@@ -1,0 +1,53 @@
+{
+  "name": "hed-system",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "setup": "node HP System/backend/scripts/vercel-setup.js"
+  },
+  "dependencies": {
+    "next": "14.2.3",
+    "react": "^18",
+    "react-dom": "^18",
+    "@vercel/postgres": "^0.8.1",
+    "@upstash/redis": "^1.31.0",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "helmet": "^7.1.0",
+    "cors": "^2.8.5",
+    "express-rate-limit": "^7.1.5",
+    "winston": "^3.11.0",
+    "nodemailer": "^6.9.13",
+    "uuid": "^9.0.0",
+    "multer": "^1.4.5-lts.1",
+    "axios": "^1.6.2",
+    "html-pdf-node": "^1.0.8",
+    "speakeasy": "^2.0.0",
+    "qrcode": "^1.5.3",
+    "zod": "^3.23.0",
+    "zustand": "^4.5.0",
+    "recharts": "^2.12.0",
+    "@supabase/supabase-js": "^2.43.0",
+    "@supabase/ssr": "^0.4.0",
+    "stripe": "^15.7.0",
+    "@stripe/stripe-js": "^3.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "typescript": "^5.4.0",
+    "tailwindcss": "^3.4.0",
+    "postcss": "^8",
+    "autoprefixer": "^10",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

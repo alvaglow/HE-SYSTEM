@@ -1,0 +1,17 @@
+{
+  "name": "@he-system/shared",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./utils/commission-formula": "./utils/commission-formula.ts",
+    "./utils/kpi-calculator": "./utils/kpi-calculator.ts",
+    "./utils/format": "./utils/format.ts",
+    "./types": "./types/index.ts"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}

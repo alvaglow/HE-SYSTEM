@@ -1,0 +1,202 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─────────────────────────────────────────────
+    // HELPERS
+    // ─────────────────────────────────────────────
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Prefer the role custom claim on the auth token (set by syncRoleClaim) — no read,
+    // lower latency/cost. Fall back to the users doc if the claim isn't present yet.
+    function myRole() {
+      return request.auth.token.role != null
+        ? request.auth.token.role
+        : get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    function isRole(r) {
+      return isSignedIn() && myRole() == r;
+    }
+
+    function isAnyOf(roles) {
+      return isSignedIn() && myRole() in roles;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    // ─────────────────────────────────────────────
+    // /users/{uid}
+    // ─────────────────────────────────────────────
+    match /users/{uid} {
+      // Users can read their own profile; admins + management can read all
+      allow read: if isOwner(uid) || isAnyOf(['admin', 'management']);
+      // Only admins can create/update/delete user records
+      allow create, update: if isRole('admin');
+      allow delete: if isRole('admin');
+    }
+
+    // ─────────────────────────────────────────────
+    // /students/{studentId}
+    // ─────────────────────────────────────────────
+    match /students/{studentId} {
+      // Student can read their own record (matched by userId field)
+      // Teacher, admin, management, parent can all read
+      allow read: if isSignedIn() && (
+        isAnyOf(['admin', 'management', 'teacher']) ||
+        (isRole('student') && resource.data.studentUserId == request.auth.uid) ||
+        (isRole('parent') && resource.data.guardianId == request.auth.uid)
+      );
+      // Only admins can create / delete
+      allow create, delete: if isRole('admin');
+      // Admins can update anything; teachers can update grades only
+      allow update: if isRole('admin') ||
+        (isRole('teacher') && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['ass1','ass2','final','gpa','attendance']));
+    }
+
+    // ─────────────────────────────────────────────
+    // /teachers/{teacherId}
+    // ─────────────────────────────────────────────
+    match /teachers/{teacherId} {
+      allow read: if isAnyOf(['admin', 'management', 'teacher']);
+      allow create, delete: if isRole('admin');
+      allow update: if isRole('admin') ||
+        (isRole('teacher') && resource.data.userId == request.auth.uid);
+    }
+
+    // ─────────────────────────────────────────────
+    // /attendanceSessions/{sessionId}
+    // ─────────────────────────────────────────────
+    match /attendanceSessions/{sessionId} {
+      // Teachers can create sessions; students, admins, management can read
+      allow read: if isAnyOf(['student', 'teacher', 'admin', 'management']);
+      allow create: if isRole('teacher');
+      // Teachers can update (deactivate) their own sessions
+      allow update: if isRole('teacher') && resource.data.teacherId == request.auth.uid;
+      allow delete: if isRole('admin');
+    }
+
+    // ─────────────────────────────────────────────
+    // /attendanceRecords/{recordId}
+    // ─────────────────────────────────────────────
+    match /attendanceRecords/{recordId} {
+      // Students create their own check-ins; teachers + admins can read all
+      allow read: if isAnyOf(['teacher', 'admin', 'management']);
+      allow read: if isRole('student') && resource.data.studentId == request.auth.uid;
+      // Check-ins go through the submitCheckIn Cloud Function (verifies active session,
+      // GPS geofence, and liveness), so direct client writes are denied.
+      allow create, update, delete: if false;
+    }
+
+    // ─────────────────────────────────────────────
+    // /invoices/{invoiceId}
+    // ─────────────────────────────────────────────
+    match /invoices/{invoiceId} {
+      // Students see only their own invoices; parents see child's invoices
+      allow read: if isAnyOf(['admin', 'management']) ||
+        (isRole('student') && resource.data.studentId == request.auth.uid);
+      allow create, update: if isRole('admin');
+      allow delete: if isRole('admin');
+    }
+
+    // ─────────────────────────────────────────────
+    // /commissions/{commissionId}
+    // ─────────────────────────────────────────────
+    match /commissions/{commissionId} {
+      // Partners see their own commissions; management sees all
+      allow read: if isRole('management') ||
+        (isRole('partner') && resource.data.partnerId == request.auth.uid);
+      allow create, update: if isRole('admin');
+      allow delete: if isRole('admin');
+    }
+
+    // ─────────────────────────────────────────────
+    // /notifications/{notifId}
+    // ─────────────────────────────────────────────
+    match /notifications/{notifId} {
+      // Users can read their own notifications
+      allow read: if isSignedIn() && resource.data.userId == request.auth.uid;
+      // Users can mark their own notifications as read
+      allow update: if isSignedIn() &&
+        resource.data.userId == request.auth.uid &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
+      // Admins can create notifications for any user
+      allow create: if isRole('admin');
+      allow delete: if isRole('admin') ||
+        (isSignedIn() && resource.data.userId == request.auth.uid);
+    }
+
+    // ─────────────────────────────────────────────
+    // /grades/{gradeId}  — written by Teacher Grade Entry
+    // ─────────────────────────────────────────────
+    match /grades/{gradeId} {
+      allow read: if isAnyOf(['admin', 'management', 'teacher']);
+      allow create, update: if isAnyOf(['teacher', 'admin']);
+      allow delete: if isRole('admin');
+    }
+
+    // ─────────────────────────────────────────────
+    // /leaveRequests/{leaveId}  — submitted by Teachers, actioned by Admin/Mgmt
+    // ─────────────────────────────────────────────
+    match /leaveRequests/{leaveId} {
+      allow read: if isAnyOf(['admin', 'management', 'teacher']);
+      allow create: if isAnyOf(['teacher', 'admin']);
+      allow update: if isAnyOf(['admin', 'management']);
+      allow delete: if isRole('admin');
+    }
+
+    // ─────────────────────────────────────────────
+    // /classes/{classId}  — course offerings (links teachers ↔ students)
+    // ─────────────────────────────────────────────
+    match /classes/{classId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isAnyOf(['admin', 'management']);
+    }
+
+    // ─────────────────────────────────────────────
+    // /enrollments/{enrollmentId}  — "student X is in class Y"
+    // ─────────────────────────────────────────────
+    match /enrollments/{enrollmentId} {
+      allow read: if isAnyOf(['admin', 'management', 'teacher']) ||
+        (isRole('student') && resource.data.studentUserId == request.auth.uid) ||
+        (isRole('parent') && resource.data.guardianId == request.auth.uid);
+      allow create, update, delete: if isRole('admin');
+    }
+
+    // ─────────────────────────────────────────────
+    // /payments/{paymentId}  — real transactions (MoMo / VNPay / ZaloPay)
+    // Confirmation/settlement happens server-side (Cloud Function) in Stage 2.
+    // ─────────────────────────────────────────────
+    match /payments/{paymentId} {
+      allow read: if isAnyOf(['admin', 'management']) ||
+        (isRole('student') && resource.data.studentUserId == request.auth.uid) ||
+        (isRole('parent') && resource.data.guardianId == request.auth.uid);
+      allow create, update, delete: if false;  // created + settled only by Cloud Functions
+    }
+
+    // ─────────────────────────────────────────────
+    // /auditLogs/{logId}  — tamper-evident: append-only, never edited or deleted
+    // ─────────────────────────────────────────────
+    match /auditLogs/{logId} {
+      allow read: if isAnyOf(['admin', 'management']);
+      allow create: if isSignedIn();
+      allow update, delete: if false;
+    }
+
+    // ─────────────────────────────────────────────
+    // /commissionPayouts/{id}  — written only by monthlyCommissionRollup (Function)
+    // ─────────────────────────────────────────────
+    match /commissionPayouts/{id} {
+      allow read: if isRole('management') ||
+        (isRole('partner') && resource.data.partnerId == request.auth.uid);
+      allow write: if false;
+    }
+
+  }
+}

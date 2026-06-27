@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 120" width="480" height="120">
+  <title>HE-SYSTEM Logo</title>
+  <desc>HE-SYSTEM — Happy English Platform brand logo. Icon mark on left with wordmark and tagline on right.</desc>
+
+  <!-- ── ICON MARK (100×100 centered at 0,10) ── -->
+  <defs>
+    <clipPath id="iconClip">
+      <rect x="10" y="10" width="100" height="100" rx="22"/>
+    </clipPath>
+  </defs>
+
+  <!-- Blue background -->
+  <rect x="10" y="10" width="100" height="100" rx="22" fill="#1B3D8C"/>
+
+  <!-- Clipped stripes -->
+  <g clip-path="url(#iconClip)">
+    <!-- Yellow top stripe -->
+    <rect x="10" y="10" width="100" height="6" fill="#F59E0B"/>
+    <!-- Yellow separator -->
+    <rect x="10" y="81" width="100" height="3" fill="#F59E0B"/>
+    <!-- Red bottom bar -->
+    <rect x="10" y="84" width="100" height="26" fill="#DC2626"/>
+  </g>
+
+  <!-- HE letters -->
+  <text
+    x="60" y="78"
+    font-family="Oswald,'Helvetica Neue','Arial Black',Arial,sans-serif"
+    font-size="46" font-weight="700"
+    fill="white" text-anchor="middle"
+    dominant-baseline="alphabetic">HE</text>
+
+  <!-- SYSTEM text in red bar -->
+  <text
+    x="60" y="103"
+    font-family="Oswald,'Helvetica Neue',Arial,sans-serif"
+    font-size="9" font-weight="600"
+    fill="white" text-anchor="middle"
+    letter-spacing="2.5">SYSTEM</text>
+
+  <!-- ── WORDMARK ── -->
+  <!-- HE (blue) -->
+  <text
+    x="128" y="72"
+    font-family="Oswald,'Helvetica Neue','Arial Black',Arial,sans-serif"
+    font-size="56" font-weight="700"
+    fill="#1B3D8C"
+    dominant-baseline="alphabetic">HE</text>
+
+  <!-- -SYSTEM (red) -->
+  <text
+    x="213" y="72"
+    font-family="Oswald,'Helvetica Neue','Arial Black',Arial,sans-serif"
+    font-size="56" font-weight="700"
+    fill="#DC2626"
+    dominant-baseline="alphabetic">-SYSTEM</text>
+
+  <!-- Tagline -->
+  <text
+    x="128" y="92"
+    font-family="Oswald,'Helvetica Neue',Arial,sans-serif"
+    font-size="12" font-weight="400"
+    fill="#94A3B8" letter-spacing="3"
+    dominant-baseline="alphabetic">HAPPY ENGLISH PLATFORM</text>
+</svg>

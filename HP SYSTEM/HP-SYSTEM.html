@@ -1,0 +1,2555 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HP System — Happy English Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   HP SYSTEM v2.0 — Design Tokens & Global Styles
+   ============================================================ */
+[data-theme="dark"] {
+  --bg:#070C18; --surface:#0D1626; --surface2:#121C33; --surface3:#1A2540;
+  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13);
+  --text1:#F1F5F9; --text2:#94A3B8; --text3:#475569;
+  --shadow:0 4px 24px rgba(0,0,0,0.4); --shadow-lg:0 8px 40px rgba(0,0,0,0.6);
+}
+[data-theme="light"] {
+  --bg:#F0F4F8; --surface:#FFFFFF; --surface2:#F8FAFC; --surface3:#EEF2F7;
+  --border:rgba(0,0,0,0.08); --border2:rgba(0,0,0,0.15);
+  --text1:#0F172A; --text2:#475569; --text3:#94A3B8;
+  --shadow:0 4px 24px rgba(0,0,0,0.08); --shadow-lg:0 8px 40px rgba(0,0,0,0.15);
+}
+:root {
+  --primary:#1B4FD8; --primary-h:#1E40AF; --accent:#F59E0B;
+  --success:#16A34A; --danger:#DC2626; --warning:#D97706; --purple:#7C3AED;
+  --c-student:#1B3D8C; --c-teacher:#2E5FCC; --c-admin:#475569;
+  --c-management:#7C3AED; --c-partner:#D97706; --c-parent:#16A34A;
+  --radius:12px; --radius-sm:8px; --radius-lg:16px;
+  --font:'Inter',system-ui,sans-serif; --font-head:'Oswald',sans-serif; --font-mono:'JetBrains Mono',monospace;
+  --t:0.2s cubic-bezier(0.4,0,0.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--text1);min-height:100vh;overflow-x:hidden;transition:background var(--t),color var(--t)}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:99px}
+h1,h2,h3{font-family:var(--font-head);letter-spacing:.02em}
+button{cursor:pointer;font-family:var(--font);border:none;outline:none}
+input,select,textarea{font-family:var(--font);outline:none}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideInLeft{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideInRight{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes otpPulse{0%,100%{box-shadow:0 0 0 0 rgba(27,79,216,.4)}50%{box-shadow:0 0 0 14px rgba(27,79,216,0)}}
+@keyframes countUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+
+.fade-in{animation:fadeIn .35s ease both}
+.slide-in{animation:slideInLeft .35s ease both}
+
+/* === LAYOUT === */
+.hp-root{display:flex;height:100vh;overflow:hidden}
+.hp-sidebar{width:240px;min-width:240px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;transition:width var(--t),min-width var(--t);overflow:hidden;z-index:100}
+.hp-sidebar.collapsed{width:64px;min-width:64px}
+.hp-logo{padding:18px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);min-height:60px}
+.hp-logo-mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--primary),#3B82F6);display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:16px;font-weight:700;color:#fff;flex-shrink:0;box-shadow:0 2px 12px rgba(27,79,216,.4)}
+.hp-logo-text{overflow:hidden}
+.hp-logo-text h2{font-size:15px;font-weight:700;color:var(--text1);white-space:nowrap}
+.hp-logo-text p{font-size:10px;color:var(--text3);white-space:nowrap;margin-top:1px}
+.hp-nav{flex:1;overflow-y:auto;padding:10px 8px}
+.hp-nav-label{font-size:9px;font-weight:700;letter-spacing:.12em;color:var(--text3);text-transform:uppercase;padding:0 8px;margin:12px 0 4px;white-space:nowrap;overflow:hidden;transition:opacity var(--t)}
+.hp-sidebar.collapsed .hp-nav-label{opacity:0}
+.hp-nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius-sm);color:var(--text2);font-size:13.5px;font-weight:500;transition:all var(--t);cursor:pointer;white-space:nowrap;position:relative;overflow:hidden}
+.hp-nav-item:hover{background:var(--surface2);color:var(--text1)}
+.hp-nav-item.active{background:rgba(27,79,216,.12);color:var(--primary)}
+.hp-nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:var(--primary);border-radius:0 3px 3px 0}
+.hp-nav-text{flex:1;overflow:hidden;transition:opacity var(--t),width var(--t)}
+.hp-sidebar.collapsed .hp-nav-text{opacity:0;width:0;pointer-events:none}
+.hp-nav-badge{font-size:10px;font-weight:700;background:var(--danger);color:#fff;padding:1px 6px;border-radius:99px;transition:opacity var(--t)}
+.hp-sidebar.collapsed .hp-nav-badge{opacity:0}
+.hp-sidebar-footer{padding:12px 8px;border-top:1px solid var(--border)}
+
+.hp-topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0}
+.hp-topbar-title{font-family:var(--font-head);font-size:18px;font-weight:600;color:var(--text1);flex:1}
+.hp-topbar-actions{display:flex;align-items:center;gap:8px}
+.hp-icon-btn{width:36px;height:36px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text2);transition:all var(--t);cursor:pointer;position:relative}
+.hp-icon-btn:hover{background:var(--surface3);color:var(--text1)}
+.hp-icon-btn .dot{position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--danger);border-radius:50%;border:2px solid var(--surface)}
+
+.hp-main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.hp-content{flex:1;overflow-y:auto;padding:24px}
+
+/* === CARDS === */
+.hp-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:border-color var(--t)}
+.hp-card:hover{border-color:var(--border2)}
+.hp-stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-bottom:24px}
+.hp-stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;display:flex;align-items:flex-start;gap:14px;transition:all var(--t);animation:fadeIn .4s ease both}
+.hp-stat-card:hover{border-color:var(--border2);transform:translateY(-1px);box-shadow:var(--shadow)}
+.hp-stat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hp-stat-info h3{font-size:26px;font-weight:800;color:var(--text1);letter-spacing:-.5px;font-family:var(--font-head);animation:countUp .5s ease both}
+.hp-stat-info p{font-size:12px;color:var(--text2);margin-top:2px}
+.hp-stat-info .trend{font-size:11px;margin-top:4px}
+.trend-up{color:var(--success)}.trend-dn{color:var(--danger)}
+
+/* === BUTTONS === */
+.hp-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;transition:all var(--t);cursor:pointer;border:1px solid transparent;white-space:nowrap}
+.hp-btn-primary{background:var(--primary);color:#fff}
+.hp-btn-primary:hover{background:var(--primary-h);transform:translateY(-1px);box-shadow:0 4px 12px rgba(27,79,216,.35)}
+.hp-btn-secondary{background:var(--surface2);color:var(--text1);border-color:var(--border)}
+.hp-btn-secondary:hover{background:var(--surface3);border-color:var(--border2)}
+.hp-btn-danger{background:var(--danger);color:#fff}
+.hp-btn-ghost{background:transparent;color:var(--text2)}
+.hp-btn-ghost:hover{background:var(--surface2);color:var(--text1)}
+.hp-btn-sm{padding:5px 10px;font-size:12px}
+.hp-btn-lg{padding:12px 24px;font-size:14px}
+.hp-btn:disabled{opacity:.5;cursor:not-allowed;pointer-events:none}
+
+/* === BADGES === */
+.hp-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:99px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.bd-blue{background:rgba(59,130,246,.15);color:#60A5FA}
+.bd-green{background:rgba(22,163,74,.15);color:#4ADE80}
+.bd-red{background:rgba(220,38,38,.15);color:#F87171}
+.bd-amber{background:rgba(245,158,11,.15);color:#FCD34D}
+.bd-purple{background:rgba(124,58,237,.15);color:#A78BFA}
+.bd-slate{background:rgba(71,85,105,.2);color:#94A3B8}
+.bd-gold{background:linear-gradient(135deg,rgba(217,119,6,.2),rgba(245,158,11,.2));color:#FCD34D;border:1px solid rgba(245,158,11,.3)}
+
+/* === TABLES === */
+.hp-table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border)}
+.hp-table{width:100%;border-collapse:collapse;font-size:13px}
+.hp-table thead th{background:var(--surface2);color:var(--text2);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:10px 16px;text-align:left;border-bottom:1px solid var(--border)}
+.hp-table tbody tr{border-bottom:1px solid var(--border);transition:background var(--t)}
+.hp-table tbody tr:last-child{border-bottom:none}
+.hp-table tbody tr:hover{background:var(--surface2)}
+.hp-table tbody td{padding:11px 16px;color:var(--text1);vertical-align:middle}
+
+/* === FORMS === */
+.hp-field{margin-bottom:16px}
+.hp-label{font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:.06em}
+.hp-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;color:var(--text1);font-size:14px;transition:all var(--t)}
+.hp-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(27,79,216,.12)}
+.hp-input::placeholder{color:var(--text3)}
+.hp-select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;color:var(--text1);font-size:14px;transition:all var(--t);appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%2394A3B8'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.hp-select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(27,79,216,.12)}
+
+/* === PROGRESS === */
+.hp-progress{height:6px;background:var(--surface3);border-radius:99px;overflow:hidden}
+.hp-progress-fill{height:100%;border-radius:99px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+
+/* === AVATAR === */
+.hp-avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;background:linear-gradient(135deg,var(--primary),#3B82F6);color:#fff;font-family:var(--font-head)}
+
+/* === SECTION LABEL === */
+.hp-section-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.hp-section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* === TIER === */
+.hp-tier{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:99px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.tier-bronze{background:rgba(180,83,9,.2);color:#D97706;border:1px solid rgba(180,83,9,.3)}
+.tier-silver{background:rgba(100,116,139,.2);color:#94A3B8;border:1px solid rgba(100,116,139,.3)}
+.tier-gold{background:rgba(245,158,11,.2);color:#FCD34D;border:1px solid rgba(245,158,11,.4)}
+.tier-platinum{background:linear-gradient(135deg,rgba(99,102,241,.2),rgba(167,139,250,.2));color:#A78BFA;border:1px solid rgba(167,139,250,.4)}
+
+/* === ALERTS === */
+.hp-alert{padding:12px 16px;border-radius:var(--radius-sm);font-size:13px;border-left:3px solid;margin-bottom:12px}
+.alert-info{background:rgba(59,130,246,.08);border-color:#3B82F6;color:#93C5FD}
+.alert-success{background:rgba(22,163,74,.08);border-color:var(--success);color:#4ADE80}
+.alert-warning{background:rgba(245,158,11,.08);border-color:var(--accent);color:#FCD34D}
+.alert-danger{background:rgba(220,38,38,.08);border-color:var(--danger);color:#F87171}
+
+/* === MODAL === */
+.hp-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:300;display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn .2s ease}
+.hp-modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:28px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:fadeIn .3s ease}
+.hp-modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.hp-modal-header h3{font-size:18px;font-weight:700}
+
+/* === OTP === */
+.hp-otp-display{font-family:var(--font-mono);font-size:48px;font-weight:700;letter-spacing:.3em;color:var(--primary);text-align:center;padding:24px;background:var(--surface2);border-radius:var(--radius);border:2px solid rgba(27,79,216,.3);animation:otpPulse 2s ease-in-out infinite}
+.hp-otp-timer{text-align:center;font-size:13px;color:var(--text2);margin-top:8px}
+.hp-otp-timer span{color:var(--accent);font-weight:700;font-family:var(--font-mono)}
+
+/* === NOTIF PANEL === */
+.hp-notif-panel{position:fixed;top:56px;right:0;width:360px;height:calc(100vh - 56px);background:var(--surface);border-left:1px solid var(--border);z-index:200;display:flex;flex-direction:column;animation:slideInRight .25s ease;box-shadow:var(--shadow-lg)}
+
+/* === LOGIN === */
+.hp-login{min-height:100vh;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;position:relative;overflow:hidden}
+.hp-login::before{content:'';position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(27,79,216,.12) 0%,transparent 70%);top:-200px;right:-200px;pointer-events:none}
+.hp-login::after{content:'';position:absolute;width:400px;height:400px;background:radial-gradient(circle,rgba(124,58,237,.08) 0%,transparent 70%);bottom:-100px;left:-100px;pointer-events:none}
+.hp-login-hd{text-align:center;margin-bottom:36px;animation:fadeIn .5s ease}
+.hp-login-logo{width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,var(--primary),#3B82F6);display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:28px;font-weight:700;color:#fff;margin:0 auto 16px;box-shadow:0 8px 32px rgba(27,79,216,.4)}
+.hp-login-hd h1{font-size:32px;font-weight:700;color:var(--text1);margin-bottom:6px}
+.hp-login-hd p{font-size:14px;color:var(--text2)}
+.hp-login-card{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:32px;box-shadow:var(--shadow-lg);animation:fadeIn .5s ease .1s both}
+.hp-login-tabs{display:flex;gap:4px;margin-bottom:24px;background:var(--surface2);padding:4px;border-radius:var(--radius-sm)}
+.hp-login-tab{flex:1;padding:8px;border-radius:6px;font-size:13px;font-weight:600;color:var(--text2);background:transparent;transition:all var(--t);text-align:center;cursor:pointer}
+.hp-login-tab.active{background:var(--surface);color:var(--text1);box-shadow:var(--shadow)}
+.hp-divider{display:flex;align-items:center;gap:12px;margin:18px 0;color:var(--text3);font-size:12px}
+.hp-divider::before,.hp-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.hp-google-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:11px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-weight:600;color:var(--text1);transition:all var(--t);cursor:pointer}
+.hp-google-btn:hover{background:var(--surface3);border-color:var(--border2)}
+.hp-portal-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:28px;width:100%;max-width:420px;animation:fadeIn .5s ease .2s both}
+.hp-portal-card{padding:14px 10px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface2);text-align:center;cursor:pointer;transition:all var(--t);display:flex;flex-direction:column;align-items:center;gap:7px}
+.hp-portal-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:var(--shadow)}
+.hp-portal-card.sel{border-color:var(--primary);background:rgba(27,79,216,.08)}
+.hp-portal-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.hp-portal-card span{font-size:11px;font-weight:600;color:var(--text2)}
+.hp-demo-banner{background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(217,119,6,.08));border:1px solid rgba(245,158,11,.25);border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:#FCD34D;display:flex;align-items:center;gap:8px;margin-bottom:16px}
+
+/* === WIZARD === */
+.hp-wizard-steps{display:flex;gap:0;margin-bottom:28px;align-items:center}
+.hp-wizard-step{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600}
+.hp-wizard-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;transition:all var(--t)}
+.step-done .hp-wizard-num{background:var(--success);color:#fff}
+.step-active .hp-wizard-num{background:var(--primary);color:#fff}
+.step-todo .hp-wizard-num{background:var(--surface2);color:var(--text3)}
+.hp-wizard-line{flex:1;height:2px;background:var(--border);margin:0 4px}
+.hp-wizard-line.done{background:var(--success)}
+.hp-wizard-line.active{background:var(--primary)}
+.step-done .hp-step-lbl{color:var(--text2)}
+.step-active .hp-step-lbl{color:var(--text1)}
+.step-todo .hp-step-lbl{color:var(--text3)}
+
+/* === MISC === */
+.hp-spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}
+.hp-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.hp-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.mb-4{margin-bottom:4px}.mb-8{margin-bottom:8px}.mb-12{margin-bottom:12px}.mb-16{margin-bottom:16px}.mb-20{margin-bottom:20px}.mb-24{margin-bottom:24px}
+.flex{display:flex}.flex-col{flex-direction:column}.items-center{align-items:center}.justify-between{justify-content:space-between}.gap-8{gap:8px}.gap-12{gap:12px}.gap-16{gap:16px}
+.text-sm{font-size:12px}.text-xs{font-size:11px}.text-muted{color:var(--text2)}.text-faint{color:var(--text3)}.font-bold{font-weight:700}.font-mono{font-family:var(--font-mono)}
+.rounded{border-radius:var(--radius)}.rounded-sm{border-radius:var(--radius-sm)}.border{border:1px solid var(--border)}
+.w-full{width:100%}.p-16{padding:16px}.p-20{padding:20px}
+@media(max-width:768px){.hp-grid-2,.hp-grid-3{grid-template-columns:1fr}.hp-sidebar{display:none}.hp-portal-cards{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<!-- Firebase Web SDK v10 compat (works with Babel standalone, no import needed) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-functions-compat.js"></script>
+<!-- React 18 + Babel Standalone -->
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+
+<script>
+/* ╔══════════════════════════════════════════════════════╗
+   ║  HP SYSTEM — Firebase Configuration                  ║
+   ║  1. Go to console.firebase.google.com                ║
+   ║  2. Project Settings → Your apps → Web app           ║
+   ║  3. Copy firebaseConfig values below                 ║
+   ╚══════════════════════════════════════════════════════╝ */
+var HP_FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyBU5xAG3PazpkOgh74tzqFauB-lH8bvLSs",
+  authDomain:        "hp-system-142a5.firebaseapp.com",
+  databaseURL:       "https://hp-system-142a5-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:         "hp-system-142a5",
+  storageBucket:     "hp-system-142a5.firebasestorage.app",
+  messagingSenderId: "409521475133",
+  appId:             "1:409521475133:web:6b908b453cffebe369e454",
+  measurementId:     "G-D12V5VRH20"
+};
+
+var DEMO_MODE = HP_FIREBASE_CONFIG.apiKey === "YOUR_API_KEY";
+
+/* Allow credential-free exploration of the deployed app via ?demo=1
+   (forces demo mode even when a real Firebase config is present). */
+try {
+  if (new URLSearchParams(window.location.search).get('demo') === '1') {
+    DEMO_MODE = true;
+    console.info('[HP] DEMO MODE forced via ?demo=1');
+  }
+} catch(e) {}
+
+if (!DEMO_MODE) {
+  try {
+    firebase.initializeApp(HP_FIREBASE_CONFIG);
+    window.HP_AUTH    = firebase.auth();
+    window.HP_DB      = firebase.firestore();
+    window.HP_STORAGE = firebase.storage();
+    try { window.HP_FUNCTIONS = firebase.functions(); } catch(e) { window.HP_FUNCTIONS = null; }
+    window.HP_DB.enablePersistence({ synchronizeTabs: true })
+      .catch(function(e) { console.warn('Persistence:', e.code); });
+    console.info('[HP] Firebase connected — project:', HP_FIREBASE_CONFIG.projectId);
+  } catch(e) {
+    console.error('[HP] Firebase init error:', e);
+    window.DEMO_MODE = true;
+    window.HP_AUTH = null;
+    window.HP_DB = null;
+    window.HP_STORAGE = null;
+  }
+} else {
+  console.info('[HP] DEMO MODE — fill in HP_FIREBASE_CONFIG to connect Firebase');
+}
+</script>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef, useCallback, useMemo } = React;
+
+/* ============================================================
+   HP_I18N — Strings (EN / VI)
+   ============================================================ */
+window.HP_I18N = {
+  en: {
+    appName:'HP System', tagline:'Happy English Platform',
+    nav:{ dashboard:'Dashboard', timetable:'Timetable', results:'Results',
+      wallet:'Wallet', attendance:'Attendance', fees:'Fees', messages:'Messages',
+      gradeEntry:'Grade Entry', leaveManagement:'Leave Mgmt', students:'Students',
+      enrolment:'Enrolment', staff:'Staff', invoices:'Invoices', reports:'Reports',
+      partners:'Partners', kpi:'KPI Dashboard', finance:'Finance', analytics:'Analytics',
+      commission:'Commission', myStudents:'My Students', leaderboard:'Leaderboard',
+      childDashboard:'Child Profile' },
+    roles:{ student:'Student', teacher:'Teacher', admin:'Admin',
+      management:'Management', partner:'Partner', parent:'Parent' },
+    login:{ title:'Welcome Back', subtitle:'HP Learning Management System',
+      email:'Email Address', password:'Password', signIn:'Sign In', signUp:'Register',
+      orContinue:'or continue with', googleBtn:'Continue with Google',
+      demoHint:'Demo: prefix email with role (e.g. teacher@hp.edu)', forgotPassword:'Forgot password?', loginAs:'Sign in as a Portal' },
+    portals:{
+      student:{ desc:'View your classes, grades, fees and attendance' },
+      teacher:{ desc:'Manage classes, submit grades and log attendance' },
+      admin:{ desc:'Enrol students, manage staff and generate invoices' },
+      management:{ desc:'Executive dashboard, KPIs and financial reports' },
+      partner:{ desc:'Track referrals, commissions and tier progress' },
+      parent:{ desc:"Monitor your child's progress and fee status" }
+    },
+    common:{ save:'Save', cancel:'Cancel', delete:'Delete', edit:'Edit', add:'Add',
+      view:'View', search:'Search', filter:'Filter', export:'Export', loading:'Loading…',
+      noData:'No data found', confirm:'Confirm', back:'Back', next:'Next', submit:'Submit',
+      close:'Close', all:'All', active:'Active', inactive:'Inactive', paid:'Paid',
+      pending:'Pending', overdue:'Overdue', approved:'Approved', rejected:'Rejected' }
+  },
+  vi: {
+    appName:'Hệ thống HP', tagline:'Nền tảng Happy English',
+    nav:{ dashboard:'Tổng quan', timetable:'Thời khóa biểu', results:'Kết quả',
+      wallet:'Ví tiền', attendance:'Điểm danh', fees:'Học phí', messages:'Tin nhắn',
+      gradeEntry:'Nhập điểm', leaveManagement:'Nghỉ phép', students:'Học viên',
+      enrolment:'Đăng ký', staff:'Nhân viên', invoices:'Hóa đơn', reports:'Báo cáo',
+      partners:'Đối tác', kpi:'KPI', finance:'Tài chính', analytics:'Phân tích',
+      commission:'Hoa hồng', myStudents:'Học viên của tôi', leaderboard:'Xếp hạng',
+      childDashboard:'Hồ sơ con' },
+    roles:{ student:'Học viên', teacher:'Giáo viên', admin:'Admin',
+      management:'Ban Giám Đốc', partner:'Đối tác', parent:'Phụ huynh' },
+    login:{ title:'Chào mừng trở lại', subtitle:'Hệ thống quản lý học tập HP',
+      email:'Địa chỉ Email', password:'Mật khẩu', signIn:'Đăng nhập', signUp:'Đăng ký',
+      orContinue:'hoặc tiếp tục với', googleBtn:'Tiếp tục với Google',
+      demoHint:'Demo: dùng tiền tố email là vai trò (vd: teacher@hp.edu)', forgotPassword:'Quên mật khẩu?', loginAs:'Đăng nhập với tư cách' },
+    portals:{
+      student:{ desc:'Xem lớp học, điểm, học phí và điểm danh' },
+      teacher:{ desc:'Quản lý lớp, nhập điểm và điểm danh' },
+      admin:{ desc:'Đăng ký học viên, quản lý nhân viên và hóa đơn' },
+      management:{ desc:'Tổng quan điều hành, KPI và báo cáo tài chính' },
+      partner:{ desc:'Theo dõi giới thiệu, hoa hồng và tiến độ hạng' },
+      parent:{ desc:'Theo dõi tiến độ và học phí của con bạn' }
+    },
+    common:{ save:'Lưu', cancel:'Hủy', delete:'Xóa', edit:'Sửa', add:'Thêm',
+      view:'Xem', search:'Tìm kiếm', filter:'Lọc', export:'Xuất', loading:'Đang tải…',
+      noData:'Không có dữ liệu', confirm:'Xác nhận', back:'Quay lại', next:'Tiếp theo',
+      submit:'Gửi', close:'Đóng', all:'Tất cả', active:'Hoạt động', inactive:'Không hoạt động',
+      paid:'Đã thanh toán', pending:'Chờ xử lý', overdue:'Quá hạn',
+      approved:'Đã duyệt', rejected:'Từ chối' }
+  }
+};
+
+/* ============================================================
+   HP_ICONS — SVG path library
+   ============================================================ */
+window.HP_ICONS = {
+  dashboard:'M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z',
+  timetable:'M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z',
+  results:'M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z',
+  wallet:'M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z',
+  attendance:'M16.5 12c1.38 0 2.49-1.12 2.49-2.5S17.88 7 16.5 7C15.12 7 14 8.12 14 9.5S15.12 12 16.5 12zM9 11c1.66 0 2.99-1.34 2.99-3S10.66 5 9 5C7.34 5 6 6.34 6 8s1.34 3 3 3zm7.5 3c-1.83 0-5.5.92-5.5 2.75V19h11v-2.25c0-1.83-3.67-2.75-5.5-2.75zM9 13c-2.33 0-7 1.17-7 3.5V19h7v-2.25c0-.85.33-2.34 2.37-3.47C10.5 13.1 9.66 13 9 13z',
+  fees:'M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z',
+  messages:'M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z',
+  grades:'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z',
+  leave:'M22 9V7h-2V5c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-2h2v-2h-2v-2h2v-2h-2V9h2zm-4 10H4V5h14v14z',
+  students:'M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z',
+  enrolment:'M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z',
+  staff:'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z',
+  invoices:'M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zM6 20V4h7v5h5v11H6z',
+  reports:'M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z',
+  kpi:'M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z',
+  finance:'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z',
+  analytics:'M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 17l1.5 1.49z',
+  commission:'M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z',
+  leaderboard:'M7.5 21H2V9h5.5v12zm7.25-18h-5.5v18h5.5V3zm7.25 8H16.5v10H22V11z',
+  notifications:'M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z',
+  settings:'M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z',
+  logout:'M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z',
+  otp:'M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z',
+  check:'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z',
+  close:'M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z',
+  plus:'M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z',
+  search:'M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z',
+  chevDown:'M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z',
+  chevRight:'M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z',
+  chevLeft:'M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z',
+  sun:'M6.76 4.84l-1.8-1.79-1.41 1.41 1.79 1.79 1.42-1.41zM4 10.5H1v2h3v-2zm9-9.95h-2V3.5h2V.55zm7.45 3.91l-1.41-1.41-1.79 1.79 1.41 1.41 1.79-1.79zm-3.21 13.7l1.79 1.8 1.41-1.41-1.8-1.79-1.4 1.4zM20 10.5v2h3v-2h-3zm-8-5c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm-1 16.95h2V19.5h-2v2.95zm-7.45-3.91l1.41 1.41 1.79-1.8-1.41-1.41-1.79 1.8z',
+  moon:'M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z',
+  globe:'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z',
+  user:'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z',
+  alert:'M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z',
+  info:'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z',
+  star:'M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z',
+  upload:'M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z',
+  menu:'M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z',
+  eye:'M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z',
+  calendar:'M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z',
+  google:'M12.545 10.239v3.821h5.445c-.712 2.315-2.647 3.972-5.445 3.972a6.033 6.033 0 110-12.064c1.498 0 2.866.549 3.921 1.453l2.814-2.814A9.969 9.969 0 0012.545 2C7.021 2 2.543 6.477 2.543 12s4.478 10 10.002 10c8.396 0 10.249-7.85 9.426-11.748l-9.426-.013z',
+  copy:'M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z',
+  refresh:'M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z',
+  myStudents:'M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z',
+  childDashboard:'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z',
+  partners:'M16.01 11H4v2h12.01v3L20 12l-3.99-4z',
+};
+
+/* ============================================================
+   HP_PORTALS — Nav definitions per role
+   ============================================================ */
+window.HP_PORTALS = {
+  student:[
+    {key:'dashboard', icon:'dashboard'},{key:'timetable', icon:'timetable'},
+    {key:'results', icon:'results'},{key:'attendance', icon:'attendance'},
+    {key:'fees', icon:'fees'},{key:'wallet', icon:'wallet'},
+    {key:'messages', icon:'messages', badge:3}
+  ],
+  teacher:[
+    {key:'dashboard', icon:'dashboard'},{key:'gradeEntry', icon:'grades'},
+    {key:'attendance', icon:'attendance'},{key:'leaveManagement', icon:'leave'},
+    {key:'students', icon:'students'},{key:'messages', icon:'messages', badge:1}
+  ],
+  admin:[
+    {key:'dashboard', icon:'dashboard'},{key:'students', icon:'students'},
+    {key:'enrolment', icon:'enrolment'},{key:'staff', icon:'staff'},
+    {key:'invoices', icon:'invoices', badge:5},{key:'reports', icon:'reports'},
+    {key:'partners', icon:'partners'}
+  ],
+  management:[
+    {key:'dashboard', icon:'dashboard'},{key:'kpi', icon:'kpi'},
+    {key:'finance', icon:'finance'},{key:'analytics', icon:'analytics'},
+    {key:'staff', icon:'staff'},{key:'reports', icon:'reports'}
+  ],
+  partner:[
+    {key:'dashboard', icon:'dashboard'},{key:'commission', icon:'commission'},
+    {key:'myStudents', icon:'myStudents'},{key:'leaderboard', icon:'leaderboard'},
+    {key:'messages', icon:'messages'}
+  ],
+  parent:[
+    {key:'dashboard', icon:'dashboard'},{key:'attendance', icon:'attendance'},
+    {key:'results', icon:'results'},{key:'fees', icon:'fees'},
+    {key:'messages', icon:'messages', badge:2}
+  ],
+};
+
+/* ============================================================
+   HP_MOCK — Demo data layer (DEMO_MODE only)
+   ============================================================ */
+window.HP_MOCK = {
+  users:{
+    student:{uid:'d-student', name:'Nguyen Van An', email:'student@hp.edu', role:'student', avatar:'NVA'},
+    teacher:{uid:'d-teacher', name:'Sarah Thompson', email:'teacher@hp.edu', role:'teacher', avatar:'ST'},
+    admin:{uid:'d-admin', name:'Tran Thi Minh', email:'admin@hp.edu', role:'admin', avatar:'TTM'},
+    management:{uid:'d-mgmt', name:'Michael Chen', email:'mgmt@hp.edu', role:'management', avatar:'MC'},
+    partner:{uid:'d-partner', name:'Le Hoang Nam', email:'partner@hp.edu', role:'partner', avatar:'LHN'},
+    parent:{uid:'d-parent', name:'Pham Thi Lan', email:'parent@hp.edu', role:'parent', avatar:'PTL'},
+  },
+  student:{
+    id:'APD21110001', programme:'Academic Preparation Diploma',
+    intake:'SEP 2024', semester:3, status:'active', classMode:'Hybrid',
+    attendance:87, gpa:3.2, feeBalance:4500000, nextFeeDate:'2026-07-01',
+    classes:[
+      {id:1, name:'Academic Writing', teacher:'Sarah Thompson', room:'B201', day:'Mon', time:'08:00-10:00', credits:3},
+      {id:2, name:'Critical Thinking', teacher:'James Wilson', room:'A103', day:'Tue', time:'10:00-12:00', credits:3},
+      {id:3, name:'IELTS Preparation', teacher:'Emma Davis', room:'B301', day:'Wed', time:'13:00-15:00', credits:3},
+      {id:4, name:'Oral Communication', teacher:'Sarah Thompson', room:'Online', day:'Thu', time:'08:00-10:00', credits:2},
+      {id:5, name:'Research Methods', teacher:'David Park', room:'A205', day:'Fri', time:'10:00-12:00', credits:2},
+    ],
+    results:[
+      {subject:'Academic Writing',  ass1:82, ass2:78, final:80, credits:3},
+      {subject:'Critical Thinking', ass1:88, ass2:85, final:86, credits:3},
+      {subject:'IELTS Preparation', ass1:75, ass2:79, final:77, credits:3},
+      {subject:'Oral Communication',ass1:90, ass2:88, final:89, credits:2},
+      {subject:'Research Methods',  ass1:70, ass2:74, final:72, credits:2},
+    ],
+    invoices:[
+      {id:'INV-001', desc:'Semester 3 Tuition', amount:18000000, due:'2026-07-01', status:'pending'},
+      {id:'INV-002', desc:'Semester 2 Tuition', amount:18000000, due:'2026-01-15', status:'paid'},
+      {id:'INV-003', desc:'Semester 1 Tuition', amount:18000000, due:'2025-09-01', status:'paid'},
+    ],
+    attendance_records:[
+      {date:'2026-06-09', subject:'Academic Writing', status:'present'},
+      {date:'2026-06-09', subject:'Critical Thinking', status:'present'},
+      {date:'2026-06-10', subject:'IELTS Preparation', status:'late'},
+      {date:'2026-06-11', subject:'Oral Communication', status:'present'},
+      {date:'2026-06-12', subject:'Research Methods', status:'absent'},
+      {date:'2026-06-13', subject:'Academic Writing', status:'present'},
+    ],
+  },
+  teacher:{
+    id:'TCH-0023', staffId:'HP-TCH-2022-023', department:'English',
+    kpiScore:92, kpiGrade:'A', employmentType:'Full-time',
+    classes:['Academic Writing — B201','Oral Communication — Online'],
+    students:[
+      {id:'APD21110001', name:'Nguyen Van An',  att:87, ass1:82, ass2:78, final:80},
+      {id:'APD21110002', name:'Tran Minh Khoa', att:92, ass1:90, ass2:88, final:89},
+      {id:'APD21110003', name:'Le Thi Phuong',  att:78, ass1:72, ass2:75, final:74},
+      {id:'APD21110004', name:'Pham Van Duc',   att:95, ass1:95, ass2:92, final:93},
+      {id:'APD21110005', name:'Hoang Thi Mai',  att:82, ass1:78, ass2:80, final:79},
+      {id:'APD21110006', name:'Vo Thanh Long',  att:65, ass1:60, ass2:62, final:61},
+    ],
+    leave:{
+      balance:{annual:10, sick:5, personal:3},
+      history:[
+        {id:'LV-001', type:'Annual', from:'2026-05-20', to:'2026-05-22', days:3, status:'approved', reason:'Family event'},
+        {id:'LV-002', type:'Sick',   from:'2026-04-10', to:'2026-04-10', days:1, status:'approved', reason:'Medical'},
+      ],
+    },
+  },
+  admin:{
+    stats:{totalStudents:847, newEnrolments:23, pendingInvoices:41, pendingTasks:7},
+    recentEnrolments:[
+      {id:'APD21110901', name:'Bui Thi Thu',     programme:'APD', intake:'JUN 2026', date:'2026-06-12', status:'active'},
+      {id:'APD21110902', name:'Nguyen Duc Manh', programme:'APD', intake:'JUN 2026', date:'2026-06-10', status:'active'},
+      {id:'APD21110903', name:'Tran Thi Hoa',    programme:'DIP', intake:'JUN 2026', date:'2026-06-08', status:'active'},
+      {id:'APD21110904', name:'Le Van Binh',      programme:'APD', intake:'JUN 2026', date:'2026-06-07', status:'pending'},
+      {id:'APD21110905', name:'Pham Ngoc Lan',    programme:'EAP', intake:'JUN 2026', date:'2026-06-05', status:'active'},
+    ],
+    staff:[
+      {id:'TCH-001', name:'Sarah Thompson', dept:'English', role:'teacher', kpi:92, status:'active'},
+      {id:'TCH-002', name:'James Wilson',   dept:'English', role:'teacher', kpi:85, status:'active'},
+      {id:'TCH-003', name:'Emma Davis',     dept:'English', role:'teacher', kpi:88, status:'active'},
+      {id:'TCH-004', name:'David Park',     dept:'English', role:'teacher', kpi:79, status:'active'},
+      {id:'TCH-005', name:'Michael Brown',  dept:'Admin',   role:'admin',   kpi:91, status:'active'},
+      {id:'TCH-006', name:'Lisa Nguyen',    dept:'English', role:'teacher', kpi:83, status:'active'},
+      {id:'TCH-007', name:'Tran Van Hung',  dept:'English', role:'teacher', kpi:76, status:'active'},
+      {id:'TCH-008', name:'Sophie Laurent', dept:'French',  role:'teacher', kpi:94, status:'active'},
+    ],
+  },
+  management:{
+    revenue:{thisMonth:1250000000, lastMonth:1180000000, target:1300000000},
+    students:{total:847, active:812, newThisMonth:23},
+    kpiAvg:87.4,
+    alerts:[
+      {type:'warning', text:'Invoice collection rate at 78% — 5% below target'},
+      {type:'info',    text:'New intake JUN 2026: 23 students enrolled'},
+      {type:'success', text:'IELTS pass rate hit 94% this semester'},
+    ],
+    monthlyRevenue:[980,1050,1100,970,1180,1250],
+    monthlyLabels:['Jan','Feb','Mar','Apr','May','Jun'],
+  },
+  partner:{
+    id:'PTR-00041', tier:'Gold', tierScore:78,
+    commissions:{pending:4500000, thisMonth:12000000, total:87000000},
+    studentsReferred:12, activeStudents:9,
+    history:[
+      {month:'Jun 2026', students:9,  rate:'8%', amount:4500000, status:'pending'},
+      {month:'May 2026', students:9,  rate:'8%', amount:12000000, status:'paid'},
+      {month:'Apr 2026', students:8,  rate:'8%', amount:10800000, status:'paid'},
+      {month:'Mar 2026', students:10, rate:'8%', amount:14000000, status:'paid'},
+      {month:'Feb 2026', students:7,  rate:'7%', amount:9100000,  status:'paid'},
+    ],
+    leaderboard:[
+      {rank:1, name:'Truong Thi Hong', tier:'Platinum', students:28, commission:87000000},
+      {rank:2, name:'Nguyen Minh Tuan',tier:'Platinum', students:24, commission:72000000},
+      {rank:3, name:'Le Hoang Nam',    tier:'Gold',     students:12, commission:34000000, isMe:true},
+      {rank:4, name:'Pham Van Quy',    tier:'Gold',     students:11, commission:31000000},
+      {rank:5, name:'Bui Thi Thanh',   tier:'Silver',   students:6,  commission:18000000},
+    ],
+  },
+  parent:{
+    child:{
+      name:'Nguyen Van An', id:'APD21110001', programme:'Academic Preparation Diploma',
+      semester:3, attendance:87, gpa:3.2, feeBalance:4500000, status:'active',
+      results:[
+        {subject:'Academic Writing',  overall:80, grade:'B+'},
+        {subject:'Critical Thinking', overall:86, grade:'A-'},
+        {subject:'IELTS Preparation', overall:77, grade:'B+'},
+        {subject:'Oral Communication',overall:89, grade:'A-'},
+        {subject:'Research Methods',  overall:72, grade:'B'},
+      ],
+    },
+  },
+  notifications:[
+    {id:1, type:'fee',       title:'Fee Reminder',    body:'Semester 3 fee of ₫18M due 1 Jul 2026', read:false, time:'2h ago'},
+    {id:2, type:'grade',     title:'Grade Released',   body:'Academic Writing S3 results available', read:false, time:'5h ago'},
+    {id:3, type:'system',    title:'System Update',    body:'HP System v2.0 launched', read:true, time:'1d ago'},
+    {id:4, type:'attendance',title:'Attendance Alert', body:'3 absences this month', read:true, time:'2d ago'},
+    {id:5, type:'message',   title:'New Message',      body:'Sarah Thompson sent you a message', read:false, time:'3d ago'},
+  ],
+};
+
+/* ============================================================
+   Utility functions
+   ============================================================ */
+const fmtVND = (n) => {
+  if(n >= 1000000000) return '₫' + (n/1000000000).toFixed(1) + 'B';
+  if(n >= 1000000) return '₫' + (n/1000000).toFixed(1) + 'M';
+  return '₫' + new Intl.NumberFormat('vi-VN').format(n);
+};
+const fmtNum = (n) => new Intl.NumberFormat().format(n);
+
+const GRADE_TABLE = (score) => {
+  if(score>=90) return {g:'A',  c:'#4ADE80'};
+  if(score>=85) return {g:'A-', c:'#22C55E'};
+  if(score>=80) return {g:'B+', c:'#60A5FA'};
+  if(score>=75) return {g:'B',  c:'#3B82F6'};
+  if(score>=70) return {g:'B-', c:'#818CF8'};
+  if(score>=65) return {g:'C+', c:'#FCD34D'};
+  if(score>=60) return {g:'C',  c:'#F59E0B'};
+  if(score>=55) return {g:'D',  c:'#F87171'};
+  return {g:'F', c:'#DC2626'};
+};
+const calcOverall = (s) => Math.round((s.ass1||0)*0.3 + (s.ass2||0)*0.3 + (s.final||0)*0.4);
+
+const PORTAL_COLOR = {
+  student:{bg:'rgba(27,61,140,.15)', border:'rgba(27,61,140,.4)', accent:'#1B4FD8'},
+  teacher:{bg:'rgba(46,95,204,.15)', border:'rgba(46,95,204,.4)', accent:'#2E5FCC'},
+  admin:{bg:'rgba(71,85,105,.15)', border:'rgba(71,85,105,.4)', accent:'#64748B'},
+  management:{bg:'rgba(124,58,237,.15)', border:'rgba(124,58,237,.4)', accent:'#7C3AED'},
+  partner:{bg:'rgba(217,119,6,.15)', border:'rgba(217,119,6,.4)', accent:'#D97706'},
+  parent:{bg:'rgba(22,163,74,.15)', border:'rgba(22,163,74,.4)', accent:'#16A34A'},
+};
+
+/* ============================================================
+   HP_DATA — unified live data layer
+   One interface, two backends: live Firestore (real-time) OR an
+   in-memory reactive demo store seeded from HP_MOCK. Components
+   use the same hooks/flows regardless of which is active, so the
+   six portals stay interconnected in demo AND in production.
+   ============================================================ */
+const HP_DATA = (function () {
+  const isLive = () => !(DEMO_MODE || window.DEMO_MODE) && !!window.HP_DB;
+  const ts = () => (window.firebase && firebase.firestore)
+    ? firebase.firestore.FieldValue.serverTimestamp() : new Date().toISOString();
+  const newId = (p) => (p || 'id') + '-' + Math.random().toString(36).slice(2, 9);
+
+  /* in-memory reactive demo store */
+  const demo = { data: {}, subs: {} };
+  const demoList = (c) => (demo.data[c] || []).map((x) => ({ ...x }));
+  const demoEmit = (c) => (demo.subs[c] ? demo.subs[c].forEach((cb) => cb(demoList(c))) : null);
+  function demoSub(c, cb) {
+    demo.subs[c] = demo.subs[c] || new Set();
+    demo.subs[c].add(cb); cb(demoList(c));
+    return () => { try { demo.subs[c].delete(cb); } catch (_) {} };
+  }
+  function demoAdd(c, obj) {
+    const id = obj.id || newId(c); const row = { ...obj, id };
+    (demo.data[c] = demo.data[c] || []).push(row); demoEmit(c); return Promise.resolve(id);
+  }
+  function demoSet(c, id, obj) {
+    const arr = (demo.data[c] = demo.data[c] || []);
+    const i = arr.findIndex((r) => r.id === id);
+    if (i >= 0) arr[i] = { ...arr[i], ...obj, id }; else arr.push({ ...obj, id });
+    demoEmit(c); return Promise.resolve(id);
+  }
+  function demoUpdate(c, id, patch) {
+    const arr = demo.data[c] || []; const i = arr.findIndex((r) => r.id === id);
+    if (i >= 0) { arr[i] = { ...arr[i], ...patch }; demoEmit(c); } return Promise.resolve();
+  }
+
+  /* seed demo store from HP_MOCK (normalized) */
+  function seedDemo() {
+    const M = window.HP_MOCK || {};
+    demo.data = {};
+    const students = {};
+    const put = (s) => { if (s && s.id) students[s.id] = { ...(students[s.id] || {}), ...s }; };
+    if (M.student) put({
+      id: M.student.id, studentId: M.student.id, name: (M.users && M.users.student && M.users.student.name) || 'Nguyen Van An',
+      programme: M.student.programme, intake: M.student.intake, semester: M.student.semester,
+      status: M.student.status, gpa: M.student.gpa, attendance: M.student.attendance,
+      feeBalance: M.student.feeBalance, referringPartnerId: (M.partner && M.partner.id) || null,
+    });
+    ((M.teacher && M.teacher.students) || []).forEach((s) => put({
+      id: s.id, studentId: s.id, name: s.name, attendance: s.att,
+      gpa: +(((s.ass1 + s.ass2 + s.final) / 3 / 20).toFixed(2)) || 0, status: 'active', programme: 'APD',
+    }));
+    ((M.admin && M.admin.recentEnrolments) || []).forEach((s) => put({
+      id: s.id, studentId: s.id, name: s.name, programme: s.programme, intake: s.intake,
+      status: s.status, attendance: 100, gpa: 0, feeBalance: 18000000,
+    }));
+    demo.data.students = Object.values(students);
+    demo.data.classes = ((M.student && M.student.classes) || []).map((c, i) => ({
+      id: 'CLS-' + (i + 1), name: c.name, teacherName: c.teacher, room: c.room,
+      schedule: c.day + ' ' + c.time, credits: c.credits, status: 'active',
+    }));
+    demo.data.grades = ((M.teacher && M.teacher.students) || []).map((s) => ({
+      id: s.id, studentId: s.id, ass1: s.ass1, ass2: s.ass2, final: s.final,
+      overall: Math.round((s.ass1 || 0) * 0.3 + (s.ass2 || 0) * 0.3 + (s.final || 0) * 0.4),
+    }));
+    demo.data.invoices = ((M.student && M.student.invoices) || []).map((v) => ({
+      id: v.id, studentId: M.student.id, desc: v.desc, amount: v.amount, due: v.due, status: v.status,
+    }));
+    demo.data.commissions = ((M.partner && M.partner.history) || []).map((h, i) => ({
+      id: 'COMM-' + i, partnerId: M.partner.id, month: h.month, amount: h.amount,
+      rate: h.rate, status: h.status, students: h.students,
+    }));
+    demo.data.leaveRequests = ((M.teacher && M.teacher.leave && M.teacher.leave.history) || []).map((l) => ({
+      ...l, teacherId: (M.teacher && M.teacher.id) || 'teacher',
+    }));
+    demo.data.attendanceRecords = ((M.student && M.student.attendance_records) || []).map((a, i) => ({
+      id: 'AR-' + i, studentId: M.student.id, subject: a.subject, status: a.status, date: a.date,
+    }));
+    demo.data.notifications = (M.notifications || []).map((n) => ({ ...n }));
+    demo.data.attendanceSessions = [];
+    demo.data.payments = [];
+  }
+
+  /* live (Firestore) */
+  function liveSub(c, cb) {
+    return window.HP_DB.collection(c).onSnapshot(
+      (s) => cb(s.docs.map((d) => ({ id: d.id, ...d.data() }))),
+      (e) => console.error('[HP_DATA] ' + c, e)
+    );
+  }
+
+  /* public read hook */
+  function useCollection(c, opts) {
+    opts = opts || {};
+    const [rows, setRows] = useState([]);
+    useEffect(() => {
+      let unsub;
+      try { unsub = isLive() ? liveSub(c, setRows) : demoSub(c, setRows); }
+      catch (e) { console.error('[HP_DATA] sub ' + c, e); unsub = demoSub(c, setRows); }
+      return () => { try { unsub && unsub(); } catch (_) {} };
+    }, [c]);
+    let out = rows;
+    if (opts.where) out = out.filter(opts.where);
+    if (opts.sort) out = [...out].sort(opts.sort);
+    return out;
+  }
+
+  /* writes */
+  function add(c, obj) {
+    return isLive() ? window.HP_DB.collection(c).add({ ...obj, createdAt: ts() }).then((r) => r.id) : demoAdd(c, obj);
+  }
+  function set(c, id, obj) {
+    return isLive() ? window.HP_DB.collection(c).doc(id).set({ ...obj }, { merge: true }).then(() => id) : demoSet(c, id, obj);
+  }
+  function update(c, id, patch) {
+    return isLive() ? window.HP_DB.collection(c).doc(id).update(patch) : demoUpdate(c, id, patch);
+  }
+  const notify = (userId, type, title, body) => add('notifications', { userId, type, title, body, read: false, time: 'just now' });
+  const audit = (action, detail) => add('auditLogs', { actorUid: (window.HP_CURRENT_USER || {}).uid || 'system', action, detail: detail || '' });
+
+  /* high-level flows (the interconnection) */
+  const flows = {
+    async enrolStudent(form) {
+      const sid = (form && form.studentId) || ('APD' + Date.now().toString().slice(-8));
+      const name = ((((form && form.firstName) || '') + ' ' + ((form && form.lastName) || '')).trim()) || (form && form.name) || 'New Student';
+      const tuition = (form && form.tuition) || 18000000;
+      await set('students', sid, {
+        studentId: sid, name, programme: (form && form.programme) || 'APD',
+        intake: (form && form.intake) || 'JUN 2026', semester: 1, status: 'pending',
+        gpa: 0, attendance: 100, feeBalance: tuition,
+        referringPartnerId: (form && form.referringPartner) || null,
+        guardianName: (form && form.guardianName) || null,
+      });
+      await add('invoices', { studentId: sid, desc: 'Tuition — ' + ((form && form.intake) || 'JUN 2026'), amount: tuition, due: (form && form.nextFeeDate) || '2026-09-01', status: 'pending' });
+      if (form && form.referringPartner) {
+        await add('commissions', { partnerId: form.referringPartner, studentId: sid, amount: Math.round(tuition * 0.08), rate: '8%', month: 'Jun 2026', status: 'pending', students: 1 });
+      }
+      await notify('admin', 'system', 'New Enrolment', name + ' has been enrolled');
+      await audit('student.enrol', 'Enrolled ' + sid + ' (' + name + ')');
+      return sid;
+    },
+    async submitGrades(rows) {
+      for (const s of (rows || [])) {
+        await set('grades', s.id, { studentId: s.id, ass1: s.ass1, ass2: s.ass2, final: s.final, overall: calcOverall(s), updatedAt: ts() });
+      }
+      await notify('student', 'grade', 'Grades Updated', 'Your latest results are available');
+      await audit('grades.submit', ((rows || []).length) + ' student grade(s) updated');
+    },
+    async openAttendanceSession(classId, teacher) {
+      const otp = '' + Math.floor(100000 + Math.random() * 900000);
+      const id = await add('attendanceSessions', { classId, otpCode: otp, teacherId: (teacher && teacher.uid) || 'teacher', isActive: true, date: new Date().toISOString().split('T')[0], expiresAt: Date.now() + 300000 });
+      await audit('attendance.open', 'Session for ' + classId);
+      return { id, otp };
+    },
+    async checkIn(otp, coords) {
+      if (isLive()) {
+        // Server-verified path (active session + geofence + idempotency).
+        if (!window.HP_FUNCTIONS) throw new Error('Attendance service unavailable.');
+        const fn = window.HP_FUNCTIONS.httpsCallable('submitCheckIn');
+        const r = await fn({ otp: String(otp), lat: coords && coords.lat, lng: coords && coords.lng });
+        return r.data;
+      }
+      const sess = (demo.data.attendanceSessions || []).find((s) => s.otpCode === String(otp) && s.isActive);
+      if (!sess) throw new Error('Invalid or expired code');
+      const uid = (window.HP_CURRENT_USER || {}).uid || 'student';
+      await demoAdd('attendanceRecords', { sessionId: sess.id, classId: sess.classId || null, studentId: uid, status: 'present', timestamp: ts() });
+      await audit('attendance.checkin', 'Checked in ' + uid);
+      return { ok: true };
+    },
+    async requestLeave(form, teacher) {
+      await add('leaveRequests', { ...(form || {}), teacherId: (teacher && teacher.uid) || 'teacher', status: 'pending' });
+      await notify('admin', 'system', 'Leave Request', 'A leave request needs review');
+      await audit('leave.request', ((form && form.type) || '') + ' leave');
+    },
+    async payInvoice(invoiceId, method) {
+      if (isLive()) {
+        // Hand off to the gateway via Cloud Function; settlement happens
+        // server-side (webhook → onPaymentPaid → invoice/commission/notify).
+        if (!window.HP_FUNCTIONS) throw new Error('Payments unavailable — deploy Cloud Functions.');
+        const callable = window.HP_FUNCTIONS.httpsCallable('createPayment');
+        const res = await callable({ invoiceId, method: method || 'momo' });
+        return { live: true, url: (res && res.data && res.data.payUrl) || null };
+      }
+      // Demo: run the same money ripple in-memory so it's visible instantly.
+      const inv = (demo.data.invoices || []).find((i) => i.id === invoiceId);
+      if (!inv) return { error: 'invoice not found' };
+      await demoUpdate('invoices', invoiceId, { status: 'paid' });
+      await demoAdd('payments', { invoiceId, studentId: inv.studentId, amount: inv.amount, method: method || 'demo', status: 'paid' });
+      (demo.data.commissions || []).filter((c) => c.studentId === inv.studentId && c.status === 'pending')
+        .forEach((c) => demoUpdate('commissions', c.id, { status: 'payable' }));
+      await notify('student', 'fee', 'Payment received', 'Your payment for ' + (inv.desc || 'tuition') + ' was received.');
+      await audit('payment.settled', 'Invoice ' + invoiceId + ' paid via ' + (method || 'demo'));
+      return { demo: true, paid: true };
+    },
+    markRead(id) { return update('notifications', id, { read: true }); },
+  };
+
+  seedDemo(); // always seed in-memory store so demo + offline-fallback work
+  return { isLive, useCollection, add, set, update, notify, audit, flows, seedDemo, _demo: demo };
+})();
+window.HP_DATA = HP_DATA;
+
+/* ============================================================
+   DEMO AUTH — Firebase simulation for DEMO_MODE
+   ============================================================ */
+const _demoListeners = [];
+let _demoUser = null;
+const demoAuth = {
+  onAuthStateChanged:(cb) => { _demoListeners.push(cb); cb(_demoUser); return ()=>{}; },
+  signInWithEmailAndPassword:(email) => {
+    const roleMap={student:'student',teacher:'teacher',admin:'admin',management:'management',partner:'partner',parent:'parent'};
+    const prefix = email.split('@')[0].toLowerCase();
+    const role = roleMap[prefix] || 'student';
+    _demoUser = {...window.HP_MOCK.users[role], _demoRole:role};
+    _demoListeners.forEach(cb=>cb(_demoUser));
+    return Promise.resolve({user:_demoUser});
+  },
+  signInWithPopup:() => {
+    _demoUser = {...window.HP_MOCK.users.student, _demoRole:'student'};
+    _demoListeners.forEach(cb=>cb(_demoUser));
+    return Promise.resolve({user:_demoUser});
+  },
+  signOut:() => { _demoUser=null; _demoListeners.forEach(cb=>cb(null)); return Promise.resolve(); },
+  GoogleAuthProvider: function(){},
+};
+demoAuth.GoogleAuthProvider.prototype = {};
+
+const getAuth = () => (DEMO_MODE || window.DEMO_MODE || !window.HP_AUTH) ? demoAuth : window.HP_AUTH;
+
+const fetchUserProfile = async(uid, demoRole) => {
+  if(DEMO_MODE || window.DEMO_MODE || !window.HP_DB) {
+    const role = demoRole || 'student';
+    return {...window.HP_MOCK.users[role], role};
+  }
+  try {
+    const snap = await window.HP_DB.collection('users').doc(uid).get();
+    if(snap.exists) return snap.data();
+    return null;
+  } catch(e) { console.error('fetchUserProfile:', e); return null; }
+};
+
+
+/* ============================================================
+   HPIcon — SVG icon renderer
+   ============================================================ */
+const HPIcon = ({name, size=20, color='currentColor', style={}}) => {
+  const d = window.HP_ICONS[name] || window.HP_ICONS.info;
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={color} style={style}>
+      <path d={d}/>
+    </svg>
+  );
+};
+
+/* ============================================================
+   HPAvatar
+   ============================================================ */
+const HPAvatar = ({initials, size=36, color='#1B4FD8', style={}}) => (
+  <div className="hp-avatar" style={{
+    width:size, height:size, fontSize:size*0.35,
+    background:`linear-gradient(135deg, ${color}, ${color}aa)`, ...style
+  }}>{initials}</div>
+);
+
+/* ============================================================
+   HPBadge
+   ============================================================ */
+const HPBadge = ({label, variant='slate', dot=false}) => {
+  const map = {
+    active:'bd-green', paid:'bd-green', present:'bd-green', approved:'bd-green',
+    pending:'bd-amber', late:'bd-amber', warning:'bd-amber',
+    overdue:'bd-red', absent:'bd-red', rejected:'bd-red', danger:'bd-red',
+    inactive:'bd-slate', slate:'bd-slate',
+    blue:'bd-blue', info:'bd-blue', enrolled:'bd-blue',
+    gold:'bd-gold', purple:'bd-purple',
+  };
+  const cls = map[variant] || map[label?.toLowerCase()] || 'bd-slate';
+  return (
+    <span className={`hp-badge ${cls}`}>
+      {dot && <span style={{width:6,height:6,borderRadius:'50%',background:'currentColor',display:'inline-block'}}/>}
+      {label}
+    </span>
+  );
+};
+
+/* ============================================================
+   HPStatCard
+   ============================================================ */
+const HPStatCard = ({icon, iconBg, iconColor, value, label, trend, trendUp, delay=0}) => (
+  <div className="hp-stat-card" style={{animationDelay:`${delay}ms`}}>
+    <div className="hp-stat-icon" style={{background:iconBg}}>
+      <HPIcon name={icon} size={22} color={iconColor}/>
+    </div>
+    <div className="hp-stat-info">
+      <h3>{value}</h3>
+      <p>{label}</p>
+      {trend && <div className={`trend ${trendUp?'trend-up':'trend-dn'}`}>
+        {trendUp?'↑':'↓'} {trend}
+      </div>}
+    </div>
+  </div>
+);
+
+/* ============================================================
+   HPBtn
+   ============================================================ */
+const HPBtn = ({children, variant='primary', size='', onClick, disabled, style={}}) => (
+  <button
+    className={`hp-btn hp-btn-${variant} ${size?'hp-btn-'+size:''}`}
+    onClick={onClick} disabled={disabled} style={style}
+  >{children}</button>
+);
+
+/* ============================================================
+   HPSectionLabel
+   ============================================================ */
+const HPSectionLabel = ({children}) => (
+  <div className="hp-section-label">{children}</div>
+);
+
+/* ============================================================
+   HPProgress
+   ============================================================ */
+const HPProgress = ({value, max=100, color='var(--primary)', height=6}) => (
+  <div className="hp-progress" style={{height}}>
+    <div className="hp-progress-fill" style={{width:`${Math.min(100,value/max*100)}%`, background:color}}/>
+  </div>
+);
+
+/* ============================================================
+   HPTier
+   ============================================================ */
+const HPTier = ({tier}) => {
+  const cls = {Bronze:'tier-bronze', Silver:'tier-silver', Gold:'tier-gold', Platinum:'tier-platinum'}[tier] || 'tier-silver';
+  const icons = {Bronze:'⬡', Silver:'◈', Gold:'★', Platinum:'◆'};
+  return <span className={`hp-tier ${cls}`}>{icons[tier]||'★'} {tier}</span>;
+};
+
+/* ============================================================
+   HPModal
+   ============================================================ */
+const HPModal = ({open, onClose, title, children, maxWidth=520}) => {
+  if(!open) return null;
+  return (
+    <div className="hp-modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="hp-modal" style={{maxWidth}}>
+        <div className="hp-modal-header">
+          <h3>{title}</h3>
+          <button className="hp-icon-btn" onClick={onClose}><HPIcon name="close" size={18}/></button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+};
+
+/* ============================================================
+   STUDENT DASHBOARD
+   ============================================================ */
+const StudentDashboard = ({lang, user}) => {
+  const t = window.HP_I18N[lang];
+  const d = window.HP_MOCK.student;
+  const pc = PORTAL_COLOR.student;
+  const today = ['Mon','Tue','Wed','Thu','Fri','Sat'][new Date().getDay()-1] || 'Mon';
+  const todayClasses = d.classes.filter(c=>c.day===today);
+  return (
+    <div className="fade-in">
+      {DEMO_MODE && <div className="hp-demo-banner"><HPIcon name="info" size={16}/>Demo mode — showing mock data</div>}
+      <div className="hp-stat-grid">
+        <HPStatCard icon="attendance" iconBg="rgba(27,79,216,.15)" iconColor="#60A5FA"
+          value={`${d.attendance}%`} label="Attendance Rate" trend="2% vs last month" trendUp delay={0}/>
+        <HPStatCard icon="results" iconBg="rgba(22,163,74,.15)" iconColor="#4ADE80"
+          value={d.gpa.toFixed(1)} label="Current GPA" trend="+0.2 this semester" trendUp delay={60}/>
+        <HPStatCard icon="fees" iconBg="rgba(245,158,11,.15)" iconColor="#FCD34D"
+          value={fmtVND(d.feeBalance)} label="Fee Balance" trend={"Due "+d.nextFeeDate} trendUp={false} delay={120}/>
+        <HPStatCard icon="timetable" iconBg="rgba(124,58,237,.15)" iconColor="#A78BFA"
+          value={d.classes.length} label="Enrolled Classes" trend="This semester" trendUp delay={180}/>
+      </div>
+
+      <div className="hp-grid-2" style={{gap:16}}>
+        <div className="hp-card">
+          <HPSectionLabel>Today's Classes</HPSectionLabel>
+          {todayClasses.length===0
+            ? <p className="text-muted text-sm" style={{textAlign:'center',padding:'24px 0'}}>No classes today — enjoy your day!</p>
+            : todayClasses.map(c=>(
+              <div key={c.id} style={{display:'flex',alignItems:'center',gap:12,padding:'10px 0',borderBottom:'1px solid var(--border)'}}>
+                <div style={{width:44,height:44,borderRadius:10,background:pc.bg,border:`1px solid ${pc.border}`,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                  <HPIcon name="timetable" size={20} color={pc.accent}/>
+                </div>
+                <div style={{flex:1}}>
+                  <div style={{fontWeight:600,fontSize:14}}>{c.name}</div>
+                  <div className="text-sm text-muted">{c.teacher} · {c.room}</div>
+                </div>
+                <div style={{textAlign:'right'}}>
+                  <div style={{fontFamily:'var(--font-mono)',fontSize:12,color:'var(--text2)'}}>{c.time}</div>
+                </div>
+              </div>
+            ))}
+        </div>
+
+        <div className="hp-card">
+          <HPSectionLabel>Fee Status</HPSectionLabel>
+          {d.invoices.map(inv=>(
+            <div key={inv.id} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 0',borderBottom:'1px solid var(--border)'}}>
+              <div>
+                <div style={{fontWeight:600,fontSize:13}}>{inv.desc}</div>
+                <div className="text-xs text-muted">{inv.id} · Due {inv.due}</div>
+              </div>
+              <div style={{textAlign:'right',gap:8,display:'flex',alignItems:'center'}}>
+                <div style={{fontWeight:700,fontSize:13}}>{fmtVND(inv.amount)}</div>
+                <HPBadge label={inv.status} variant={inv.status}/>
+              </div>
+            </div>
+          ))}
+          <div style={{marginTop:12}}>
+            <HPBtn variant="primary" style={{width:'100%',justifyContent:'center'}}>
+              <HPIcon name="fees" size={14}/>Pay Fee Online
+            </HPBtn>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ============================================================
+   STUDENT TIMETABLE
+   ============================================================ */
+const StudentTimetable = ({lang}) => {
+  const days = ['Mon','Tue','Wed','Thu','Fri'];
+  const d = window.HP_MOCK.student;
+  return (
+    <div className="fade-in">
+      <div className="hp-card mb-16">
+        <HPSectionLabel>Weekly Schedule</HPSectionLabel>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:10}}>
+          {days.map(day=>{
+            const cls = d.classes.filter(c=>c.day===day);
+            return (
+              <div key={day}>
+                <div style={{fontSize:11,fontWeight:700,color:'var(--text3)',textAlign:'center',marginBottom:8,textTransform:'uppercase',letterSpacing:'.08em'}}>{day}</div>
+                {cls.length===0
+                  ? <div style={{height:60,border:'1px dashed var(--border)',borderRadius:8,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                      <span className="text-xs text-faint">—</span>
+                    </div>
+                  : cls.map(c=>(
+                    <div key={c.id} style={{background:PORTAL_COLOR.student.bg,border:`1px solid ${PORTAL_COLOR.student.border}`,borderRadius:8,padding:'8px 10px',marginBottom:6}}>
+                      <div style={{fontSize:12,fontWeight:600,color:'var(--text1)'}}>{c.name}</div>
+                      <div style={{fontSize:11,color:'var(--text2)',marginTop:2}}>{c.time}</div>
+                      <div style={{fontSize:11,color:'var(--text3)',marginTop:1}}>{c.room}</div>
+                    </div>
+                  ))}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <div className="hp-card">
+        <HPSectionLabel>All Classes This Semester</HPSectionLabel>
+        <div className="hp-table-wrap">
+          <table className="hp-table">
+            <thead><tr><th>Subject</th><th>Teacher</th><th>Day</th><th>Time</th><th>Room</th><th>Credits</th></tr></thead>
+            <tbody>
+              {d.classes.map(c=>(
+                <tr key={c.id}>
+                  <td style={{fontWeight:600}}>{c.name}</td>
+                  <td className="text-muted">{c.teacher}</td>
+                  <td>{c.day}</td>
+                  <td style={{fontFamily:'var(--font-mono)',fontSize:12}}>{c.time}</td>
+                  <td><span style={{background:'var(--surface2)',padding:'2px 8px',borderRadius:4,fontSize:12}}>{c.room}</span></td>
+                  <td>{c.credits}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ============================================================
+   STUDENT RESULTS
+   ============================================================ */
+const StudentResults = ({lang}) => {
+  const d = window.HP_MOCK.student;
+  const liveGrades = HP_DATA.useCollection('grades');                       // live — teacher saves appear here
+  const myGrade = liveGrades.find(g=>(g.studentId||g.id)===d.id);
+  const results = d.results.map(r=>{
+    if(myGrade && r.subject==='Academic Writing'){
+      const merged = {...r, ass1:myGrade.ass1??r.ass1, ass2:myGrade.ass2??r.ass2, final:myGrade.final??r.final};
+      return {...merged, overall:calcOverall(merged)};
+    }
+    return {...r, overall:calcOverall(r)};
+  });
+  const totalCredits = results.reduce((s,r)=>s+r.credits,0);
+  const weightedSum = results.reduce((s,r)=>s + calcOverall(r)*r.credits, 0);
+  const gpa = (weightedSum/totalCredits/25).toFixed(2);
+  return (
+    <div className="fade-in">
+      <div style={{display:'flex',gap:16,marginBottom:20}}>
+        <div className="hp-card" style={{flex:1,textAlign:'center'}}>
+          <div style={{fontSize:48,fontWeight:800,fontFamily:'var(--font-head)',color:'var(--primary)'}}>{d.gpa.toFixed(1)}</div>
+          <div className="text-muted text-sm">Cumulative GPA</div>
+        </div>
+        <div className="hp-card" style={{flex:1,textAlign:'center'}}>
+          <div style={{fontSize:48,fontWeight:800,fontFamily:'var(--font-head)',color:'var(--success)'}}>
+            {GRADE_TABLE(weightedSum/totalCredits).g}
+          </div>
+          <div className="text-muted text-sm">Overall Grade</div>
+        </div>
+        <div className="hp-card" style={{flex:1,textAlign:'center'}}>
+          <div style={{fontSize:48,fontWeight:800,fontFamily:'var(--font-head)',color:'var(--accent)'}}>S3</div>
+          <div className="text-muted text-sm">Current Semester</div>
+        </div>
+      </div>
+      <div className="hp-card">
+        <HPSectionLabel>Subject Breakdown</HPSectionLabel>
+        {results.map((r,i)=>{
+          const gt = GRADE_TABLE(r.overall);
+          return (
+            <div key={i} style={{padding:'14px 0',borderBottom:'1px solid var(--border)'}}>
+              <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:8}}>
+                <div style={{fontWeight:600}}>{r.subject}</div>
+                <div style={{display:'flex',alignItems:'center',gap:10}}>
+                  <span style={{fontFamily:'var(--font-mono)',fontSize:13,color:'var(--text2)'}}>{r.overall}%</span>
+                  <span style={{fontFamily:'var(--font-head)',fontSize:18,fontWeight:700,color:gt.c,minWidth:32,textAlign:'center'}}>{gt.g}</span>
+                </div>
+              </div>
+              <HPProgress value={r.overall} color={gt.c}/>
+              <div style={{display:'flex',gap:16,marginTop:6}}>
+                {[['Ass 1',r.ass1,30],['Ass 2',r.ass2,30],['Final',r.final,40]].map(([lbl,v,w])=>(
+                  <span key={lbl} className="text-xs text-muted">{lbl}: <strong style={{color:'var(--text1)'}}>{v}%</strong> <span style={{opacity:.5}}>×{w}%</span></span>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+/* ============================================================
+   STUDENT ATTENDANCE
+   ============================================================ */
+const StudentAttendance = ({lang}) => {
+  const d = window.HP_MOCK.student;
+  const [code, setCode] = useState('');
+  const [msg, setMsg] = useState('');
+  const myUid = (window.HP_CURRENT_USER||{}).uid || 'student';
+  const liveRecs = HP_DATA.useCollection('attendanceRecords').filter(r=>!r.studentId || r.studentId===myUid || r.studentId==='student');
+  const liveMapped = liveRecs.map(r=>({ date:(typeof r.timestamp==='string'?r.timestamp.slice(0,10):'today'), subject:'Class check-in', status:r.status||'present' }));
+  const recs = [...liveMapped, ...d.attendance_records];
+  const counts = {present:0,late:0,absent:0};
+  recs.forEach(r=>{ counts[r.status]=(counts[r.status]||0)+1; });
+  const doCheckIn = async () => {
+    try {
+      await HP_DATA.flows.checkIn(code, null);   // server verifies session (+ geofence in live)
+      setCode(''); setMsg('Checked in ✓');
+    } catch(e){ setMsg(e.message || 'Check-in failed'); }
+  };
+  return (
+    <div className="fade-in">
+      <div className="hp-stat-grid" style={{gridTemplateColumns:'repeat(3,1fr)'}}>
+        <HPStatCard icon="check" iconBg="rgba(22,163,74,.15)" iconColor="#4ADE80" value={counts.present} label="Present" delay={0}/>
+        <HPStatCard icon="alert" iconBg="rgba(245,158,11,.15)" iconColor="#FCD34D" value={counts.late}    label="Late"    delay={60}/>
+        <HPStatCard icon="close" iconBg="rgba(220,38,38,.15)"  iconColor="#F87171" value={counts.absent}  label="Absent"  delay={120}/>
+      </div>
+      <div className="hp-card">
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
+          <HPSectionLabel>Overall Attendance</HPSectionLabel>
+          <span style={{fontFamily:'var(--font-head)',fontSize:24,fontWeight:700,color:'var(--primary)'}}>{d.attendance}%</span>
+        </div>
+        <HPProgress value={d.attendance} color="var(--primary)" height={10}/>
+        <div style={{marginTop:20,display:'flex',gap:8,alignItems:'flex-end',flexWrap:'wrap'}}>
+          <div className="hp-field" style={{flex:1,minWidth:160,marginBottom:0}}>
+            <label className="hp-label">Attendance OTP (from your teacher)</label>
+            <input className="hp-input" value={code} onChange={e=>{setCode(e.target.value);setMsg('');}} placeholder="6-digit code"/>
+          </div>
+          <HPBtn variant="primary" onClick={doCheckIn}><HPIcon name="check" size={14}/>Check In</HPBtn>
+          {msg && <span style={{fontSize:12,fontWeight:600,color:msg.includes('✓')?'var(--success)':'var(--danger)'}}>{msg}</span>}
+        </div>
+        <div style={{marginTop:20}}>
+          <HPSectionLabel>Recent Records</HPSectionLabel>
+          <div className="hp-table-wrap">
+            <table className="hp-table">
+              <thead><tr><th>Date</th><th>Subject</th><th>Status</th></tr></thead>
+              <tbody>
+                {recs.map((r,i)=>(
+                  <tr key={i}>
+                    <td style={{fontFamily:'var(--font-mono)',fontSize:12}}>{r.date}</td>
+                    <td>{r.subject}</td>
+                    <td><HPBadge label={r.status} variant={r.status}/></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ============================================================
+   STUDENT FEES / WALLET
+   ============================================================ */
+const StudentFees = ({lang}) => {
+  const d = window.HP_MOCK.student;
+  const liveInvoices = HP_DATA.useCollection('invoices');                       // live — updates when paid
+  const myInvoices = liveInvoices.filter(i=>!i.studentId || i.studentId===d.id);
+  const invoices = myInvoices.length ? myInvoices : d.invoices;
+  const unpaid = invoices.filter(i=>i.status!=='paid');
+  const outstanding = unpaid.reduce((s,i)=>s+(i.amount||0),0);
+  const target = unpaid[0];
+  const [showTopUp, setShowTopUp] = useState(false);
+  const [paying, setPaying] = useState(false);
+  const [msg, setMsg] = useState('');
+  const doPay = async (method) => {
+    if(!target){ setMsg('No outstanding invoices.'); return; }
+    setPaying(true); setMsg('');
+    try {
+      const res = await HP_DATA.flows.payInvoice(target.id, method);
+      if(res && res.live && res.url){ window.open(res.url,'_blank'); setMsg('Redirecting to '+method.toUpperCase()+'…'); }
+      else if(res && res.paid){ setMsg('Payment received ✓'); setTimeout(()=>setShowTopUp(false),1300); }
+      else if(res && res.error){ setMsg(res.error); }
+    } catch(e){ setMsg(e.message||'Payment failed'); }
+    setPaying(false);
+  };
+  return (
+    <div className="fade-in">
+      <div style={{background:'linear-gradient(135deg,#1B4FD8,#3B82F6)',borderRadius:'var(--radius)',padding:24,marginBottom:16,color:'#fff',position:'relative',overflow:'hidden'}}>
+        <div style={{position:'absolute',right:-20,top:-20,width:120,height:120,background:'rgba(255,255,255,.08)',borderRadius:'50%'}}/>
+        <div style={{position:'absolute',right:40,bottom:-30,width:80,height:80,background:'rgba(255,255,255,.05)',borderRadius:'50%'}}/>
+        <div className="text-xs" style={{opacity:.7,letterSpacing:'.1em',textTransform:'uppercase',marginBottom:4}}>Outstanding Balance</div>
+        <div style={{fontSize:36,fontWeight:800,fontFamily:'var(--font-head)',marginBottom:4}}>{fmtVND(outstanding)}</div>
+        <div style={{fontSize:13,opacity:.8}}>Next due: {(target&&(target.due||target.dueDate))||d.nextFeeDate}</div>
+        <button onClick={()=>setShowTopUp(true)} disabled={!outstanding} style={{marginTop:16,background:'rgba(255,255,255,.2)',border:'1px solid rgba(255,255,255,.3)',borderRadius:8,padding:'8px 20px',color:'#fff',fontWeight:600,fontSize:13,cursor:outstanding?'pointer':'not-allowed',opacity:outstanding?1:.6}}>
+          {outstanding ? 'Pay Now' : 'All Paid ✓'}
+        </button>
+      </div>
+      <div className="hp-card">
+        <HPSectionLabel>Invoice History</HPSectionLabel>
+        <div className="hp-table-wrap">
+          <table className="hp-table">
+            <thead><tr><th>Invoice</th><th>Description</th><th>Due Date</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody>
+              {invoices.map(inv=>(
+                <tr key={inv.id}>
+                  <td style={{fontFamily:'var(--font-mono)',fontSize:12}}>{inv.id}</td>
+                  <td style={{fontWeight:600}}>{inv.desc||inv.description}</td>
+                  <td className="text-muted">{inv.due||inv.dueDate}</td>
+                  <td style={{fontWeight:700}}>{fmtVND(inv.amount)}</td>
+                  <td><HPBadge label={inv.status} variant={inv.status}/></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <HPModal open={showTopUp} onClose={()=>setShowTopUp(false)} title="Pay Fee Online">
+        <div style={{textAlign:'center',padding:'12px 0 18px'}}>
+          <div style={{fontSize:32,fontWeight:800,fontFamily:'var(--font-head)',color:'var(--primary)',marginBottom:6}}>{fmtVND(target?target.amount:outstanding)}</div>
+          <div className="text-muted text-sm">{target?('Invoice '+(target.desc||target.description||target.id)):'Total outstanding'}</div>
+        </div>
+        <div className="text-sm text-muted" style={{textAlign:'center',marginBottom:10}}>Choose a payment method</div>
+        <div style={{display:'flex',gap:8}}>
+          {['momo','vnpay','zalopay'].map(m=>(
+            <HPBtn key={m} variant="secondary" style={{flex:1,justifyContent:'center'}} disabled={paying||!target} onClick={()=>doPay(m)}>{m.toUpperCase()}</HPBtn>
+          ))}
+        </div>
+        {msg && <div style={{marginTop:14,textAlign:'center',fontWeight:600,color:msg.includes('✓')?'var(--success)':'var(--text2)'}}>{msg}</div>}
+        <div className="text-xs text-faint" style={{marginTop:14,textAlign:'center'}}>
+          {DEMO_MODE||window.DEMO_MODE ? 'Demo mode — payment is simulated and settles instantly.' : 'You will be redirected to the gateway (MoMo/VNPay/ZaloPay) to complete payment securely.'}
+        </div>
+      </HPModal>
+    </div>
+  );
+};
+
+/* ============================================================
+   TEACHER DASHBOARD + OTP
+   ============================================================ */
+const TeacherDashboard = ({lang}) => {
+  const d = window.HP_MOCK.teacher;
+  const pc = PORTAL_COLOR.teacher;
+  const [otp, setOtp] = useState(null);
+  const [otpTimer, setOtpTimer] = useState(0);
+  const [otpClass, setOtpClass] = useState('');
+  const timerRef = useRef(null);
+
+  const generateOtp = async () => {
+    const cls = otpClass || d.classes[0];
+    // Opens a session in the shared store (demo + live) and shows its code,
+    // so students can check in against the same session record.
+    const session = await HP_DATA.flows.openAttendanceSession(cls, window.HP_CURRENT_USER);
+    setOtp(session.otp);
+    setOtpClass(cls);
+    setOtpTimer(300);
+    if(timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(()=>{
+      setOtpTimer(p=>{ if(p<=1){ clearInterval(timerRef.current); setOtp(null); return 0; } return p-1; });
+    },1000);
+  };
+
+  useEffect(()=>()=>{ if(timerRef.current) clearInterval(timerRef.current); },[]);
+
+  const mins = Math.floor(otpTimer/60);
+  const secs = String(otpTimer%60).padStart(2,'0');
+  const gt = GRADE_TABLE(d.kpiScore);
+
+  return (
+    <div className="fade-in">
+      {DEMO_MODE && <div className="hp-demo-banner"><HPIcon name="info" size={16}/>Demo mode — OTP generation is simulated</div>}
+      <div className="hp-stat-grid">
+        <HPStatCard icon="kpi" iconBg="rgba(22,163,74,.15)" iconColor="#4ADE80"
+          value={`${d.kpiScore}%`} label="KPI Score" trend="Grade: A" trendUp delay={0}/>
+        <HPStatCard icon="students" iconBg="rgba(27,79,216,.15)" iconColor="#60A5FA"
+          value={d.students.length} label="Students This Sem" delay={60}/>
+        <HPStatCard icon="attendance" iconBg="rgba(245,158,11,.15)" iconColor="#FCD34D"
+          value="87%" label="Avg Class Attendance" delay={120}/>
+        <HPStatCard icon="grades" iconBg="rgba(124,58,237,.15)" iconColor="#A78BFA"
+          value="6" label="Pending Grade Reviews" delay={180}/>
+      </div>
+
+      <div className="hp-grid-2" style={{gap:16}}>
+        <div className="hp-card">
+          <HPSectionLabel>OTP Attendance</HPSectionLabel>
+          <div className="hp-field">
+            <label className="hp-label">Select Class</label>
+            <select className="hp-select" value={otpClass} onChange={e=>setOtpClass(e.target.value)}>
+              {d.classes.map((c,i)=><option key={i} value={c}>{c}</option>)}
+            </select>
+          </div>
+          {otp
+            ? <>
+                <div className="hp-otp-display">{otp}</div>
+                <div className="hp-otp-timer">Expires in <span>{mins}:{secs}</span></div>
+                <div style={{display:'flex',gap:8,marginTop:12}}>
+                  <HPBtn variant="secondary" style={{flex:1,justifyContent:'center'}} onClick={()=>{
+                    navigator.clipboard?.writeText(otp);
+                  }}><HPIcon name="copy" size={14}/>Copy</HPBtn>
+                  <HPBtn variant="danger" style={{flex:1,justifyContent:'center'}} onClick={()=>{setOtp(null);clearInterval(timerRef.current);}}>
+                    <HPIcon name="close" size={14}/>End Session
+                  </HPBtn>
+                </div>
+              </>
+            : <HPBtn variant="primary" style={{width:'100%',justifyContent:'center',padding:14}} onClick={generateOtp}>
+                <HPIcon name="otp" size={16}/>Generate OTP Code
+              </HPBtn>
+          }
+        </div>
+
+        <div className="hp-card">
+          <HPSectionLabel>KPI Performance</HPSectionLabel>
+          <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:16}}>
+            <div style={{width:64,height:64,borderRadius:16,background:pc.bg,border:`2px solid ${pc.border}`,display:'flex',alignItems:'center',justifyContent:'center'}}>
+              <span style={{fontFamily:'var(--font-head)',fontSize:28,fontWeight:700,color:gt.c}}>{d.kpiGrade}</span>
+            </div>
+            <div>
+              <div style={{fontSize:13,color:'var(--text2)'}}>Overall KPI Grade</div>
+              <div style={{fontSize:24,fontWeight:800,fontFamily:'var(--font-head)',color:gt.c}}>{d.kpiScore}%</div>
+            </div>
+          </div>
+          <HPProgress value={d.kpiScore} color={gt.c} height={8}/>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginTop:16}}>
+            {[['Teaching Quality','95%'],['Student Satisfaction','89%'],['Attendance Punctuality','92%'],['Admin Compliance','91%']].map(([k,v])=>(
+              <div key={k} style={{background:'var(--surface2)',borderRadius:8,padding:'10px 12px'}}>
+                <div className="text-xs text-muted mb-4">{k}</div>
+                <div style={{fontWeight:700,color:'var(--text1)'}}>{v}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ============================================================
+   TEACHER GRADE ENTRY
+   ============================================================ */
+const TeacherGradeEntry = ({lang}) => {
+  const raw = window.HP_MOCK.teacher.students;
+  const [grades, setGrades] = useState(raw.map(s=>({...s})));
+  const [saved, setSaved] = useState(false);
+
+  const update = (i, field, val) => {
+    const v = Math.min(100, Math.max(0, parseInt(val)||0));
+    setGrades(g=>g.map((s,idx)=>idx===i?{...s,[field]:v}:s));
+    setSaved(false);
+  };
+
+  const handleSave = () => {
+    setSaved(true);
+    // Writes grades → ripples to Student Results + Parent view + posts a notification.
+    HP_DATA.flows.submitGrades(grades).catch(console.error);
+    setTimeout(()=>setSaved(false),3000);
+  };
+
+  return (
+    <div className="fade-in">
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:20}}>
+        <div>
+          <h2 style={{fontFamily:'var(--font-head)',fontSize:20}}>Grade Entry — Academic Writing</h2>
+          <p className="text-sm text-muted">Weights: Ass 1 × 30% · Ass 2 × 30% · Final × 40%</p>
+        </div>
+        <HPBtn variant="primary" onClick={handleSave}>
+          {saved ? <><HPIcon name="check" size={14}/>Saved!</> : <><HPIcon name="upload" size={14}/>Save Grades</>}
+        </HPBtn>
+      </div>
+      <div className="hp-card">
+        <div className="hp-table-wrap">
+          <table className="hp-table">
+            <thead>
+              <tr>
+                <th>Student ID</th><th>Name</th><th>Att %</th>
+                <th>Ass 1 /100</th><th>Ass 2 /100</th><th>Final /100</th>
+                <th>Overall</th><th>Grade</th>
+              </tr>
+            </thead>
+            <tbody>
+              {grades.map((s,i)=>{
+                const ov = calcOverall(s);
+                const gt = GRADE_TABLE(ov);
+                return (
+                  <tr key={s.id}>
+                    <td style={{fontFamily:'var(--font-mono)',fontSize:12}}>{s.id}</td>
+                    <td style={{fontWeight:600}}>{s.name}</td>
+                    <td>
+                      <span style={{color:s.att<75?'var(--danger)':'var(--success)',fontWeight:600}}>{s.att}%</span>
+                    </td>
+                    {['ass1','ass2','final'].map(f=>(
+                      <td key={f}>
+                        <input type="number" min="0" max="100"
+                          value={s[f]}
+                          onChange={e=>update(i,f,e.target.value)}
+                          style={{width:64,background:'var(--surface2)',border:'1px solid var(--border)',borderRadius:6,padding:'4px 8px',color:'var(--text1)',fontFamily:'var(--font-mono)',fontSize:13,textAlign:'center'}}
+                        />
+                      </td>
+                    ))}
+                    <td style={{fontFamily:'var(--font-mono)',fontWeight:700,color:gt.c}}>{ov}%</td>
+                    <td><span style={{fontFamily:'var(--font-head)',fontSize:18,fontWeight:700,color:gt.c}}>{gt.g}</span></td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ============================================================
+   TEACHER LEAVE MANAGEMENT
+   ============================================================ */
+const TeacherLeaveManagement = ({lang}) => {
+  const d = window.HP_MOCK.teacher.leave;
+  const liveLeave = HP_DATA.useCollection('leaveRequests');     // live — new requests appear + notify admin
+  const history = [...liveLeave, ...d.history];
+  const [showApply, setShowApply] = useState(false);
+  const [form, setForm] = useState({type:'Annual',from:'',to:'',reason:''});
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = () => {
+    setSubmitted(true);
+    setShowApply(false);
+    // Submits to the shared store → posts an admin notification + audit entry.
+    HP_DATA.flows.requestLeave(form, window.HP_CURRENT_USER).catch(console.error);
+    setForm({type:'Annual',from:'',to:'',reason:''});
+    setTimeout(()=>setSubmitted(false),4000);
+  };
+
+  return (
+    <div className="fade-in">
+      {submitted && <div className="hp-alert alert-success mb-16"><HPIcon name="check" size={14}/>Leave request submitted successfully!</div>}
+      <div className="hp-stat-grid" style={{gridTemplateColumns:'repeat(3,1fr)'}}>
+        <HPStatCard icon="calendar" iconBg="rgba(22,163,74,.15)" iconColor="#4ADE80" value={d.balance.annual} label="Annual Leave Remaining" delay={0}/>
+        <HPStatCard icon="calendar" iconBg="rgba(220,38,38,.15)"  iconColor="#F87171" value={d.balance.sick}   label="Sick Leave Remaining"   delay={60}/>
+        <HPStatCard icon="calendar" iconBg="rgba(124,58,237,.15)" iconColor="#A78BFA" value={d.balance.personal} label="Personal Leave Remaining" delay={120}/>
+      </div>
+      <div className="hp-card">
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
+          <HPSectionLabel>Leave History</HPSectionLabel>
+          <HPBtn variant="primary" size="sm" onClick={()=>setShowApply(true)}>
+            <HPIcon name="plus" size={14}/>Apply for Leave
+          </HPBtn>
+        </div>
+        <div className="hp-table-wrap">
+          <table className="hp-table">
+            <thead><tr><th>ID</th><th>Type</th><th>From</th><th>To</th><th>Days</th><th>Reason</th><th>Status</th></tr></thead>
+            <tbody>
+              {history.map(l=>(
+                <tr key={l.id}>
+                  <td style={{fontFamily:'var(--font-mono)',fontSize:12}}>{l.id}</td>
+                  <td><HPBadge label={l.type} variant="blue"/></td>
+                  <td className="text-muted">{l.from||'—'}</td>
+                  <td className="text-muted">{l.to||'—'}</td>
+                  <td style={{fontWeight:700}}>{l.days||'—'}</td>
+                  <td className="text-muted">{l.reason}</td>
+                  <td><HPBadge label={l.status} variant={l.status}/></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <HPModal open={showApply} onClose={()=>setShowApply(false)} title="Apply for Leave">
+        <div className="hp-field">
+          <label className="hp-label">Leave Type</label>
+          <select className="hp-select" value={form.type} onChange={e=>setForm(f=>({...f,type:e.target.value}))}>
+            {['Annual','Sick','Personal','Emergency'].map(t=><option key={t}>{t}</option>)}
+          </select>
+        </div>
+        <div className="hp-grid-2">
+          <div className="hp-field">
+            <label className="hp-label">From Date</label>
+            <input type="date" className="hp-input" value={form.from} onChange={e=>setForm(f=>({...f,from:e.target.value}))}/>
+          </div>
+          <div className="hp-field">
+            <label className="hp-label">To Date</label>
+            <input type="date" className="hp-input" value={form.to} onChange={e=>setForm(f=>({...f,to:e.target.value}))}/>
+          </div>
+        </div>
+        <div className="hp-field">
+          <label className="hp-label">Reason</label>
+          <textarea className="hp-input" rows={3} value={form.reason} onChange={e=>setForm(f=>({...f,reason:e.target.value}))} placeholder="Brief description of reason"/>
+        </div>
+        <div style={{display:'flex',gap:8,justifyContent:'flex-end',marginTop:8}}>
+          <HPBtn variant="secondary" onClick={()=>setShowApply(false)}>Cancel</HPBtn>
+          <HPBtn variant="primary" onClick={handleSubmit} disabled={!form.from||!form.to}>Submit Request</HPBtn>
+        </div>
+      </HPModal>
+    </div>
+  );
+};
+
+
+/* ============================================================
+   ADMIN DASHBOARD
+   ============================================================ */
+const AdminDashboard = ({lang}) => {
+  const d = window.HP_MOCK.admin;
+  const students = HP_DATA.useCollection('students');     // live — updates when anyone enrols
+  const invoices = HP_DATA.useCollection('invoices');
+  const totalStudents = students.length;
+  const newEnrolments = students.filter(s=>s.status==='pending').length;
+  const pendingInvoices = invoices.filter(i=>i.status!=='paid').length;
+  const recent = [...students].reverse().slice(0,6);
+  return (
+    <div className="fade-in">
+      {DEMO_MODE && <div className="hp-demo-banner"><HPIcon name="info" size={16}/>Demo mode — showing mock data</div>}
+      <div className="hp-stat-grid">
+        <HPStatCard icon="students"   iconBg="rgba(27,79,216,.15)"  iconColor="#60A5FA" value={fmtNum(totalStudents)} label="Total Students" trend="live" trendUp delay={0}/>
+        <HPStatCard icon="enrolment"  iconBg="rgba(22,163,74,.15)"  iconColor="#4ADE80" value={newEnrolments} label="New Enrolments" trend="pending approval" trendUp delay={60}/>
+        <HPStatCard icon="invoices"   iconBg="rgba(245,158,11,.15)" iconColor="#FCD34D" value={pendingInvoices} label="Pending Invoices" trend="Requires action" trendUp={false} delay={120}/>
+        <HPStatCard icon="alert"      iconBg="rgba(220,38,38,.15)"  iconColor="#F87171" value={d.stats.pendingTasks}   label="Pending Tasks"    delay={180}/>
+      </div>
+      <div className="hp-card">
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
+          <HPSectionLabel>Recent Enrolments</HPSectionLabel>
+          <HPBtn variant="primary" size="sm"><HPIcon name="plus" size={14}/>New Enrolment</HPBtn>
+        </div>
+        <div className="hp-table-wrap">
+          <table className="hp-table">
+            <thead><tr><th>Student ID</th><th>Name</th><th>Programme</th><th>Intake</th><th>Date</th><th>Status</th></tr></thead>
+            <tbody>
+              {recent.map(e=>(
+                <tr key={e.id}>
+                  <td style={{fontFamily:'var(--font-mono)',fontSize:12}}>{e.studentId||e.id}</td>
+                  <td style={{fontWeight:600}}>{e.name}</td>
+                  <td><span style={{background:'var(--surface2)',padding:'2px 8px',borderRadius:4,fontSize:12}}>{e.programme||'APD'}</span></td>
+                  <td className="text-muted">{e.intake||'—'}</td>
+                  <td className="text-muted">{e.date||e.intake||'—'}</td>
+                  <td><HPBadge label={e.status} variant={e.status}/></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ============================================================
+   ADMIN ENROLMENT FORM (4-step wizard)
+   ============================================================ */
+const AdminEnrolmentForm = ({lang}) => {
+  const [step, setStep] = useState(0);
+  const [form, setForm] = useState({
+    firstName:'', lastName:'', dob:'', gender:'', nationality:'', phone:'', email:'',
+    programme:'', intake:'', classMode:'', semester:'1',
+    passportNo:'', passportExpiry:'', photoUrl:'',
+    referringPartner:'', guardianName:'', guardianPhone:'',
+  });
+  const [submitted, setSubmitted] = useState(false);
+  const upd = (k,v) => setForm(f=>({...f,[k]:v}));
+  const steps = ['Personal','Academic','Documents','Review'];
+
+  const handleSubmit = () => {
+    setSubmitted(true);
+    // One flow → ripples to Admin list, Management headcount, Partner commission,
+    // a new invoice, a notification and an audit entry (demo + live).
+    HP_DATA.flows.enrolStudent(form).catch(console.error);
+  };
+
+  if(submitted) return (
+    <div className="fade-in" style={{textAlign:'center',padding:'60px 24px'}}>
+      <div style={{width:64,height:64,borderRadius:'50%',background:'rgba(22,163,74,.15)',border:'2px solid var(--success)',display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 20px'}}>
+        <HPIcon name="check" size={32} color="var(--success)"/>
+      </div>
+      <h2 style={{fontFamily:'var(--font-head)',fontSize:24,marginBottom:8}}>Enrolment Submitted!</h2>
+      <p className="text-muted">The student record has been created and is pending approval.</p>
+      <HPBtn variant="primary" style={{marginTop:24}} onClick={()=>{setSubmitted(false);setStep(0);}}>Enrol Another Student</HPBtn>
+    </div>
+  );
+
+  return (
+    <div className="fade-in">
+      <div className="hp-wizard-steps mb-24">
+        {steps.map((s,i)=>(
+          <React.Fragment key={s}>
+            <div className={`hp-wizard-step ${i<step?'step-done':i===step?'step-active':'step-todo'}`}>
+              <div className="hp-wizard-num">{i<step?'✓':i+1}</div>
+              <span className="hp-step-lbl" style={{fontSize:12,fontWeight:600}}>{s}</span>
+            </div>
+            {i<steps.length-1 && <div className={`hp-wizard-line ${i<step?'done':i===step?'active':''}`}/>}
+          </React.Fragment>
+        ))}
+      </div>
+
+      <div className="hp-card">
+        {step===0 && (
+          <>
+            <h3 style={{marginBottom:20,fontFamily:'var(--font-head)',fontSize:18}}>Personal Information</h3>
+            <div className="hp-grid-2">
+              <div className="hp-field"><label className="hp-label">First Name</label><input className="hp-input" value={form.firstName} onChange={e=>upd('firstName',e.target.value)} placeholder="Enter first name"/></div>
+              <div className="hp-field"><label className="hp-label">Last Name</label><input className="hp-input" value={form.lastName} onChange={e=>upd('lastName',e.target.value)} placeholder="Enter last name"/></div>
+            </div>
+            <div className="hp-grid-2">
+              <div className="hp-field"><label className="hp-label">Date of Birth</label><input type="date" className="hp-input" value={form.dob} onChange={e=>upd('dob',e.target.value)}/></div>
+              <div className="hp-field"><label className="hp-label">Gender</label>
+                <select className="hp-select" value={form.gender} onChange={e=>upd('gender',e.target.value)}>
+                  <option value="">Select...</option>
+                  {['Male','Female','Other'].map(g=><option key={g}>{g}</option>)}
+                </select>
+              </div>
+            </div>
+            <div className="hp-grid-2">
+              <div className="hp-field"><label className="hp-label">Email</label><input type="email" className="hp-input" value={form.email} onChange={e=>upd('email',e.target.value)} placeholder="student@email.com"/></div>
+              <div className="hp-field"><label className="hp-label">Phone</label><input className="hp-input" value={form.phone} onChange={e=>upd('phone',e.target.value)} placeholder="+84 xxx xxx xxx"/></div>
+            </div>
+            <div className="hp-field"><label className="hp-label">Nationality</label><input className="hp-input" value={form.nationality} onChange={e=>upd('nationality',e.target.value)} placeholder="Vietnamese"/></div>
+          </>
+        )}
+        {step===1 && (
+          <>
+            <h3 style={{marginBottom:20,fontFamily:'var(--font-head)',fontSize:18}}>Academic Details</h3>
+            <div className="hp-field"><label className="hp-label">Programme</label>
+              <select className="hp-select" value={form.programme} onChange={e=>upd('programme',e.target.value)}>
+                <option value="">Select programme...</option>
+                {['Academic Preparation Diploma (APD)','Diploma in English (DIP)','English for Academic Purposes (EAP)','IELTS Preparation (IELTS)','Business English (BE)'].map(p=><option key={p}>{p}</option>)}
+              </select>
+            </div>
+            <div className="hp-grid-2">
+              <div className="hp-field"><label className="hp-label">Intake</label>
+                <select className="hp-select" value={form.intake} onChange={e=>upd('intake',e.target.value)}>
+                  <option value="">Select intake...</option>
+                  {['JUN 2026','SEP 2026','JAN 2027','APR 2027'].map(i=><option key={i}>{i}</option>)}
+                </select>
+              </div>
+              <div className="hp-field"><label className="hp-label">Class Mode</label>
+                <select className="hp-select" value={form.classMode} onChange={e=>upd('classMode',e.target.value)}>
+                  <option value="">Select...</option>
+                  {['In-person','Online','Hybrid'].map(m=><option key={m}>{m}</option>)}
+                </select>
+              </div>
+            </div>
+            <div className="hp-grid-2">
+              <div className="hp-field"><label className="hp-label">Starting Semester</label>
+                <select className="hp-select" value={form.semester} onChange={e=>upd('semester',e.target.value)}>
+                  {['1','2','3','4'].map(s=><option key={s}>Semester {s}</option>)}
+                </select>
+              </div>
+              <div className="hp-field"><label className="hp-label">Referring Partner (optional)</label><input className="hp-input" value={form.referringPartner} onChange={e=>upd('referringPartner',e.target.value)} placeholder="Partner ID or name"/></div>
+            </div>
+          </>
+        )}
+        {step===2 && (
+          <>
+            <h3 style={{marginBottom:20,fontFamily:'var(--font-head)',fontSize:18}}>Documents & Guardian</h3>
+            <div className="hp-grid-2">
+              <div className="hp-field"><label className="hp-label">Passport / ID Number</label><input className="hp-input" value={form.passportNo} onChange={e=>upd('passportNo',e.target.value)} placeholder="Passport or ID number"/></div>
+              <div className="hp-field"><label className="hp-label">Passport Expiry</label><input type="date" className="hp-input" value={form.passportExpiry} onChange={e=>upd('passportExpiry',e.target.value)}/></div>
+            </div>
+            <div className="hp-field">
+              <label className="hp-label">Photo Upload</label>
+              <div style={{border:'2px dashed var(--border)',borderRadius:8,padding:'24px',textAlign:'center',cursor:'pointer',transition:'border-color var(--t)'}} onMouseEnter={e=>e.currentTarget.style.borderColor='var(--primary)'} onMouseLeave={e=>e.currentTarget.style.borderColor='var(--border)'}>
+                <HPIcon name="upload" size={32} color="var(--text3)"/>
+                <div className="text-sm text-muted" style={{marginTop:8}}>Click or drag to upload passport photo</div>
+                <div className="text-xs text-faint" style={{marginTop:4}}>PNG, JPG up to 5MB</div>
+              </div>
+            </div>
+            <div className="hp-grid-2">
+              <div className="hp-field"><label className="hp-label">Guardian Name</label><input className="hp-input" value={form.guardianName} onChange={e=>upd('guardianName',e.target.value)} placeholder="Parent/guardian full name"/></div>
+              <div className="hp-field"><label className="hp-label">Guardian Phone</label><input className="hp-input" value={form.guardianPhone} onChange={e=>upd('guardianPhone',e.target.value)} placeholder="+84 xxx xxx xxx"/></div>
+            </div>
+          </>
+        )}
+        {step===3 && (
+          <>
+            <h3 style={{marginBottom:20,fontFamily:'var(--font-head)',fontSize:18}}>Review & Confirm</h3>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+              {[['Full Name',`${form.firstName} ${form.lastName}`],['Email',form.email],['Phone',form.phone],['DOB',form.dob],['Gender',form.gender],['Nationality',form.nationality],['Programme',form.programme],['Intake',form.intake],['Class Mode',form.classMode],['Passport',form.passportNo],['Guardian',form.guardianName]].map(([k,v])=>(
+                v ? <div key={k} style={{background:'var(--surface2)',borderRadius:8,padding:'10px 14px'}}>
+                  <div className="text-xs text-faint mb-4">{k}</div>
+                  <div style={{fontWeight:600,fontSize:13}}>{v}</div>
+                </div> : null
+              ))}
+            </div>
+          </>
+        )}
+
+        <div style={{display:'flex',justifyContent:'space-between',marginTop:24}}>
+          {step>0
+            ? <HPBtn variant="secondary" onClick={()=>setStep(s=>s-1)}><HPIcon name="chevLeft" size={14}/>Back</HPBtn>
+            : <div/>}
+          {step<3
+            ? <HPBtn variant="primary" onClick={()=>setStep(s=>s+1)}>Next<HPIcon name="chevRight" size={14}/></HPBtn>
+            : <HPBtn variant="primary" onClick={handleSubmit}><HPIcon name="check" size={14}/>Submit Enrolment</HPBtn>}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ============================================================
+   ADMIN STAFF
+   ============================================================ */
+const AdminStaff = ({lang}) => {
+  const [q, setQ] = useState('');
+  const staff = window.HP_MOCK.admin.staff.filter(s=>s.name.toLowerCase().includes(q.toLowerCase())||s.dept.toLowerCase().includes(q.toLowerCase()));
+  return (
+    <div className="fade-in">
+      <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:16}}>
+        <div style={{flex:1,position:'relative'}}>
+          <HPIcon name="search" size={16} color="var(--text3)" style={{position:'absolute',left:12,top:'50%',transform:'translateY(-50%)'}}/>
+          <input className="hp-input" style={{paddingLeft:38}} placeholder="Search staff…" value={q} onChange={e=>setQ(e.target.value)}/>
+        </div>
+        <HPBtn variant="primary"><HPIcon name="plus" size={14}/>Add Staff</HPBtn>
+      </div>
+      <div className="hp-card">
+        <div className="hp-table-wrap">
+          <table className="hp-table">
+            <thead><tr><th>ID</th><th>Name</th><th>Department</th><th>Role</th><th>KPI Score</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              {staff.map(s=>{
+                const gt = GRADE_TABLE(s.kpi);
+                return (
+                  <tr key={s.id}>
+                    <td style={{fontFamily:'var(--font-mono)',fontSize:12}}>{s.id}</td>
+                    <td>
+                      <div style={{display:'flex',alignItems:'center',gap:10}}>
+                        <HPAvatar initials={s.name.split(' ').map(w=>w[0]).join('').slice(0,2)} size={32} color={PORTAL_COLOR.teacher.accent}/>
+                        <span style={{fontWeight:600}}>{s.name}</span>
+                      </div>
+                    </td>
+                    <td className="text-muted">{s.dept}</td>
+                    <td><HPBadge label={s.role} variant="blue"/></td>
+                    <td>
+                      <div style={{display:'flex',alignItems:'center',gap:8}}>
+                        <span style={{fontWeight:700,color:gt.c}}>{s.kpi}%</span>
+                        <span style={{fontFamily:'var(--font-head)',color:gt.c,fontSize:13,fontWeight:700}}>{gt.g}</span>
+                      </div>
+                    </td>
+                    <td><HPBadge label={s.status} variant={s.status}/></td>
+                    <td><HPBtn variant="ghost" size="sm"><HPIcon name="eye" size={14}/>View</HPBtn></td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ============================================================
+   MANAGEMENT DASHBOARD
+   ============================================================ */
+const MgmtDashboard = ({lang}) => {
+  const d = window.HP_MOCK.management;
+  const students = HP_DATA.useCollection('students');   // same live source as Admin
+  const pct = ((d.revenue.thisMonth/d.revenue.target)*100).toFixed(1);
+  return (
+    <div className="fade-in">
+      {DEMO_MODE && <div className="hp-demo-banner"><HPIcon name="info" size={16}/>Demo mode — showing mock executive data</div>}
+      {d.alerts.map((a,i)=>(
+        <div key={i} className={`hp-alert alert-${a.type==='warning'?'warning':a.type==='success'?'success':'info'}`}>
+          <HPIcon name="alert" size={14}/> {a.text}
+        </div>
+      ))}
+      <div className="hp-stat-grid">
+        <HPStatCard icon="finance" iconBg="rgba(22,163,74,.15)" iconColor="#4ADE80"
+          value={fmtVND(d.revenue.thisMonth)} label="Revenue This Month" trend={`${pct}% of target`} trendUp delay={0}/>
+        <HPStatCard icon="students" iconBg="rgba(27,79,216,.15)" iconColor="#60A5FA"
+          value={fmtNum(students.length)} label="Total Students" trend={`+${students.filter(s=>s.status==='pending').length} pending`} trendUp delay={60}/>
+        <HPStatCard icon="kpi" iconBg="rgba(245,158,11,.15)" iconColor="#FCD34D"
+          value={`${d.kpiAvg}%`} label="Avg Staff KPI" trend="Above target" trendUp delay={120}/>
+        <HPStatCard icon="analytics" iconBg="rgba(124,58,237,.15)" iconColor="#A78BFA"
+          value="94%" label="IELTS Pass Rate" trend="+4% vs last sem" trendUp delay={180}/>
+      </div>
+      <div className="hp-grid-2" style={{gap:16}}>
+        <div className="hp-card">
+          <HPSectionLabel>Revenue vs Target</HPSectionLabel>
+          <div style={{marginBottom:12}}>
+            <div style={{display:'flex',justifyContent:'space-between',marginBottom:6}}>
+              <span className="text-sm text-muted">Monthly Target</span>
+              <span style={{fontWeight:700}}>{fmtVND(d.revenue.target)}</span>
+            </div>
+            <HPProgress value={d.revenue.thisMonth} max={d.revenue.target} color="var(--success)" height={10}/>
+            <div style={{display:'flex',justifyContent:'space-between',marginTop:4}}>
+              <span className="text-xs text-muted">{fmtVND(d.revenue.thisMonth)} achieved</span>
+              <span className="text-xs" style={{color:'var(--success)'}}>{pct}%</span>
+            </div>
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(6,1fr)',gap:4,marginTop:16}}>
+            {d.monthlyRevenue.map((v,i)=>{
+              const maxV = Math.max(...d.monthlyRevenue);
+              const h = Math.round((v/maxV)*60);
+              return (
+                <div key={i} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:4}}>
+                  <div style={{width:'100%',height:60,display:'flex',alignItems:'flex-end',justifyContent:'center'}}>
+                    <div style={{width:'80%',height:h,background:i===d.monthlyRevenue.length-1?'var(--primary)':'var(--surface3)',borderRadius:'3px 3px 0 0',transition:'height .6s ease'}}/>
+                  </div>
+                  <span className="text-xs text-faint">{d.monthlyLabels[i]}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className="hp-card">
+          <HPSectionLabel>Student Distribution</HPSectionLabel>
+          <div style={{display:'flex',flexDirection:'column',gap:12,marginTop:8}}>
+            {[['Active Students',d.students.active,'var(--success)',d.students.total],
+              ['New This Month',d.students.newThisMonth,'var(--primary)',d.students.active],
+              ['Inactive',d.students.total-d.students.active,'var(--danger)',d.students.total]
+            ].map(([label,val,color,max])=>(
+              <div key={label}>
+                <div style={{display:'flex',justifyContent:'space-between',marginBottom:4}}>
+                  <span className="text-sm">{label}</span>
+                  <span style={{fontWeight:700,color}}>{fmtNum(val)}</span>
+                </div>
+                <HPProgress value={val} max={max} color={color} height={6}/>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ============================================================
+   MANAGEMENT KPI TABLE
+   ============================================================ */
+const MgmtKPIAll = ({lang}) => {
+  const [sortBy, setSortBy] = useState('kpi');
+  const [sortDir, setSortDir] = useState(-1);
+  const [q, setQ] = useState('');
+  const staff = [...window.HP_MOCK.admin.staff]
+    .filter(s=>s.name.toLowerCase().includes(q.toLowerCase()))
+    .sort((a,b)=>sortDir*(b[sortBy]>a[sortBy]?1:-1));
+
+  const toggleSort = (col) => { if(sortBy===col) setSortDir(d=>-d); else{ setSortBy(col); setSortDir(-1); }};
+
+  return (
+    <div className="fade-in">
+      <div style={{display:'flex',gap:12,marginBottom:16}}>
+        <div style={{flex:1,position:'relative'}}>
+          <HPIcon name="search" size={16} color="var(--text3)" style={{position:'absolute',left:12,top:'50%',transform:'translateY(-50%)'}}/>
+          <input className="hp-input" style={{paddingLeft:38}} placeholder="Search staff…" value={q} onChange={e=>setQ(e.target.value)}/>
+        </div>
+        <HPBtn variant="secondary"><HPIcon name="download" size={14}/>Export</HPBtn>
+      </div>
+      <div className="hp-card">
+        <div className="hp-table-wrap">
+          <table className="hp-table">
+            <thead>
+              <tr>
+                <th>Staff</th>
+                <th>Department</th>
+                {[['kpi','KPI Score'],['name','Name']].map(([col,lbl])=>(
+                  <th key={col} style={{cursor:'pointer',userSelect:'none'}} onClick={()=>toggleSort(col)}>
+                    {lbl} {sortBy===col?(sortDir>0?'▲':'▼'):''}
+                  </th>
+                ))}
+                <th>Grade</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {staff.map(s=>{
+                const gt = GRADE_TABLE(s.kpi);
+                return (
+                  <tr key={s.id}>
+                    <td>
+                      <div style={{display:'flex',alignItems:'center',gap:10}}>
+                        <HPAvatar initials={s.name.split(' ').map(w=>w[0]).join('').slice(0,2)} size={30} color={PORTAL_COLOR.teacher.accent}/>
+                        <div>
+                          <div style={{fontWeight:600,fontSize:13}}>{s.name}</div>
+                          <div className="text-xs text-muted">{s.id}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="text-muted">{s.dept}</td>
+                    <td>
+                      <div style={{display:'flex',alignItems:'center',gap:8}}>
+                        <div style={{flex:1,maxWidth:80}}><HPProgress value={s.kpi} color={gt.c} height={4}/></div>
+                        <span style={{fontWeight:700,color:gt.c,fontSize:13}}>{s.kpi}%</span>
+                      </div>
+                    </td>
+                    <td>{s.name}</td>
+                    <td><span style={{fontFamily:'var(--font-head)',fontSize:20,fontWeight:700,color:gt.c}}>{gt.g}</span></td>
+                    <td><HPBadge label={s.status} variant={s.status}/></td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ============================================================
+   MANAGEMENT FINANCE
+   ============================================================ */
+const MgmtFinance = ({lang}) => {
+  const d = window.HP_MOCK.management;
+  const items = [
+    {label:'Total Revenue',   value:d.revenue.thisMonth, color:'var(--success)', icon:'finance'},
+    {label:'Total Expenses',  value:818000000,            color:'var(--danger)',  icon:'fees'},
+    {label:'Net Profit',      value:d.revenue.thisMonth-818000000, color:'var(--primary)', icon:'kpi'},
+    {label:'Profit Margin',   value:'34.6%',              color:'var(--accent)', icon:'analytics'},
+  ];
+  return (
+    <div className="fade-in">
+      <div className="hp-stat-grid">
+        {items.map((it,i)=>(
+          <HPStatCard key={it.label} icon={it.icon} iconBg={`${it.color}22`} iconColor={it.color}
+            value={typeof it.value==='number'?fmtVND(it.value):it.value} label={it.label} delay={i*60}/>
+        ))}
+      </div>
+      <div className="hp-card">
+        <HPSectionLabel>P&L Summary — June 2026</HPSectionLabel>
+        <div style={{display:'flex',flexDirection:'column',gap:0}}>
+          {[
+            {label:'Tuition Revenue',          amount:1100000000, type:'income'},
+            {label:'Registration Fees',         amount:85000000,  type:'income'},
+            {label:'Material Fees',             amount:65000000,  type:'income'},
+            {label:'Teacher Salaries',          amount:-520000000,type:'expense'},
+            {label:'Admin & Operations',        amount:-180000000,type:'expense'},
+            {label:'Marketing',                 amount:-68000000, type:'expense'},
+            {label:'Facilities & Utilities',    amount:-50000000, type:'expense'},
+          ].map((row,i)=>(
+            <div key={i} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'12px 0',borderBottom:'1px solid var(--border)'}}>
+              <div style={{display:'flex',alignItems:'center',gap:8}}>
+                <div style={{width:8,height:8,borderRadius:2,background:row.type==='income'?'var(--success)':'var(--danger)'}}/>
+                <span className="text-sm">{row.label}</span>
+              </div>
+              <span style={{fontWeight:700,color:row.type==='income'?'var(--success)':'var(--danger)',fontFamily:'var(--font-mono)',fontSize:13}}>
+                {row.amount<0?'-':''}{fmtVND(Math.abs(row.amount))}
+              </span>
+            </div>
+          ))}
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'14px 0',borderTop:'2px solid var(--border2)'}}>
+            <span style={{fontWeight:700,fontSize:14}}>Net Profit</span>
+            <span style={{fontWeight:800,fontSize:18,color:'var(--success)',fontFamily:'var(--font-mono)'}}>{fmtVND(432000000)}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ============================================================
+   PARTNER DASHBOARD
+   ============================================================ */
+const PartnerDashboard = ({lang}) => {
+  const d = window.HP_MOCK.partner;
+  const pc = PORTAL_COLOR.partner;
+  const students = HP_DATA.useCollection('students');                 // same live source
+  const referred = students.filter(s=>s.referringPartnerId===d.id);   // grows when this partner refers
+  return (
+    <div className="fade-in">
+      {DEMO_MODE && <div className="hp-demo-banner"><HPIcon name="info" size={16}/>Demo mode — showing mock partner data</div>}
+      <div className="hp-card mb-16" style={{background:`linear-gradient(135deg, ${pc.bg}, rgba(0,0,0,0))`,border:`1px solid ${pc.border}`}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+          <div style={{display:'flex',alignItems:'center',gap:16}}>
+            <HPAvatar initials="LHN" size={56} color={pc.accent}/>
+            <div>
+              <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:4}}>
+                <h2 style={{fontFamily:'var(--font-head)',fontSize:20}}>{window.HP_MOCK.users.partner.name}</h2>
+                <HPTier tier={d.tier}/>
+              </div>
+              <div className="text-sm text-muted">Partner ID: {d.id}</div>
+            </div>
+          </div>
+          <div style={{textAlign:'right'}}>
+            <div className="text-xs text-faint mb-4">Tier Progress</div>
+            <div style={{fontSize:13,fontWeight:600,color:pc.accent}}>{d.tierScore}% to Platinum</div>
+            <div style={{width:140,marginTop:6}}><HPProgress value={d.tierScore} color={pc.accent} height={6}/></div>
+          </div>
+        </div>
+      </div>
+      <div className="hp-stat-grid">
+        <HPStatCard icon="commission" iconBg={`${pc.accent}22`} iconColor={pc.accent} value={fmtVND(d.commissions.thisMonth)} label="Commission This Month" delay={0}/>
+        <HPStatCard icon="fees"       iconBg="rgba(245,158,11,.15)" iconColor="#FCD34D" value={fmtVND(d.commissions.pending)} label="Pending Commission" delay={60}/>
+        <HPStatCard icon="students"   iconBg="rgba(27,79,216,.15)"  iconColor="#60A5FA" value={referred.length} label="Total Referred" trend="live" trendUp delay={120}/>
+        <HPStatCard icon="check"      iconBg="rgba(22,163,74,.15)"  iconColor="#4ADE80" value={d.activeStudents} label="Active Students" delay={180}/>
+      </div>
+      <div className="hp-card">
+        <HPSectionLabel>Commission History</HPSectionLabel>
+        <div className="hp-table-wrap">
+          <table className="hp-table">
+            <thead><tr><th>Month</th><th>Students</th><th>Rate</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody>
+              {d.history.map((h,i)=>(
+                <tr key={i}>
+                  <td style={{fontWeight:600}}>{h.month}</td>
+                  <td>{h.students}</td>
+                  <td style={{fontFamily:'var(--font-mono)'}}>{h.rate}</td>
+                  <td style={{fontWeight:700}}>{fmtVND(h.amount)}</td>
+                  <td><HPBadge label={h.status} variant={h.status}/></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ============================================================
+   PARTNER LEADERBOARD
+   ============================================================ */
+const PartnerLeaderboard = ({lang}) => {
+  const lb = window.HP_MOCK.partner.leaderboard;
+  const medals = ['🥇','🥈','🥉'];
+  return (
+    <div className="fade-in">
+      <div className="hp-card">
+        <HPSectionLabel>Top Partners — June 2026</HPSectionLabel>
+        <div style={{display:'flex',flexDirection:'column',gap:8}}>
+          {lb.map((p,i)=>(
+            <div key={i} style={{display:'flex',alignItems:'center',gap:14,padding:'12px 16px',borderRadius:10,background:p.isMe?'rgba(27,79,216,.1)':i<3?'var(--surface2)':'transparent',border:p.isMe?'1px solid rgba(27,79,216,.3)':'1px solid transparent',transition:'all var(--t)'}}>
+              <div style={{width:32,height:32,borderRadius:'50%',background:'var(--surface3)',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700,fontSize:13}}>
+                {i<3 ? medals[i] : p.rank}
+              </div>
+              <HPAvatar initials={p.name.split(' ').map(w=>w[0]).join('').slice(0,2)} size={36} color={PORTAL_COLOR.partner.accent}/>
+              <div style={{flex:1}}>
+                <div style={{display:'flex',alignItems:'center',gap:8}}>
+                  <span style={{fontWeight:600}}>{p.name}</span>
+                  {p.isMe && <span style={{fontSize:10,fontWeight:700,color:'var(--primary)',background:'rgba(27,79,216,.15)',padding:'1px 6px',borderRadius:99}}>YOU</span>}
+                </div>
+                <div className="text-xs text-muted">{p.students} active students</div>
+              </div>
+              <HPTier tier={p.tier}/>
+              <div style={{textAlign:'right'}}>
+                <div style={{fontWeight:700,fontSize:13}}>{fmtVND(p.commission)}</div>
+                <div className="text-xs text-faint">total earned</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ============================================================
+   PARENT DASHBOARD
+   ============================================================ */
+const ParentDashboard = ({lang}) => {
+  const c = window.HP_MOCK.parent.child;
+  const pc = PORTAL_COLOR.parent;
+  return (
+    <div className="fade-in">
+      {DEMO_MODE && <div className="hp-demo-banner"><HPIcon name="info" size={16}/>Demo mode — showing mock child data</div>}
+      <div className="hp-card mb-16" style={{background:`linear-gradient(135deg, ${pc.bg}, rgba(0,0,0,0))`,border:`1px solid ${pc.border}`}}>
+        <div style={{display:'flex',alignItems:'center',gap:16}}>
+          <HPAvatar initials={c.name.split(' ').map(w=>w[0]).join('').slice(0,2)} size={56} color={pc.accent}/>
+          <div>
+            <h2 style={{fontFamily:'var(--font-head)',fontSize:20,marginBottom:4}}>{c.name}</h2>
+            <div className="text-sm text-muted">{c.id} · {c.programme}</div>
+            <div style={{marginTop:4}}><HPBadge label={c.status} variant={c.status}/></div>
+          </div>
+        </div>
+      </div>
+      <div className="hp-stat-grid">
+        <HPStatCard icon="attendance" iconBg={`${pc.accent}22`} iconColor={pc.accent} value={`${c.attendance}%`} label="Attendance Rate" delay={0}/>
+        <HPStatCard icon="results"    iconBg="rgba(27,79,216,.15)" iconColor="#60A5FA" value={c.gpa.toFixed(1)} label="Current GPA" delay={60}/>
+        <HPStatCard icon="fees"       iconBg="rgba(220,38,38,.15)" iconColor="#F87171" value={fmtVND(c.feeBalance)} label="Outstanding Fees" delay={120}/>
+        <HPStatCard icon="timetable"  iconBg="rgba(124,58,237,.15)" iconColor="#A78BFA" value={`Sem ${c.semester}`} label="Current Semester" delay={180}/>
+      </div>
+      <div className="hp-card">
+        <HPSectionLabel>Academic Results</HPSectionLabel>
+        {c.results.map((r,i)=>{
+          const gt = GRADE_TABLE(r.overall);
+          return (
+            <div key={i} style={{padding:'12px 0',borderBottom:'1px solid var(--border)',display:'flex',alignItems:'center',gap:12}}>
+              <div style={{flex:1}}>
+                <div style={{fontWeight:600,marginBottom:6}}>{r.subject}</div>
+                <HPProgress value={r.overall} color={gt.c}/>
+              </div>
+              <div style={{textAlign:'right',minWidth:60}}>
+                <div style={{fontFamily:'var(--font-mono)',fontSize:13,color:'var(--text2)'}}>{r.overall}%</div>
+                <div style={{fontFamily:'var(--font-head)',fontSize:18,fontWeight:700,color:gt.c}}>{r.grade}</div>
+              </div>
+            </div>
+          );
+        })}
+        <div className="hp-alert alert-info" style={{marginTop:16}}>
+          <HPIcon name="info" size={14}/> Fee of {fmtVND(c.feeBalance)} is due. <a href="#" style={{color:'var(--primary)',fontWeight:700}}>Pay now →</a>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ============================================================
+   HP NOTIFICATION PANEL
+   ============================================================ */
+const HPNotifPanel = ({onClose, lang}) => {
+  const items = HP_DATA.useCollection('notifications');   // live — new alerts from any flow appear here
+  const markAll = () => items.forEach(x=>{ if(!x.read) HP_DATA.flows.markRead(x.id); });
+  const typeIcon = {fee:'fees', grade:'grades', system:'info', attendance:'attendance', message:'messages'};
+  const typeColor = {fee:'#FCD34D', grade:'#4ADE80', system:'#60A5FA', attendance:'#F87171', message:'#A78BFA'};
+  return (
+    <div className="hp-notif-panel">
+      <div style={{padding:'16px 20px',borderBottom:'1px solid var(--border)',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+        <h3 style={{fontFamily:'var(--font-head)',fontSize:16}}>Notifications <span style={{fontSize:12,color:'var(--text3)',fontWeight:400,fontFamily:'var(--font)'}}>({items.filter(n=>!n.read).length} unread)</span></h3>
+        <div style={{display:'flex',gap:8}}>
+          <HPBtn variant="ghost" size="sm" onClick={markAll}>Mark all read</HPBtn>
+          <button className="hp-icon-btn" onClick={onClose}><HPIcon name="close" size={16}/></button>
+        </div>
+      </div>
+      <div style={{flex:1,overflowY:'auto'}}>
+        {items.map(n=>(
+          <div key={n.id} onClick={()=>HP_DATA.flows.markRead(n.id)}
+            style={{padding:'14px 20px',borderBottom:'1px solid var(--border)',display:'flex',gap:12,cursor:'pointer',background:n.read?'transparent':'rgba(27,79,216,.04)',transition:'background var(--t)'}}>
+            <div style={{width:36,height:36,borderRadius:10,background:`${typeColor[n.type]}22`,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+              <HPIcon name={typeIcon[n.type]||'info'} size={18} color={typeColor[n.type]||'#60A5FA'}/>
+            </div>
+            <div style={{flex:1}}>
+              <div style={{display:'flex',justifyContent:'space-between',marginBottom:2}}>
+                <span style={{fontWeight:n.read?500:700,fontSize:13}}>{n.title}</span>
+                <span className="text-xs text-faint">{n.time}</span>
+              </div>
+              <div className="text-sm text-muted">{n.body}</div>
+            </div>
+            {!n.read && <div style={{width:8,height:8,borderRadius:'50%',background:'var(--primary)',marginTop:4,flexShrink:0}}/>}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+
+/* ============================================================
+   HP SIDEBAR
+   ============================================================ */
+const HPSidebar = ({role, screen, onNav, collapsed, onToggle, lang, user, onSignOut}) => {
+  const t = window.HP_I18N[lang];
+  const navItems = window.HP_PORTALS[role] || [];
+  const pc = PORTAL_COLOR[role] || PORTAL_COLOR.student;
+  const initials = user?.avatar || user?.name?.split(' ').map(w=>w[0]).join('').slice(0,2) || '??';
+  return (
+    <div className={`hp-sidebar${collapsed?' collapsed':''}`}>
+      <div className="hp-logo">
+        <div className="hp-logo-mark">HP</div>
+        {!collapsed && <div className="hp-logo-text">
+          <h2>{t.appName}</h2>
+          <p style={{textTransform:'capitalize'}}>{t.roles[role]} Portal</p>
+        </div>}
+      </div>
+      <div className="hp-nav">
+        {navItems.map(item=>(
+          <div key={item.key}
+            className={`hp-nav-item${screen===item.key?' active':''}`}
+            onClick={()=>onNav(item.key)}
+            title={collapsed?t.nav[item.key]:''}
+          >
+            <HPIcon name={item.icon} size={18} color={screen===item.key?pc.accent:'currentColor'}/>
+            <span className="hp-nav-text">{t.nav[item.key]}</span>
+            {item.badge && <span className="hp-nav-badge">{item.badge}</span>}
+          </div>
+        ))}
+      </div>
+      <div className="hp-sidebar-footer">
+        <div className="hp-nav-item" onClick={onSignOut}>
+          <HPIcon name="logout" size={18} color="var(--danger)"/>
+          <span className="hp-nav-text" style={{color:'var(--danger)'}}>Sign Out</span>
+        </div>
+        {!collapsed && <div style={{display:'flex',alignItems:'center',gap:10,padding:'10px 10px 0'}}>
+          <HPAvatar initials={initials} size={30} color={pc.accent}/>
+          <div style={{overflow:'hidden'}}>
+            <div style={{fontSize:12,fontWeight:600,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{user?.name}</div>
+            <div style={{fontSize:10,color:'var(--text3)',textTransform:'capitalize'}}>{t.roles[role]}</div>
+          </div>
+        </div>}
+      </div>
+    </div>
+  );
+};
+
+/* ============================================================
+   HP TOPBAR
+   ============================================================ */
+const HPTopBar = ({role, screen, lang, setLang, theme, setTheme, onToggleSidebar, onToggleNotif, notifCount}) => {
+  const t = window.HP_I18N[lang];
+  return (
+    <div className="hp-topbar">
+      <button className="hp-icon-btn" onClick={onToggleSidebar}><HPIcon name="menu" size={18}/></button>
+      <div className="hp-topbar-title">{t.nav[screen] || screen}</div>
+      <div className="hp-topbar-actions">
+        <button className="hp-icon-btn" onClick={()=>setTheme(t=>t==='dark'?'light':'dark')} title="Toggle theme">
+          <HPIcon name={theme==='dark'?'sun':'moon'} size={17}/>
+        </button>
+        <button className="hp-icon-btn" onClick={()=>setLang(l=>l==='en'?'vi':'en')} title="Toggle language" style={{fontFamily:'var(--font)',fontSize:11,fontWeight:700,width:'auto',padding:'0 8px'}}>
+          {lang==='en'?'VI':'EN'}
+        </button>
+        <button className="hp-icon-btn" onClick={onToggleNotif} title="Notifications">
+          <HPIcon name="notifications" size={18}/>
+          {notifCount>0 && <span className="dot"/>}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+/* ============================================================
+   HP APP SHELL (portal content router)
+   ============================================================ */
+const SCREEN_MAP = {
+  // Student
+  dashboard:    {student:StudentDashboard, teacher:TeacherDashboard, admin:AdminDashboard, management:MgmtDashboard, partner:PartnerDashboard, parent:ParentDashboard},
+  timetable:    {student:StudentTimetable},
+  results:      {student:StudentResults, parent:({lang})=><ParentDashboard lang={lang}/>},
+  attendance:   {student:StudentAttendance, parent:({lang})=><ParentDashboard lang={lang}/>},
+  fees:         {student:StudentFees, parent:({lang})=><ParentDashboard lang={lang}/>},
+  wallet:       {student:StudentFees},
+  gradeEntry:   {teacher:TeacherGradeEntry},
+  leaveManagement:{teacher:TeacherLeaveManagement},
+  students:     {admin:AdminStaff, teacher:AdminStaff, management:MgmtKPIAll},
+  enrolment:    {admin:AdminEnrolmentForm},
+  staff:        {admin:AdminStaff, management:AdminStaff},
+  invoices:     {admin:AdminDashboard},
+  reports:      {admin:AdminDashboard, management:MgmtFinance},
+  partners:     {admin:AdminDashboard},
+  kpi:          {management:MgmtKPIAll},
+  finance:      {management:MgmtFinance},
+  analytics:    {management:MgmtDashboard},
+  commission:   {partner:PartnerDashboard},
+  myStudents:   {partner:AdminStaff},
+  leaderboard:  {partner:PartnerLeaderboard},
+  messages:     {student:StudentDashboard, teacher:TeacherDashboard, admin:AdminDashboard, partner:PartnerDashboard, parent:ParentDashboard},
+  childDashboard:{parent:ParentDashboard},
+};
+
+const HPAppShell = ({user, role, lang, setLang, theme, setTheme, onSignOut}) => {
+  const defaultScreen = (window.HP_PORTALS[role]||[])[0]?.key || 'dashboard';
+  const [screen, setScreen] = useState(defaultScreen);
+  const [collapsed, setCollapsed] = useState(false);
+  const [showNotif, setShowNotif] = useState(false);
+  const unread = HP_DATA.useCollection('notifications').filter(n=>!n.read).length;  // live badge
+
+  useEffect(()=>{ document.documentElement.setAttribute('data-theme', theme); },[theme]);
+  useEffect(()=>{ window.HP_CURRENT_USER = user; },[user]);  // actor for audit log entries
+
+  const ScreenComp = (SCREEN_MAP[screen]||{})[role] || (SCREEN_MAP['dashboard']||{})[role] || (()=><div style={{padding:40,color:'var(--text3)',textAlign:'center'}}>Screen coming soon.</div>);
+
+  return (
+    <div className="hp-root">
+      <HPSidebar role={role} screen={screen} onNav={(k)=>{setScreen(k);setShowNotif(false);}} collapsed={collapsed} onToggle={()=>setCollapsed(c=>!c)} lang={lang} user={user} onSignOut={onSignOut}/>
+      <div className="hp-main">
+        <HPTopBar role={role} screen={screen} lang={lang} setLang={setLang} theme={theme} setTheme={setTheme}
+          onToggleSidebar={()=>setCollapsed(c=>!c)} onToggleNotif={()=>setShowNotif(s=>!s)} notifCount={unread}/>
+        <div className="hp-content">
+          <ScreenComp lang={lang} user={user} role={role}/>
+        </div>
+      </div>
+      {showNotif && <HPNotifPanel onClose={()=>setShowNotif(false)} lang={lang}/>}
+    </div>
+  );
+};
+
+/* ============================================================
+   HP LOGIN (Firebase Auth — email/password + Google)
+   ============================================================ */
+const HPLogin = ({onLogin, lang, setLang, theme, setTheme}) => {
+  const t = window.HP_I18N[lang];
+  const demo = DEMO_MODE || window.DEMO_MODE;   // honor runtime fallback (timeout / init failure / ?demo=1)
+  const [tab, setTab] = useState('signin');
+  const [selectedRole, setSelectedRole] = useState('student');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const auth = getAuth();
+
+  const roles = ['student','teacher','admin','management','partner','parent'];
+  const pc = PORTAL_COLOR;
+
+  const doSignIn = async(e) => {
+    e.preventDefault();
+    setLoading(true); setError('');
+    try {
+      const res = await auth.signInWithEmailAndPassword(email||`${selectedRole}@hp.edu`, password||'demo123');
+      // onLogin is handled by onAuthStateChanged
+    } catch(err) {
+      setError(err.message || 'Sign in failed. Please try again.');
+      setLoading(false);
+    }
+  };
+
+  const doGoogle = async() => {
+    setLoading(true); setError('');
+    try {
+      const Provider = demo ? null : new firebase.auth.GoogleAuthProvider();
+      await auth.signInWithPopup(Provider || {});
+    } catch(err) {
+      setError(err.message || 'Google sign in failed.');
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="hp-login">
+      <div style={{position:'absolute',top:16,right:16,display:'flex',gap:8,zIndex:10}}>
+        <button className="hp-icon-btn" onClick={()=>setTheme(t=>t==='dark'?'light':'dark')}><HPIcon name={theme==='dark'?'sun':'moon'} size={17}/></button>
+        <button className="hp-icon-btn" onClick={()=>setLang(l=>l==='en'?'vi':'en')} style={{fontSize:11,fontWeight:700,width:'auto',padding:'0 10px'}}>{lang==='en'?'VI':'EN'}</button>
+      </div>
+
+      <div className="hp-login-hd">
+        <div className="hp-login-logo">HP</div>
+        <h1>{t.login.title}</h1>
+        <p>{t.login.subtitle}</p>
+      </div>
+
+      <div className="hp-login-card">
+        {demo && (
+          <div className="hp-demo-banner mb-16">
+            <HPIcon name="info" size={14}/>
+            <span>DEMO MODE — Select a portal role below to explore</span>
+          </div>
+        )}
+
+        <div className="hp-login-tabs">
+          {['signin','signup'].map(tab2=>(
+            <div key={tab2} className={`hp-login-tab${tab===tab2?' active':''}`} onClick={()=>setTab(tab2)}>
+              {tab2==='signin'?t.login.signIn:t.login.signUp}
+            </div>
+          ))}
+        </div>
+
+        {error && <div className="hp-alert alert-danger mb-16">{error}</div>}
+
+        <form onSubmit={doSignIn}>
+          <div className="hp-field">
+            <label className="hp-label">{t.login.email}</label>
+            <input type="email" className="hp-input" placeholder={demo?`${selectedRole}@hp.edu`:'you@example.com'}
+              value={email} onChange={e=>setEmail(e.target.value)}/>
+          </div>
+          <div className="hp-field">
+            <label className="hp-label">{t.login.password}</label>
+            <input type="password" className="hp-input" placeholder={demo?'(any password)':'••••••••'}
+              value={password} onChange={e=>setPassword(e.target.value)}/>
+          </div>
+          {!demo && (
+            <div style={{textAlign:'right',marginBottom:16}}>
+              <a href="#" style={{fontSize:12,color:'var(--text3)'}}>{t.login.forgotPassword}</a>
+            </div>
+          )}
+          <HPBtn variant="primary" style={{width:'100%',justifyContent:'center',padding:12}} disabled={loading}>
+            {loading ? <><div className="hp-spinner" style={{width:16,height:16,borderWidth:2}}/>&nbsp;Signing in…</> : t.login.signIn}
+          </HPBtn>
+        </form>
+
+        <div className="hp-divider">{t.login.orContinue}</div>
+        <button className="hp-google-btn" onClick={doGoogle} disabled={loading}>
+          <HPIcon name="google" size={18}/>
+          {t.login.googleBtn}
+        </button>
+
+        {demo && (
+          <>
+            <div className="hp-divider">{t.login.loginAs}</div>
+            <div className="hp-portal-cards">
+              {roles.map(r=>(
+                <div key={r} className={`hp-portal-card${selectedRole===r?' sel':''}`} onClick={()=>{setSelectedRole(r);setEmail(`${r}@hp.edu`);}}>
+                  <div className="hp-portal-icon" style={{background:pc[r].bg,border:`1px solid ${pc[r].border}`}}>
+                    <HPIcon name={r==='management'?'kpi':r==='partner'?'leaderboard':r==='parent'?'user':r} size={18} color={pc[r].accent}/>
+                  </div>
+                  <span style={{textTransform:'capitalize'}}>{r}</span>
+                </div>
+              ))}
+            </div>
+            <HPBtn variant="primary" style={{width:'100%',justifyContent:'center',marginTop:16,padding:12}}
+              onClick={()=>{setEmail(`${selectedRole}@hp.edu`);setTimeout(()=>document.querySelector('form')?.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true})),50);}}>
+              <HPIcon name="chevRight" size={14}/>Enter as {selectedRole.charAt(0).toUpperCase()+selectedRole.slice(1)}
+            </HPBtn>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
+/* ============================================================
+   ROOT — HPApp (Firebase onAuthStateChanged → login or shell)
+   ============================================================ */
+const HPApp = () => {
+  const saved = (() => { try { return JSON.parse(localStorage.getItem('hp_state')||'{}'); } catch(e){ return {}; }})();
+  const [user,     setUser]     = useState(null);
+  const [role,     setRole]     = useState(saved.role  || null);
+  const [theme,    setTheme]    = useState(saved.theme || 'dark');
+  const [lang,     setLang]     = useState(saved.lang  || 'en');
+  const [loading,  setLoading]  = useState(true);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
+  useEffect(() => {
+    localStorage.setItem('hp_state', JSON.stringify({role, theme, lang}));
+  }, [role, theme, lang]);
+
+  useEffect(() => {
+    let settled = false;
+    // Safety net: if Firebase never calls back (e.g. file:// protocol blocks network),
+    // fall through to login screen after 8 seconds.
+    const fallbackTimer = setTimeout(() => {
+      if (!settled) {
+        console.warn('[HP] Auth timeout — falling back to demo/login mode');
+        settled = true;
+        window.DEMO_MODE = true;
+        setLoading(false);
+      }
+    }, 8000);
+
+    let auth;
+    try { auth = getAuth(); }
+    catch(e) { auth = demoAuth; window.DEMO_MODE = true; }
+
+    let unsub = () => {};
+    try {
+      unsub = auth.onAuthStateChanged(async (firebaseUser) => {
+        settled = true;
+        clearTimeout(fallbackTimer);
+        if (firebaseUser) {
+          const profile = await fetchUserProfile(firebaseUser.uid, firebaseUser._demoRole);
+          if (profile) {
+            setUser(profile);
+            setRole(profile.role);
+          } else {
+            // New Firebase user — no Firestore profile yet
+            setUser({uid:firebaseUser.uid, name:firebaseUser.displayName||firebaseUser.email, email:firebaseUser.email, role:'student'});
+            setRole('student');
+          }
+        } else {
+          setUser(null);
+          setRole(null);
+        }
+        setLoading(false);
+      });
+    } catch(e) {
+      console.error('[HP] onAuthStateChanged failed:', e);
+      settled = true;
+      clearTimeout(fallbackTimer);
+      window.DEMO_MODE = true;
+      setLoading(false);
+    }
+    return () => { try { unsub(); } catch(_){} clearTimeout(fallbackTimer); };
+  }, []);
+
+  const handleSignOut = async () => {
+    const auth = getAuth();
+    await auth.signOut();
+    setUser(null);
+    setRole(null);
+    localStorage.removeItem('hp_state');
+  };
+
+  if (loading) {
+    return (
+      <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'var(--bg)',flexDirection:'column',gap:16}}>
+        <div style={{width:56,height:56,borderRadius:16,background:'linear-gradient(135deg,var(--primary),#3B82F6)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'var(--font-head)',fontSize:22,fontWeight:700,color:'#fff'}}>HP</div>
+        <div className="hp-spinner"/>
+        <div style={{color:'var(--text3)',fontSize:13}}>Loading HP System…</div>
+      </div>
+    );
+  }
+
+  if (!user || !role) {
+    return <HPLogin onLogin={()=>{}} lang={lang} setLang={setLang} theme={theme} setTheme={setTheme}/>;
+  }
+
+  return (
+    <HPAppShell
+      user={user} role={role}
+      lang={lang} setLang={setLang}
+      theme={theme} setTheme={setTheme}
+      onSignOut={handleSignOut}
+    />
+  );
+};
+
+/* ============================================================
+   MOUNT
+   ============================================================ */
+ReactDOM.createRoot(document.getElementById('root')).render(<HPApp />);
+</script>
+</body>
+</html>

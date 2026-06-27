@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HE-SYSTEM — Happy English Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    /* ── CSS Variables ──────────────────────────── */
+    :root {
+      --bg:           #070C18;
+      --surface:      #0F1729;
+      --surface2:     #182036;
+      --sidebar-bg:   #05090F;
+      --topbar-bg:    #0A1020;
+      --border:       rgba(255,255,255,0.07);
+      --text1:        #F1F5F9;
+      --text2:        #8B9CC0;
+      --text3:        #4A5568;
+      --border-track: rgba(255,255,255,0.07);
+    }
+    [data-theme="light"] {
+      --bg:           #F0F4FA;
+      --surface:      #FFFFFF;
+      --surface2:     #F1F5F9;
+      --sidebar-bg:   #1B3D8C;
+      --topbar-bg:    #FFFFFF;
+      --border:       rgba(0,0,0,0.08);
+      --text1:        #0F172A;
+      --text2:        #475569;
+      --text3:        #94A3B8;
+      --border-track: rgba(0,0,0,0.08);
+    }
+
+    /* ── Reset ──────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body, #root { height: 100%; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text1);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    button { font-family: inherit; }
+    * { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.1) transparent; }
+    *::-webkit-scrollbar { width: 4px; }
+    *::-webkit-scrollbar-track { background: transparent; }
+    *::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 9999px; }
+    [data-theme="light"] * { scrollbar-color: rgba(0,0,0,0.15) transparent; }
+    [data-theme="light"] *::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); }
+
+    /* Light mode sidebar overrides */
+    [data-theme="light"] .sidebar-nav-btn { color: rgba(255,255,255,0.7) !important; }
+    [data-theme="light"] .sidebar-nav-btn:hover { background: rgba(255,255,255,0.12) !important; color: #fff !important; }
+    [data-theme="light"] .sidebar-user-text { color: rgba(255,255,255,0.9) !important; }
+    [data-theme="light"] .sidebar-user-sub { color: rgba(255,255,255,0.5) !important; }
+
+    /* ── Animations ─────────────────────────────── */
+    @keyframes fadeSlideDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+
+    /* ── Page enter ─────────────────────────────── */
+    #root > div > div {
+      animation: fadeIn 0.25s ease both;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- Data layer (plain JS — no Babel needed) -->
+  <script src="he-data.js"></script>
+
+  <!-- React component layers (order matters — deps first) -->
+  <script type="text/babel" src="he-ui.jsx"></script>
+  <script type="text/babel" src="he-portals-1.jsx"></script>
+  <script type="text/babel" src="he-portals-2.jsx"></script>
+  <script type="text/babel" src="he-portals-3.jsx"></script>
+  <script type="text/babel" src="he-screens-student.jsx"></script>
+  <script type="text/babel" src="he-screens-teacher.jsx"></script>
+  <script type="text/babel" src="he-screens-admin.jsx"></script>
+  <script type="text/babel" src="he-screens-mgmt.jsx"></script>
+  <script type="text/babel" src="he-notifications.jsx"></script>
+  <script type="text/babel" src="he-calendar.jsx"></script>
+  <script type="text/babel" src="he-app.jsx"></script>
+</body>
+</html>

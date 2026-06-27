@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>HE-SYSTEM App Icon</title>
+  <desc>HE-SYSTEM icon mark — square app icon with blue background, gold top stripe, red bottom bar, and bold HE lettermark.</desc>
+
+  <defs>
+    <clipPath id="iconMark">
+      <rect x="0" y="0" width="200" height="200" rx="44"/>
+    </clipPath>
+  </defs>
+
+  <!-- Blue background -->
+  <rect width="200" height="200" rx="44" fill="#1B3D8C"/>
+
+  <!-- Clipped color stripes -->
+  <g clip-path="url(#iconMark)">
+    <rect x="0" y="0"   width="200" height="11" fill="#F59E0B"/>
+    <rect x="0" y="143" width="200" height="6"  fill="#F59E0B"/>
+    <rect x="0" y="149" width="200" height="51" fill="#DC2626"/>
+  </g>
+
+  <!-- HE letters (white, Oswald Bold) -->
+  <text
+    x="100" y="113"
+    font-family="Oswald,'Helvetica Neue','Arial Black',Arial,sans-serif"
+    font-size="90" font-weight="700"
+    fill="white" text-anchor="middle"
+    dominant-baseline="alphabetic">HE</text>
+
+  <!-- SYSTEM text in red bar -->
+  <text
+    x="100" y="177"
+    font-family="Oswald,'Helvetica Neue',Arial,sans-serif"
+    font-size="18" font-weight="600"
+    fill="white" text-anchor="middle"
+    letter-spacing="5"
+    dominant-baseline="alphabetic">SYSTEM</text>
+</svg>

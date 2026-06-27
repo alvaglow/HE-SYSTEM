@@ -1,0 +1,14 @@
+{
+  "name": "hp-system-seed",
+  "version": "1.0.0",
+  "description": "Seeds HP System demo users and sample data into Firebase Auth + Firestore.",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "seed": "node seed.js",
+    "seed:wipe": "node seed.js --wipe"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.7.0"
+  }
+}

@@ -1,0 +1,565 @@
+# HE-SYSTEM — Full Technical Specification
+*Version 1.0 — June 2026*
+
+---
+
+## 1. Project Structure
+
+```
+he-system/                              ← Turborepo monorepo root
+├── apps/
+│   ├── web/                            ← Next.js 14 (App Router)
+│   │   ├── app/
+│   │   │   ├── (auth)/
+│   │   │   │   ├── login/page.tsx
+│   │   │   │   ├── register/page.tsx
+│   │   │   │   └── forgot-password/page.tsx
+│   │   │   ├── (student)/
+│   │   │   │   ├── layout.tsx          ← Student shell + nav
+│   │   │   │   ├── dashboard/page.tsx
+│   │   │   │   ├── attendance/page.tsx
+│   │   │   │   ├── timetable/page.tsx
+│   │   │   │   ├── results/page.tsx
+│   │   │   │   ├── fees/page.tsx
+│   │   │   │   ├── wallet/page.tsx
+│   │   │   │   ├── location/page.tsx
+│   │   │   │   └── messages/page.tsx
+│   │   │   ├── (teacher)/
+│   │   │   │   ├── layout.tsx
+│   │   │   │   ├── dashboard/page.tsx
+│   │   │   │   ├── kpi/page.tsx
+│   │   │   │   ├── attendance/page.tsx
+│   │   │   │   ├── grades/page.tsx
+│   │   │   │   ├── timetable/page.tsx
+│   │   │   │   ├── students/page.tsx
+│   │   │   │   └── leave/page.tsx
+│   │   │   ├── (admin)/
+│   │   │   │   ├── layout.tsx
+│   │   │   │   ├── dashboard/page.tsx
+│   │   │   │   ├── students/page.tsx
+│   │   │   │   ├── staff/page.tsx
+│   │   │   │   ├── enrolment/page.tsx
+│   │   │   │   ├── invoices/page.tsx
+│   │   │   │   ├── partners/page.tsx
+│   │   │   │   ├── timetable/page.tsx
+│   │   │   │   └── announcements/page.tsx
+│   │   │   ├── (management)/
+│   │   │   │   ├── layout.tsx
+│   │   │   │   ├── dashboard/page.tsx
+│   │   │   │   ├── kpi/page.tsx
+│   │   │   │   ├── finance/page.tsx
+│   │   │   │   ├── partners/page.tsx
+│   │   │   │   ├── enrolment/page.tsx
+│   │   │   │   └── reports/page.tsx
+│   │   │   ├── (partner)/
+│   │   │   │   ├── layout.tsx
+│   │   │   │   ├── dashboard/page.tsx
+│   │   │   │   ├── students/page.tsx
+│   │   │   │   ├── commission/page.tsx
+│   │   │   │   ├── payouts/page.tsx
+│   │   │   │   ├── leaderboard/page.tsx
+│   │   │   │   └── profile/page.tsx
+│   │   │   ├── (parent)/
+│   │   │   │   ├── layout.tsx
+│   │   │   │   ├── dashboard/page.tsx
+│   │   │   │   ├── attendance/page.tsx
+│   │   │   │   ├── results/page.tsx
+│   │   │   │   ├── fees/page.tsx
+│   │   │   │   ├── location/page.tsx
+│   │   │   │   └── messages/page.tsx
+│   │   │   ├── api/
+│   │   │   │   └── auth/
+│   │   │   │       └── callback/route.ts  ← Supabase OAuth callback
+│   │   │   └── layout.tsx               ← Root layout
+│   │   ├── middleware.ts                ← RBAC route protection
+│   │   ├── components/                  ← Web-only UI components
+│   │   ├── lib/
+│   │   │   ├── supabase/
+│   │   │   │   ├── client.ts            ← Browser client
+│   │   │   │   └── server.ts            ← Server component client
+│   │   │   └── i18n/
+│   │   │       ├── en.json
+│   │   │       └── vi.json
+│   │   ├── public/
+│   │   │   ├── HE-SYSTEM_Logo.svg
+│   │   │   └── HE-SYSTEM_Icon.svg
+│   │   ├── next.config.ts
+│   │   ├── tailwind.config.ts
+│   │   └── tsconfig.json
+│   │
+│   └── mobile/                         ← Expo React Native
+│       ├── app/                         ← Expo Router
+│       │   ├── (auth)/
+│       │   │   ├── login.tsx
+│       │   │   └── forgot-password.tsx
+│       │   ├── (student)/
+│       │   │   ├── _layout.tsx
+│       │   │   ├── index.tsx            ← dashboard
+│       │   │   ├── attendance.tsx
+│       │   │   ├── timetable.tsx
+│       │   │   ├── results.tsx
+│       │   │   ├── fees.tsx
+│       │   │   └── location.tsx
+│       │   ├── (teacher)/
+│       │   ├── (admin)/
+│       │   ├── (partner)/
+│       │   ├── (parent)/
+│       │   └── _layout.tsx
+│       ├── components/                  ← Mobile-only components
+│       ├── lib/
+│       │   └── supabase.ts
+│       ├── app.json
+│       └── tsconfig.json
+│
+├── packages/
+│   ├── shared/                         ← Shared business logic
+│   │   ├── utils/
+│   │   │   ├── commission-formula.ts   ← ✅ Written
+│   │   │   ├── kpi-calculator.ts       ← ✅ Written
+│   │   │   ├── format.ts               ← Currency, date, number formatters
+│   │   │   └── validation.ts           ← Zod schemas
+│   │   ├── hooks/
+│   │   │   ├── useAuth.ts
+│   │   │   ├── useCurrentUser.ts
+│   │   │   └── useRealtime.ts
+│   │   ├── types/
+│   │   │   └── index.ts                ← Shared TypeScript types
+│   │   └── package.json
+│   │
+│   └── database/
+│       ├── types/
+│       │   └── index.ts                ← Generated by: supabase gen types
+│       └── package.json
+│
+├── supabase/
+│   ├── migrations/
+│   │   └── 001_initial_schema.sql      ← ✅ Written
+│   ├── functions/
+│   │   ├── commission-calculate/
+│   │   │   └── index.ts
+│   │   ├── attendance-otp/
+│   │   │   └── index.ts
+│   │   ├── payment-webhook/
+│   │   │   └── index.ts
+│   │   ├── kpi-calculate/
+│   │   │   └── index.ts
+│   │   ├── notify-send/
+│   │   │   └── index.ts
+│   │   └── invoice-generate/
+│   │       └── index.ts
+│   ├── config.toml
+│   └── seed.sql
+│
+├── turbo.json
+├── package.json
+└── .env.local                          ← Never commit — see env vars below
+```
+
+---
+
+## 2. Environment Variables
+
+Create `.env.local` at the monorepo root:
+
+```bash
+# ── Supabase ──────────────────────────────────────────────────────────────────
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+SUPABASE_SERVICE_ROLE_KEY=eyJ...         # Server / Edge Functions only — never expose to client
+
+# ── Stripe ────────────────────────────────────────────────────────────────────
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
+STRIPE_SECRET_KEY=sk_live_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+
+# ── Twilio (SMS) ──────────────────────────────────────────────────────────────
+TWILIO_ACCOUNT_SID=ACxxx
+TWILIO_AUTH_TOKEN=xxx
+TWILIO_FROM_NUMBER=+60XXXXXXXX
+
+# ── Firebase (Push notifications) ─────────────────────────────────────────────
+FIREBASE_PROJECT_ID=he-system
+FIREBASE_CLIENT_EMAIL=firebase-adminsdk@he-system.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n..."
+
+# ── Google Maps ───────────────────────────────────────────────────────────────
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=AIza...
+
+# ── Resend (Email) ────────────────────────────────────────────────────────────
+RESEND_API_KEY=re_...
+RESEND_FROM_EMAIL=noreply@happyenglish.edu.vn
+
+# ── App ───────────────────────────────────────────────────────────────────────
+NEXT_PUBLIC_APP_URL=https://app.happyenglish.edu.vn
+NEXT_PUBLIC_APP_NAME=HE-SYSTEM
+```
+
+Add the same secrets to Supabase Edge Functions (in Supabase Dashboard → Edge Functions → Secrets):
+`SUPABASE_SERVICE_ROLE_KEY`, `STRIPE_SECRET_KEY`, `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `FIREBASE_*`, `RESEND_API_KEY`
+
+---
+
+## 3. RBAC Middleware
+
+`apps/web/middleware.ts` — protects all portal routes server-side:
+
+```typescript
+import { createServerClient } from '@supabase/ssr'
+import { NextResponse, type NextRequest } from 'next/server'
+
+const ROLE_ROUTES: Record<string, string> = {
+  student:    '/(student)',
+  teacher:    '/(teacher)',
+  admin:      '/(admin)',
+  management: '/(management)',
+  partner:    '/(partner)',
+  parent:     '/(parent)',
+}
+
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+  let response = NextResponse.next({ request })
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { cookies: { getAll: () => request.cookies.getAll(), setAll: (cookiesToSet) => { cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options)) } } }
+  )
+
+  const { data: { user } } = await supabase.auth.getUser()
+
+  // Redirect unauthenticated users to login
+  if (!user && !pathname.startsWith('/(auth)')) {
+    return NextResponse.redirect(new URL('/login', request.url))
+  }
+
+  if (user) {
+    // Get role from users table
+    const { data } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    const role = data?.role
+    if (role) {
+      // Redirect to correct portal if accessing wrong one
+      const allowedPrefix = ROLE_ROUTES[role]
+      const isOnCorrectPortal = pathname.startsWith(allowedPrefix.replace(/[()]/g, ''))
+      if (!isOnCorrectPortal && !pathname.startsWith('/(auth)')) {
+        return NextResponse.redirect(new URL(`${allowedPrefix}/dashboard`, request.url))
+      }
+    }
+  }
+
+  return response
+}
+
+export const config = {
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
+}
+```
+
+---
+
+## 4. Supabase Client Setup
+
+`apps/web/lib/supabase/client.ts`:
+```typescript
+import { createBrowserClient } from '@supabase/ssr'
+import type { Database } from '@he-system/database'
+
+export function createClient() {
+  return createBrowserClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+}
+```
+
+`apps/web/lib/supabase/server.ts`:
+```typescript
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
+import type { Database } from '@he-system/database'
+
+export async function createClient() {
+  const cookieStore = await cookies()
+  return createServerClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() { return cookieStore.getAll() },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options))
+        },
+      },
+    }
+  )
+}
+```
+
+---
+
+## 5. Edge Function Stubs
+
+### commission-calculate
+`supabase/functions/commission-calculate/index.ts`
+```typescript
+import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+serve(async (req) => {
+  const { recruit_id } = await req.json()
+  const supabase = createClient(
+    Deno.env.get('SUPABASE_URL')!,
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+  )
+
+  // 1. Get recruit + partner data
+  const { data: recruit } = await supabase
+    .from('partner_recruits')
+    .select('*, partners(*)')
+    .eq('id', recruit_id)
+    .single()
+
+  if (!recruit || recruit.status !== 'enrolled') {
+    return new Response('Not enrolled', { status: 400 })
+  }
+
+  const partner = recruit.partners
+  const newTotal = partner.total_recruited + 1
+
+  // 2. Calculate commission using formula
+  const BASE_PCT = 8, RATE = 0.4, MAX = 35
+  const pct = Math.min(MAX, BASE_PCT + newTotal * RATE)
+  const earned = recruit.tuition_fee * (pct / 100)
+
+  // 3. Insert commission record
+  await supabase.from('partner_commissions').insert({
+    institution_id: recruit.institution_id,
+    partner_id: partner.id,
+    recruit_id: recruit.id,
+    students_at_time: newTotal,
+    commission_pct: pct,
+    tuition_fee: recruit.tuition_fee,
+    amount_earned: earned,
+    tier_at_time: getTier(newTotal),
+  })
+
+  // 4. Update partner total
+  await supabase.from('partners')
+    .update({ total_recruited: newTotal, total_earned: partner.total_earned + earned })
+    .eq('id', partner.id)
+
+  // 5. Notify partner
+  await supabase.functions.invoke('notify-send', {
+    body: {
+      user_id: partner.user_id,
+      title: 'Commission earned!',
+      body: `You earned ${earned.toFixed(2)} for enrolling a new student.`,
+      channel: ['push', 'in_app'],
+    }
+  })
+
+  return new Response(JSON.stringify({ pct, earned }), { status: 200 })
+})
+
+function getTier(n: number) {
+  if (n >= 61) return 'platinum'
+  if (n >= 31) return 'gold'
+  if (n >= 16) return 'silver'
+  if (n >= 6)  return 'bronze'
+  return 'starter'
+}
+```
+
+### attendance-otp
+```typescript
+// POST /attendance-otp { action: 'generate' | 'validate', class_id, student_id?, otp? }
+// generate: creates 6-digit OTP, stores on classes.otp_code, expires 15min
+// validate: checks OTP, marks attendance, returns { success, message }
+```
+
+### payment-webhook
+```typescript
+// POST /payment-webhook (Stripe webhook)
+// Verifies Stripe signature → handles payment_intent.succeeded
+// → updates fee_invoices → creates fee_payments → notifies student
+```
+
+### kpi-calculate (CRON)
+```typescript
+// Runs 1st of each month at 00:00 UTC
+// For each teacher: aggregates previous month data, calls calculateTeacherKpi(),
+// upserts kpi_records row
+// Schedule in supabase/config.toml:
+// [functions.kpi-calculate]
+// schedule = "0 0 1 * *"
+```
+
+### notify-send
+```typescript
+// POST body: { user_id, title, body, channel: string[], reference_type?, reference_id? }
+// Routes to: Expo Push (push), Twilio SMS (sms), Resend email (email)
+// Always inserts to notifications table
+```
+
+### invoice-generate
+```typescript
+// POST body: { student_id, programme_id, amount, due_date, description? }
+// Creates fee_invoices row with auto invoice number HE-YYYY-NNNN
+// Triggers notify-send for student + parent
+```
+
+---
+
+## 6. Tailwind Design Tokens
+
+`apps/web/tailwind.config.ts`:
+```typescript
+export default {
+  theme: {
+    extend: {
+      colors: {
+        brand: {
+          blue:       '#1B3D8C',
+          'blue-light': '#2E5FCC',
+          red:        '#DC2626',
+          gold:       '#F59E0B',
+          black:      '#0F172A',
+        },
+      },
+      fontFamily: {
+        display: ['Oswald', 'sans-serif'],   // headers, logo
+        sans:    ['Inter', 'sans-serif'],     // body
+      },
+    },
+  },
+}
+```
+
+Add to `apps/web/app/layout.tsx`:
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+```
+
+---
+
+## 7. Quick-Start Commands
+
+```bash
+# ── 1. Clone and install ──────────────────────────────────────────────────────
+git init he-system && cd he-system
+npm install -g pnpm
+pnpm init
+npx create-turbo@latest --skip-install .
+
+# ── 2. Create apps ────────────────────────────────────────────────────────────
+cd apps
+npx create-next-app@latest web --typescript --tailwind --app --src-dir=false --import-alias "@/*"
+npx create-expo-app@latest mobile --template expo-template-blank-typescript
+
+# ── 3. Install web dependencies ───────────────────────────────────────────────
+cd web
+pnpm add @supabase/supabase-js @supabase/ssr
+pnpm add @stripe/stripe-js stripe
+pnpm add zustand react-hook-form zod
+pnpm add @tanstack/react-query
+pnpm add recharts
+pnpm add @googlemaps/react-wrapper
+
+# ── 4. Install mobile dependencies ───────────────────────────────────────────
+cd ../mobile
+npx expo install expo-router expo-location expo-notifications expo-secure-store
+npx expo install react-native-maps @stripe/stripe-react-native
+pnpm add @supabase/supabase-js @tanstack/react-query
+
+# ── 5. Supabase setup ─────────────────────────────────────────────────────────
+cd ../..
+pnpm add -D supabase
+npx supabase login
+npx supabase init
+npx supabase link --project-ref YOUR_PROJECT_REF
+
+# ── 6. Push schema to Supabase ────────────────────────────────────────────────
+npx supabase db push
+# or apply migration directly:
+npx supabase migration up
+
+# ── 7. Generate TypeScript types ──────────────────────────────────────────────
+npx supabase gen types typescript --linked \
+  > packages/database/types/index.ts
+
+# ── 8. Deploy edge functions ──────────────────────────────────────────────────
+npx supabase functions deploy commission-calculate
+npx supabase functions deploy attendance-otp
+npx supabase functions deploy payment-webhook
+npx supabase functions deploy kpi-calculate
+npx supabase functions deploy notify-send
+npx supabase functions deploy invoice-generate
+
+# ── 9. Run web locally ────────────────────────────────────────────────────────
+cd apps/web && pnpm dev
+# Opens at http://localhost:3000
+
+# ── 10. Run mobile locally ────────────────────────────────────────────────────
+cd apps/mobile && npx expo start
+# Scan QR code with Expo Go app
+```
+
+---
+
+## 8. Realtime Subscriptions
+
+Enable Realtime in Supabase Dashboard → Database → Replication for:
+- `notifications` — live bell counter
+- `kpi_records` — live KPI dashboard
+- `attendance_records` — live attendance tracking
+- `fee_invoices` — live payment status
+
+Example client subscription:
+```typescript
+const channel = supabase
+  .channel('my-notifications')
+  .on('postgres_changes',
+    { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${userId}` },
+    (payload) => { setNotifications(prev => [payload.new, ...prev]) }
+  )
+  .subscribe()
+```
+
+---
+
+## 9. Mobile Push Notification Setup
+
+1. Create Firebase project at console.firebase.google.com
+2. Add Android + iOS apps, download `google-services.json` and `GoogleService-Info.plist`
+3. Place in `apps/mobile/` root
+4. In Expo: `npx expo install expo-notifications`
+5. Register for push token on login:
+
+```typescript
+const { data: token } = await Notifications.getExpoPushTokenAsync()
+await supabase.from('users').update({ expo_push_token: token.data }).eq('id', userId)
+```
+
+---
+
+## 10. Deployment Checklist
+
+| Service | Platform | Config |
+|---------|----------|--------|
+| Web app | Vercel | Connect GitHub, set env vars, auto-deploy on main |
+| Mobile iOS | EAS Build + App Store | `eas build --platform ios` |
+| Mobile Android | EAS Build + Play Store | `eas build --platform android` |
+| Database | Supabase | Already hosted — apply migrations via CLI |
+| Edge Functions | Supabase | `supabase functions deploy --all` |
+| Domain | Vercel DNS | Point `app.happyenglish.edu.vn` to Vercel |
+
+---
+
+*Generated by HE-SYSTEM Architecture Session — June 2026*

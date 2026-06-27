@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HE-SYSTEM — Design Tokens</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#070C18;color:#F1F5F9;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1100px;margin:0 auto;padding:0 28px 80px}
+.topnav{position:sticky;top:0;background:rgba(5,9,15,.94);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.07);z-index:99;padding:0 28px;height:52px;display:flex;align-items:center;gap:20px}
+.logo{font-family:'Oswald';font-weight:700;font-size:17px;color:#F1F5F9}.logo span{color:#DC2626}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav a{padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;color:#8B9CC0;text-decoration:none;transition:all 150ms}
+nav a:hover{background:rgba(255,255,255,.06);color:#F1F5F9}
+.hero{padding:56px 0 40px;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:48px}
+.hero h1{font-family:'Oswald';font-weight:800;font-size:52px;line-height:1;margin-bottom:10px}
+.hero h1 span{color:#DC2626}
+.hero p{color:#8B9CC0;font-size:16px;max-width:620px}
+.section-hd{font-family:'Oswald';font-weight:700;font-size:24px;color:#F1F5F9;margin-bottom:6px;margin-top:52px}
+.section-sub{color:#8B9CC0;font-size:14px;margin-bottom:20px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:0}
+.tab{padding:8px 18px;cursor:pointer;font-size:13px;font-weight:600;color:#8B9CC0;border-bottom:2px solid transparent;transition:all 150ms;user-select:none}
+.tab.active{color:#93B4FF;border-bottom-color:#1B3D8C}
+.tab-pane{display:none}.tab-pane.active{display:block}
+pre{background:#05090F;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:22px;overflow-x:auto;font-family:'JetBrains Mono';font-size:12.5px;line-height:1.75;color:#CBD5E1;margin-top:0;border-top-left-radius:0;border-top-right-radius:0}
+.k{color:#93B4FF}.s{color:#86EFAC}.v{color:#FCD34D}.c{color:#4A5568;font-style:italic}.p{color:#C4B5FD}.r{color:#FCA5A5}
+/* Color swatches */
+.swatch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:28px}
+.swatch{border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+.swatch-color{height:60px}
+.swatch-info{padding:10px 12px;background:#0F1729}
+.swatch-hex{font-family:'JetBrains Mono';font-size:11px;color:#8B9CC0;margin-top:2px}
+.swatch-name{font-size:12px;font-weight:600;color:#F1F5F9}
+/* Token table */
+.token-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:28px}
+.token-table th{padding:8px 14px;background:#0A1020;color:#4A5568;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.06em;text-align:left;border-bottom:1px solid rgba(255,255,255,.07)}
+.token-table td{padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.05);vertical-align:middle}
+.token-table td:first-child{font-family:'JetBrains Mono';font-size:12px;color:#FCD34D}
+.token-table td:nth-child(2){font-family:'JetBrains Mono';font-size:12px;color:#86EFAC}
+.token-table td:nth-child(3){color:#8B9CC0;font-size:12px}
+.token-table tr:hover td{background:rgba(255,255,255,.02)}
+.dot{width:18px;height:18px;border-radius:4px;display:inline-block;vertical-align:middle;margin-right:6px;border:1px solid rgba(255,255,255,.1)}
+</style>
+</head>
+<body>
+<div class="topnav">
+  <div class="logo">HE<span>-SYSTEM</span> Design Tokens</div>
+  <nav>
+    <a href="#colors">Colors</a>
+    <a href="#type">Typography</a>
+    <a href="#spacing">Spacing</a>
+    <a href="#radius">Radius</a>
+    <a href="#shadow">Shadows</a>
+    <a href="#css">CSS Export</a>
+    <a href="#scss">SCSS Export</a>
+    <a href="#tailwind">Tailwind Config</a>
+  </nav>
+</div>
+<div class="wrap">
+  <div class="hero">
+    <h1>Design <span>Tokens</span></h1>
+    <p>All HE-SYSTEM design decisions as exportable tokens — CSS custom properties, SCSS variables, and Tailwind config. Single source of truth for the entire platform.</p>
+  </div>
+
+  <!-- COLORS -->
+  <div id="colors">
+    <div class="section-hd">Color Tokens</div>
+    <div class="section-sub">Brand palette, semantic colors and neutrals</div>
+
+    <div style="color:#4A5568;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Brand Colors</div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="swatch-color" style="background:#1B3D8C"></div><div class="swatch-info"><div class="swatch-name">he-blue</div><div class="swatch-hex">#1B3D8C</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#2E5FCC"></div><div class="swatch-info"><div class="swatch-name">he-blue-light</div><div class="swatch-hex">#2E5FCC</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#EEF2FF"></div><div class="swatch-info"><div class="swatch-name">he-blue-50</div><div class="swatch-hex">#EEF2FF</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#C7D2FE"></div><div class="swatch-info"><div class="swatch-name">he-blue-100</div><div class="swatch-hex">#C7D2FE</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#DC2626"></div><div class="swatch-info"><div class="swatch-name">he-red</div><div class="swatch-hex">#DC2626</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#FEE2E2"></div><div class="swatch-info"><div class="swatch-name">he-red-50</div><div class="swatch-hex">#FEE2E2</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#F59E0B"></div><div class="swatch-info"><div class="swatch-name">he-gold</div><div class="swatch-hex">#F59E0B</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#FEF3C7"></div><div class="swatch-info"><div class="swatch-name">he-gold-50</div><div class="swatch-hex">#FEF3C7</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#0F172A"></div><div class="swatch-info"><div class="swatch-name">he-black</div><div class="swatch-hex">#0F172A</div></div></div>
+    </div>
+
+    <div style="color:#4A5568;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Semantic Colors</div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="swatch-color" style="background:#16A34A"></div><div class="swatch-info"><div class="swatch-name">success</div><div class="swatch-hex">#16A34A</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#DCFCE7"></div><div class="swatch-info"><div class="swatch-name">success-bg</div><div class="swatch-hex">#DCFCE7</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#D97706"></div><div class="swatch-info"><div class="swatch-name">warning</div><div class="swatch-hex">#D97706</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#FEF3C7"></div><div class="swatch-info"><div class="swatch-name">warning-bg</div><div class="swatch-hex">#FEF3C7</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#0EA5E9"></div><div class="swatch-info"><div class="swatch-name">info</div><div class="swatch-hex">#0EA5E9</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#E0F2FE"></div><div class="swatch-info"><div class="swatch-name">info-bg</div><div class="swatch-hex">#E0F2FE</div></div></div>
+    </div>
+
+    <div style="color:#4A5568;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Neutral Scale (Slate)</div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="swatch-color" style="background:#F8FAFC"></div><div class="swatch-info"><div class="swatch-name">slate-50</div><div class="swatch-hex">#F8FAFC</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#F1F5F9"></div><div class="swatch-info"><div class="swatch-name">slate-100</div><div class="swatch-hex">#F1F5F9</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#E2E8F0"></div><div class="swatch-info"><div class="swatch-name">slate-200</div><div class="swatch-hex">#E2E8F0</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#CBD5E1"></div><div class="swatch-info"><div class="swatch-name">slate-300</div><div class="swatch-hex">#CBD5E1</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#94A3B8"></div><div class="swatch-info"><div class="swatch-name">slate-400</div><div class="swatch-hex">#94A3B8</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#64748B"></div><div class="swatch-info"><div class="swatch-name">slate-500</div><div class="swatch-hex">#64748B</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#475569"></div><div class="swatch-info"><div class="swatch-name">slate-600</div><div class="swatch-hex">#475569</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#334155"></div><div class="swatch-info"><div class="swatch-name">slate-700</div><div class="swatch-hex">#334155</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#1E293B"></div><div class="swatch-info"><div class="swatch-name">slate-800</div><div class="swatch-hex">#1E293B</div></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#0F172A"></div><div class="swatch-info"><div class="swatch-name">slate-900</div><div class="swatch-hex">#0F172A</div></div></div>
+    </div>
+  </div>
+
+  <!-- TYPOGRAPHY -->
+  <div id="type">
+    <div class="section-hd">Typography Tokens</div>
+    <div class="section-sub">Font families, sizes and weights</div>
+    <table class="token-table">
+      <thead><tr><th>Token</th><th>Value</th><th>Usage</th></tr></thead>
+      <tbody>
+        <tr><td>--font-display</td><td>'Oswald', sans-serif</td><td>All headings, KPI scores, portal names</td></tr>
+        <tr><td>--font-body</td><td>'Inter', sans-serif</td><td>All body text, UI labels, navigation</td></tr>
+        <tr><td>--font-mono</td><td>'JetBrains Mono', monospace</td><td>OTP codes, student IDs, invoice numbers</td></tr>
+        <tr><td>--text-display-xl</td><td>40px / 800 / Oswald</td><td>Page hero titles</td></tr>
+        <tr><td>--text-display-lg</td><td>32px / 800 / Oswald</td><td>Section titles</td></tr>
+        <tr><td>--text-display-md</td><td>24px / 700 / Oswald</td><td>Card titles</td></tr>
+        <tr><td>--text-display-sm</td><td>20px / 700 / Oswald</td><td>Sub-headings</td></tr>
+        <tr><td>--text-body-lg</td><td>16px / 400–500 / Inter</td><td>Long-form text</td></tr>
+        <tr><td>--text-body-md</td><td>14px / 400 / Inter</td><td>Standard UI text</td></tr>
+        <tr><td>--text-body-sm</td><td>13px / 400 / Inter</td><td>Secondary text</td></tr>
+        <tr><td>--text-label-lg</td><td>14px / 600 / Inter</td><td>Form labels</td></tr>
+        <tr><td>--text-label-sm</td><td>12px / 600 / Inter</td><td>Field hints</td></tr>
+        <tr><td>--text-overline</td><td>11px / 700 / Inter + 1px tracking</td><td>Section labels (ALL CAPS)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SPACING -->
+  <div id="spacing">
+    <div class="section-hd">Spacing Tokens</div>
+    <div class="section-sub">4px base grid</div>
+    <table class="token-table">
+      <thead><tr><th>Token</th><th>Value</th><th>Usage</th></tr></thead>
+      <tbody>
+        <tr><td>--space-1</td><td>4px</td><td>Micro gap (icon + text)</td></tr>
+        <tr><td>--space-2</td><td>8px</td><td>Tight gap (badge items)</td></tr>
+        <tr><td>--space-3</td><td>12px</td><td>Standard gap between items</td></tr>
+        <tr><td>--space-4</td><td>16px</td><td>Card padding</td></tr>
+        <tr><td>--space-5</td><td>20px</td><td>Section element gap</td></tr>
+        <tr><td>--space-6</td><td>24px</td><td>Page section gap, mobile gutter</td></tr>
+        <tr><td>--space-8</td><td>32px</td><td>Tablet gutter</td></tr>
+        <tr><td>--space-10</td><td>40px</td><td>Large section gap</td></tr>
+        <tr><td>--space-12</td><td>48px</td><td>Page section padding, desktop gutter</td></tr>
+        <tr><td>--space-16</td><td>64px</td><td>Hero padding</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- RADIUS -->
+  <div id="radius">
+    <div class="section-hd">Border Radius Tokens</div>
+    <table class="token-table">
+      <thead><tr><th>Token</th><th>Value</th><th>Usage</th></tr></thead>
+      <tbody>
+        <tr><td>--radius-xs</td><td>4px</td><td>Tiny elements, progress bars</td></tr>
+        <tr><td>--radius-sm</td><td>6px</td><td>Buttons XS, tags</td></tr>
+        <tr><td>--radius-md</td><td>8px</td><td>Inputs, small cards</td></tr>
+        <tr><td>--radius-lg</td><td>10px</td><td>Standard buttons</td></tr>
+        <tr><td>--radius-xl</td><td>12px</td><td>Cards, modals</td></tr>
+        <tr><td>--radius-2xl</td><td>16px</td><td>Large cards, panels</td></tr>
+        <tr><td>--radius-3xl</td><td>20px</td><td>Feature sections</td></tr>
+        <tr><td>--radius-full</td><td>9999px</td><td>Pills, avatar circles, badges</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SHADOWS -->
+  <div id="shadow">
+    <div class="section-hd">Shadow Tokens</div>
+    <table class="token-table">
+      <thead><tr><th>Token</th><th>Value</th><th>Usage</th></tr></thead>
+      <tbody>
+        <tr><td>--shadow-sm</td><td>0 1px 3px rgba(0,0,0,0.08)</td><td>Cards, inputs</td></tr>
+        <tr><td>--shadow-md</td><td>0 4px 12px rgba(0,0,0,0.10)</td><td>Dropdowns, popovers</td></tr>
+        <tr><td>--shadow-lg</td><td>0 8px 24px rgba(0,0,0,0.12)</td><td>Modals, drawers</td></tr>
+        <tr><td>--shadow-xl</td><td>0 20px 48px rgba(0,0,0,0.16)</td><td>Floating panels</td></tr>
+        <tr><td>--shadow-brand</td><td>0 4px 16px rgba(27,61,140,0.20)</td><td>Focused primary elements</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CSS EXPORT -->
+  <div id="css">
+    <div class="section-hd">CSS Custom Properties</div>
+    <div class="section-sub">Drop this into your global stylesheet</div>
+    <div class="tabs">
+      <div class="tab active" onclick="showTab(this,'css-light')">Light Mode</div>
+      <div class="tab" onclick="showTab(this,'css-dark')">Dark Mode</div>
+    </div>
+    <div id="css-light" class="tab-pane active">
+<pre><span class="c">/* HE-SYSTEM Design Tokens — Light Mode */</span>
+<span class="k">:root</span> {
+  <span class="c">/* Brand */</span>
+  <span class="p">--he-blue</span>:       <span class="v">#1B3D8C</span>;
+  <span class="p">--he-blue-light</span>: <span class="v">#2E5FCC</span>;
+  <span class="p">--he-blue-50</span>:    <span class="v">#EEF2FF</span>;
+  <span class="p">--he-blue-100</span>:   <span class="v">#C7D2FE</span>;
+  <span class="p">--he-red</span>:        <span class="v">#DC2626</span>;
+  <span class="p">--he-red-50</span>:     <span class="v">#FEE2E2</span>;
+  <span class="p">--he-gold</span>:       <span class="v">#F59E0B</span>;
+  <span class="p">--he-gold-50</span>:    <span class="v">#FEF3C7</span>;
+  <span class="p">--he-black</span>:      <span class="v">#0F172A</span>;
+
+  <span class="c">/* Semantic */</span>
+  <span class="p">--color-success</span>:     <span class="v">#16A34A</span>;
+  <span class="p">--color-success-bg</span>:  <span class="v">#DCFCE7</span>;
+  <span class="p">--color-warning</span>:     <span class="v">#D97706</span>;
+  <span class="p">--color-warning-bg</span>:  <span class="v">#FEF3C7</span>;
+  <span class="p">--color-info</span>:        <span class="v">#0EA5E9</span>;
+  <span class="p">--color-info-bg</span>:     <span class="v">#E0F2FE</span>;
+  <span class="p">--color-danger</span>:      <span class="v">#DC2626</span>;
+  <span class="p">--color-danger-bg</span>:   <span class="v">#FEE2E2</span>;
+
+  <span class="c">/* UI Surfaces — Light */</span>
+  <span class="p">--bg</span>:              <span class="v">#F0F4FA</span>;
+  <span class="p">--surface</span>:         <span class="v">#FFFFFF</span>;
+  <span class="p">--surface-2</span>:       <span class="v">#F1F5F9</span>;
+  <span class="p">--sidebar-bg</span>:      <span class="v">#1B3D8C</span>;
+  <span class="p">--topbar-bg</span>:       <span class="v">#FFFFFF</span>;
+  <span class="p">--border</span>:          <span class="v">rgba(0,0,0,0.08)</span>;
+  <span class="p">--text-1</span>:          <span class="v">#0F172A</span>;
+  <span class="p">--text-2</span>:          <span class="v">#475569</span>;
+  <span class="p">--text-3</span>:          <span class="v">#94A3B8</span>;
+
+  <span class="c">/* Typography */</span>
+  <span class="p">--font-display</span>:    <span class="s">'Oswald', sans-serif</span>;
+  <span class="p">--font-body</span>:       <span class="s">'Inter', sans-serif</span>;
+  <span class="p">--font-mono</span>:       <span class="s">'JetBrains Mono', monospace</span>;
+
+  <span class="c">/* Spacing (4px grid) */</span>
+  <span class="p">--space-1</span>: <span class="v">4px</span>;   <span class="p">--space-2</span>: <span class="v">8px</span>;   <span class="p">--space-3</span>: <span class="v">12px</span>;
+  <span class="p">--space-4</span>: <span class="v">16px</span>;  <span class="p">--space-5</span>: <span class="v">20px</span>;  <span class="p">--space-6</span>: <span class="v">24px</span>;
+  <span class="p">--space-8</span>: <span class="v">32px</span>;  <span class="p">--space-10</span>: <span class="v">40px</span>; <span class="p">--space-12</span>: <span class="v">48px</span>;
+  <span class="p">--space-16</span>: <span class="v">64px</span>;
+
+  <span class="c">/* Border Radius */</span>
+  <span class="p">--radius-xs</span>:   <span class="v">4px</span>;  <span class="p">--radius-sm</span>: <span class="v">6px</span>;   <span class="p">--radius-md</span>: <span class="v">8px</span>;
+  <span class="p">--radius-lg</span>:   <span class="v">10px</span>; <span class="p">--radius-xl</span>: <span class="v">12px</span>;  <span class="p">--radius-2xl</span>: <span class="v">16px</span>;
+  <span class="p">--radius-3xl</span>:  <span class="v">20px</span>; <span class="p">--radius-full</span>: <span class="v">9999px</span>;
+
+  <span class="c">/* Shadows */</span>
+  <span class="p">--shadow-sm</span>:    <span class="v">0 1px 3px rgba(0,0,0,0.08)</span>;
+  <span class="p">--shadow-md</span>:    <span class="v">0 4px 12px rgba(0,0,0,0.10)</span>;
+  <span class="p">--shadow-lg</span>:    <span class="v">0 8px 24px rgba(0,0,0,0.12)</span>;
+  <span class="p">--shadow-xl</span>:    <span class="v">0 20px 48px rgba(0,0,0,0.16)</span>;
+  <span class="p">--shadow-brand</span>: <span class="v">0 4px 16px rgba(27,61,140,0.20)</span>;
+
+  <span class="c">/* Animation */</span>
+  <span class="p">--ease-standard</span>: <span class="v">cubic-bezier(0.4, 0, 0.2, 1)</span>;
+  <span class="p">--ease-spring</span>:   <span class="v">cubic-bezier(0.34, 1.56, 0.64, 1)</span>;
+  <span class="p">--duration-micro</span>: <span class="v">150ms</span>;
+  <span class="p">--duration-base</span>:  <span class="v">200ms</span>;
+  <span class="p">--duration-slow</span>:  <span class="v">300ms</span>;
+}</pre>
+    </div>
+    <div id="css-dark" class="tab-pane">
+<pre><span class="c">/* HE-SYSTEM Design Tokens — Dark Mode */</span>
+<span class="k">[data-theme="dark"]</span> {
+  <span class="p">--bg</span>:              <span class="v">#070C18</span>;
+  <span class="p">--surface</span>:         <span class="v">#0F1729</span>;
+  <span class="p">--surface-2</span>:       <span class="v">#182036</span>;
+  <span class="p">--sidebar-bg</span>:      <span class="v">#05090F</span>;
+  <span class="p">--topbar-bg</span>:       <span class="v">#0A1020</span>;
+  <span class="p">--border</span>:          <span class="v">rgba(255,255,255,0.07)</span>;
+  <span class="p">--text-1</span>:          <span class="v">#F1F5F9</span>;
+  <span class="p">--text-2</span>:          <span class="v">#8B9CC0</span>;
+  <span class="p">--text-3</span>:          <span class="v">#4A5568</span>;
+  <span class="c">/* Brand tokens remain unchanged in dark mode */</span>
+}</pre>
+    </div>
+  </div>
+
+  <!-- SCSS EXPORT -->
+  <div id="scss">
+    <div class="section-hd">SCSS Variables</div>
+    <div class="section-sub">For projects using Sass / SCSS</div>
+<pre><span class="c">// HE-SYSTEM Design Tokens — _tokens.scss</span>
+
+<span class="c">// ── Brand ──────────────────────────────────────────</span>
+<span class="p">$he-blue</span>:        <span class="v">#1B3D8C</span>;
+<span class="p">$he-blue-light</span>:  <span class="v">#2E5FCC</span>;
+<span class="p">$he-blue-50</span>:     <span class="v">#EEF2FF</span>;
+<span class="p">$he-blue-100</span>:    <span class="v">#C7D2FE</span>;
+<span class="p">$he-red</span>:         <span class="v">#DC2626</span>;
+<span class="p">$he-red-50</span>:      <span class="v">#FEE2E2</span>;
+<span class="p">$he-gold</span>:        <span class="v">#F59E0B</span>;
+<span class="p">$he-gold-50</span>:     <span class="v">#FEF3C7</span>;
+<span class="p">$he-black</span>:       <span class="v">#0F172A</span>;
+
+<span class="c">// ── Semantic ────────────────────────────────────────</span>
+<span class="p">$success</span>:    <span class="v">#16A34A</span>;  <span class="p">$success-bg</span>: <span class="v">#DCFCE7</span>;
+<span class="p">$warning</span>:    <span class="v">#D97706</span>;  <span class="p">$warning-bg</span>: <span class="v">#FEF3C7</span>;
+<span class="p">$info</span>:       <span class="v">#0EA5E9</span>;  <span class="p">$info-bg</span>:    <span class="v">#E0F2FE</span>;
+<span class="p">$danger</span>:     <span class="v">#DC2626</span>;  <span class="p">$danger-bg</span>:  <span class="v">#FEE2E2</span>;
+
+<span class="c">// ── Slate Neutrals ──────────────────────────────────</span>
+<span class="p">$slate</span>: (
+  50:  <span class="v">#F8FAFC</span>, 100: <span class="v">#F1F5F9</span>, 200: <span class="v">#E2E8F0</span>,
+  300: <span class="v">#CBD5E1</span>, 400: <span class="v">#94A3B8</span>, 500: <span class="v">#64748B</span>,
+  600: <span class="v">#475569</span>, 700: <span class="v">#334155</span>, 800: <span class="v">#1E293B</span>, 900: <span class="v">#0F172A</span>
+);
+
+<span class="c">// ── Typography ──────────────────────────────────────</span>
+<span class="p">$font-display</span>: <span class="s">'Oswald', sans-serif</span>;
+<span class="p">$font-body</span>:    <span class="s">'Inter', sans-serif</span>;
+<span class="p">$font-mono</span>:    <span class="s">'JetBrains Mono', monospace</span>;
+
+<span class="c">// ── Spacing ─────────────────────────────────────────</span>
+<span class="p">$space</span>: (1: 4px, 2: 8px, 3: 12px, 4: 16px, 5: 20px, 6: 24px, 8: 32px, 10: 40px, 12: 48px, 16: 64px);
+
+<span class="c">// ── Border Radius ───────────────────────────────────</span>
+<span class="p">$radius</span>: (xs: 4px, sm: 6px, md: 8px, lg: 10px, xl: 12px, 2xl: 16px, 3xl: 20px, full: 9999px);
+
+<span class="c">// ── Shadows ─────────────────────────────────────────</span>
+<span class="p">$shadow-sm</span>:    <span class="v">0 1px 3px rgba(0,0,0,0.08)</span>;
+<span class="p">$shadow-md</span>:    <span class="v">0 4px 12px rgba(0,0,0,0.10)</span>;
+<span class="p">$shadow-lg</span>:    <span class="v">0 8px 24px rgba(0,0,0,0.12)</span>;
+<span class="p">$shadow-xl</span>:    <span class="v">0 20px 48px rgba(0,0,0,0.16)</span>;
+<span class="p">$shadow-brand</span>: <span class="v">0 4px 16px rgba(27,61,140,0.20)</span>;
+
+<span class="c">// ── Usage: @each / map.get ────────────────────────</span>
+<span class="c">// color: map.get($slate, 400);  → #94A3B8</span>
+<span class="c">// padding: map.get($space, 4);  → 16px</span>
+<span class="c">// border-radius: map.get($radius, xl); → 12px</span></pre>
+  </div>
+
+  <!-- TAILWIND CONFIG -->
+  <div id="tailwind">
+    <div class="section-hd">Tailwind CSS Config</div>
+    <div class="section-sub">Drop into tailwind.config.js / tailwind.config.ts</div>
+<pre><span class="c">// tailwind.config.js — HE-SYSTEM Design Tokens</span>
+<span class="k">module.exports</span> = {
+  content: [<span class="s">'./src/**/*.{js,ts,jsx,tsx}'</span>],
+  theme: {
+    extend: {
+      colors: {
+        <span class="c">// Brand</span>
+        he: {
+          blue:       <span class="s">'#1B3D8C'</span>,
+          <span class="s">'blue-light'</span>: <span class="s">'#2E5FCC'</span>,
+          <span class="s">'blue-50'</span>:    <span class="s">'#EEF2FF'</span>,
+          <span class="s">'blue-100'</span>:   <span class="s">'#C7D2FE'</span>,
+          red:        <span class="s">'#DC2626'</span>,
+          <span class="s">'red-50'</span>:     <span class="s">'#FEE2E2'</span>,
+          gold:       <span class="s">'#F59E0B'</span>,
+          <span class="s">'gold-50'</span>:    <span class="s">'#FEF3C7'</span>,
+          black:      <span class="s">'#0F172A'</span>,
+        },
+        <span class="c">// Semantic</span>
+        success:     <span class="s">'#16A34A'</span>,
+        warning:     <span class="s">'#D97706'</span>,
+        info:        <span class="s">'#0EA5E9'</span>,
+        <span class="c">// Surfaces (dark theme vars)</span>
+        surface:     <span class="s">'var(--surface)'</span>,
+        <span class="s">'surface-2'</span>: <span class="s">'var(--surface-2)'</span>,
+      },
+      fontFamily: {
+        display: [<span class="s">'Oswald'</span>, <span class="s">'sans-serif'</span>],
+        body:    [<span class="s">'Inter'</span>, <span class="s">'sans-serif'</span>],
+        mono:    [<span class="s">'JetBrains Mono'</span>, <span class="s">'monospace'</span>],
+      },
+      spacing: {
+        <span class="s">'1'</span>: <span class="s">'4px'</span>, <span class="s">'2'</span>: <span class="s">'8px'</span>,   <span class="s">'3'</span>: <span class="s">'12px'</span>,
+        <span class="s">'4'</span>: <span class="s">'16px'</span>,<span class="s">'5'</span>: <span class="s">'20px'</span>,  <span class="s">'6'</span>: <span class="s">'24px'</span>,
+        <span class="s">'8'</span>: <span class="s">'32px'</span>,<span class="s">'10'</span>: <span class="s">'40px'</span>, <span class="s">'12'</span>: <span class="s">'48px'</span>,
+        <span class="s">'16'</span>: <span class="s">'64px'</span>,
+      },
+      borderRadius: {
+        xs:   <span class="s">'4px'</span>,  sm:  <span class="s">'6px'</span>,   md:   <span class="s">'8px'</span>,
+        lg:   <span class="s">'10px'</span>, xl:  <span class="s">'12px'</span>,  <span class="s">'2xl'</span>: <span class="s">'16px'</span>,
+        <span class="s">'3xl'</span>: <span class="s">'20px'</span>, full: <span class="s">'9999px'</span>,
+      },
+      boxShadow: {
+        sm:    <span class="s">'0 1px 3px rgba(0,0,0,0.08)'</span>,
+        md:    <span class="s">'0 4px 12px rgba(0,0,0,0.10)'</span>,
+        lg:    <span class="s">'0 8px 24px rgba(0,0,0,0.12)'</span>,
+        xl:    <span class="s">'0 20px 48px rgba(0,0,0,0.16)'</span>,
+        brand: <span class="s">'0 4px 16px rgba(27,61,140,0.20)'</span>,
+      },
+      transitionTimingFunction: {
+        standard: <span class="s">'cubic-bezier(0.4, 0, 0.2, 1)'</span>,
+        spring:   <span class="s">'cubic-bezier(0.34, 1.56, 0.64, 1)'</span>,
+      },
+      transitionDuration: {
+        micro: <span class="s">'150ms'</span>,
+        base:  <span class="s">'200ms'</span>,
+        slow:  <span class="s">'300ms'</span>,
+      },
+    },
+  },
+  plugins: [],
+};
+</pre>
+  </div>
+
+</div>
+<script>
+function showTab(el, paneId) {
+  el.closest('.tabs').querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const wrap = el.closest('div');
+  const panes = wrap.parentElement.querySelectorAll('.tab-pane');
+  panes.forEach(p=>p.classList.remove('active'));
+  document.getElementById(paneId).classList.add('active');
+}
+</script>
+</body>
+</html>

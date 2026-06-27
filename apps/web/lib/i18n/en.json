@@ -1,0 +1,28 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "attendance": "Attendance",
+    "timetable": "Timetable",
+    "results": "Results",
+    "fees": "Fees",
+    "wallet": "Wallet",
+    "location": "Location",
+    "messages": "Messages",
+    "kpi": "KPI",
+    "students": "Students",
+    "commission": "Commission",
+    "payouts": "Payouts",
+    "leaderboard": "Leaderboard",
+    "logout": "Log out"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export"
+  }
+}

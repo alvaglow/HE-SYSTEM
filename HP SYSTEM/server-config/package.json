@@ -1,0 +1,7 @@
+{
+  "name": "hp-system-server-config",
+  "version": "1.0.0",
+  "description": "Configuration package for HP System backend",
+  "main": "index.js",
+  "private": true
+}

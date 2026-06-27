@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HE-SYSTEM — React Native Mobile Spec</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#070C18;color:#F1F5F9;line-height:1.6;-webkit-font-smoothing:antialiased}
+.topnav{position:sticky;top:0;background:rgba(5,9,15,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.07);z-index:99;padding:0 28px;height:52px;display:flex;align-items:center;gap:20px}
+.logo{font-family:'Oswald';font-weight:700;font-size:17px;color:#F1F5F9}.logo span{color:#DC2626}
+nav{display:flex;gap:4px;flex-wrap:wrap}
+nav a{padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;color:#8B9CC0;text-decoration:none;transition:all 150ms}
+nav a:hover{background:rgba(255,255,255,.06);color:#F1F5F9}
+.wrap{max-width:1100px;margin:0 auto;padding:0 28px 80px}
+.hero{padding:56px 0 40px;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:48px}
+.hero h1{font-family:'Oswald';font-weight:800;font-size:52px;line-height:1;margin-bottom:10px}
+.hero h1 span{color:#DC2626}
+.hero p{color:#8B9CC0;font-size:16px;max-width:640px;margin-bottom:20px}
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.04em;margin-right:6px}
+.tag.green{background:rgba(22,163,74,.15);color:#86EFAC;border:1px solid rgba(22,163,74,.3)}
+.tag.blue{background:rgba(27,61,140,.18);color:#93B4FF;border:1px solid rgba(27,61,140,.35)}
+.tag.gold{background:rgba(245,158,11,.15);color:#FCD34D;border:1px solid rgba(245,158,11,.3)}
+.tag.purple{background:rgba(124,58,237,.15);color:#C4B5FD;border:1px solid rgba(124,58,237,.3)}
+.section-hd{font-family:'Oswald';font-weight:700;font-size:26px;margin-bottom:6px;margin-top:52px}
+.section-sub{color:#8B9CC0;font-size:14px;margin-bottom:22px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:768px){.grid2{grid-template-columns:1fr}}
+.card{background:#0F1729;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:20px;position:relative;overflow:hidden}
+.card-accent{position:absolute;top:0;left:0;right:0;height:3px}
+.card h3{font-family:'Oswald';font-size:16px;font-weight:700;color:#F1F5F9;margin-bottom:8px}
+.card p{color:#8B9CC0;font-size:13px;line-height:1.6}
+pre{background:#05090F;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:18px 20px;overflow-x:auto;font-family:'JetBrains Mono';font-size:12px;line-height:1.75;color:#CBD5E1;margin:16px 0}
+.k{color:#93B4FF}.s{color:#86EFAC}.v{color:#FCD34D}.c{color:#4A5568;font-style:italic}.p{color:#C4B5FD}.r{color:#FCA5A5}
+.file-tree{background:#05090F;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:18px 20px;font-family:'JetBrains Mono';font-size:12px;line-height:1.8}
+.ft-dir{color:#FCD34D}.ft-file{color:#CBD5E1}.ft-cmt{color:#4A5568;font-style:italic}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0}
+th{padding:8px 14px;background:#0A1020;color:#4A5568;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.06em;text-align:left;border-bottom:1px solid rgba(255,255,255,.07)}
+td{padding:9px 14px;border-bottom:1px solid rgba(255,255,255,.05);color:#8B9CC0}
+td:first-child{font-family:'JetBrains Mono';font-size:12px;color:#FCD34D}
+tr:hover td{background:rgba(255,255,255,.02)}
+.screen-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.screen-card{background:#0A1020;border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px;text-align:center}
+.screen-icon{font-size:24px;margin-bottom:8px}
+.screen-name{font-size:12px;font-weight:600;color:#F1F5F9}
+.screen-route{font-family:'JetBrains Mono';font-size:10px;color:#8B9CC0;margin-top:3px}
+</style>
+</head>
+<body>
+<div class="topnav">
+  <div class="logo">HE<span>-SYSTEM</span> Mobile Spec</div>
+  <nav>
+    <a href="#stack">Stack</a>
+    <a href="#structure">Structure</a>
+    <a href="#navigation">Navigation</a>
+    <a href="#screens">Screens</a>
+    <a href="#notifications">Push</a>
+    <a href="#offline">Offline</a>
+    <a href="#security">Security</a>
+  </nav>
+</div>
+<div class="wrap">
+  <div class="hero">
+    <h1>React Native<br/><span>Mobile Spec</span></h1>
+    <p>Complete specification for the HE-SYSTEM iOS and Android mobile apps. Built with React Native + Expo, sharing the same API as the web platform.</p>
+    <div>
+      <span class="tag blue">React Native 0.74</span>
+      <span class="tag green">Expo SDK 51</span>
+      <span class="tag gold">iOS + Android</span>
+      <span class="tag purple">Expo Router v3</span>
+      <span class="tag blue">TypeScript</span>
+      <span class="tag green">Offline-first</span>
+    </div>
+  </div>
+
+  <div id="stack">
+    <div class="section-hd">Technology Stack</div>
+    <div class="section-sub">Libraries and tooling choices for the mobile app</div>
+    <table>
+      <thead><tr><th>Layer</th><th>Package</th><th>Version</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>Framework</td><td style="color:#86EFAC">react-native</td><td style="color:#8B9CC0">0.74</td><td style="color:#8B9CC0">Core cross-platform mobile framework</td></tr>
+        <tr><td>Platform</td><td style="color:#86EFAC">expo</td><td style="color:#8B9CC0">SDK 51</td><td style="color:#8B9CC0">Build tools, OTA updates, managed workflow</td></tr>
+        <tr><td>Navigation</td><td style="color:#86EFAC">expo-router</td><td style="color:#8B9CC0">v3</td><td style="color:#8B9CC0">File-based routing (mirrors Next.js App Router)</td></tr>
+        <tr><td>State</td><td style="color:#86EFAC">@tanstack/react-query</td><td style="color:#8B9CC0">v5</td><td style="color:#8B9CC0">Server state, caching, background sync</td></tr>
+        <tr><td>Forms</td><td style="color:#86EFAC">react-hook-form + zod</td><td style="color:#8B9CC0">latest</td><td style="color:#8B9CC0">Form state and schema validation</td></tr>
+        <tr><td>Auth</td><td style="color:#86EFAC">expo-secure-store</td><td style="color:#8B9CC0">latest</td><td style="color:#8B9CC0">Secure token storage (replaces AsyncStorage for tokens)</td></tr>
+        <tr><td>Biometrics</td><td style="color:#86EFAC">expo-local-authentication</td><td style="color:#8B9CC0">latest</td><td style="color:#8B9CC0">Face ID / Touch ID / Fingerprint login</td></tr>
+        <tr><td>Push Notifs</td><td style="color:#86EFAC">expo-notifications</td><td style="color:#8B9CC0">latest</td><td style="color:#8B9CC0">APNs (iOS) + FCM (Android) push notifications</td></tr>
+        <tr><td>Offline</td><td style="color:#86EFAC">@react-native-async-storage/async-storage</td><td style="color:#8B9CC0">latest</td><td style="color:#8B9CC0">Local data persistence for offline mode</td></tr>
+        <tr><td>Real-time</td><td style="color:#86EFAC">socket.io-client</td><td style="color:#8B9CC0">v4</td><td style="color:#8B9CC0">OTP sessions, live attendance, notifications</td></tr>
+        <tr><td>UI</td><td style="color:#86EFAC">@shopify/flash-list</td><td style="color:#8B9CC0">latest</td><td style="color:#8B9CC0">High-performance lists (students, transactions)</td></tr>
+        <tr><td>Charts</td><td style="color:#86EFAC">victory-native</td><td style="color:#8B9CC0">v41</td><td style="color:#8B9CC0">Bar, line, pie charts (revenue, KPI, attendance)</td></tr>
+        <tr><td>Camera</td><td style="color:#86EFAC">expo-camera</td><td style="color:#8B9CC0">latest</td><td style="color:#8B9CC0">QR code scanner for student ID check-in</td></tr>
+        <tr><td>Payments</td><td style="color:#86EFAC">@stripe/stripe-react-native</td><td style="color:#8B9CC0">latest</td><td style="color:#8B9CC0">Fee payments and wallet top-ups</td></tr>
+        <tr><td>i18n</td><td style="color:#86EFAC">i18next + react-i18next</td><td style="color:#8B9CC0">latest</td><td style="color:#8B9CC0">EN/VI bilingual support</td></tr>
+        <tr><td>Testing</td><td style="color:#86EFAC">jest + @testing-library/react-native</td><td style="color:#8B9CC0">latest</td><td style="color:#8B9CC0">Unit and component testing</td></tr>
+        <tr><td>E2E</td><td style="color:#86EFAC">detox</td><td style="color:#8B9CC0">latest</td><td style="color:#8B9CC0">End-to-end testing on simulators</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="structure">
+    <div class="section-hd">Project Structure</div>
+    <div class="section-sub">File-based routing with Expo Router v3</div>
+<div class="file-tree">
+<span class="ft-dir">he-system-mobile/</span>
+├── <span class="ft-dir">app/</span>                          <span class="ft-cmt"># Expo Router — file = route</span>
+│   ├── <span class="ft-dir">(auth)/</span>                   <span class="ft-cmt"># Public routes (no auth required)</span>
+│   │   ├── <span class="ft-file">login.tsx</span>             <span class="ft-cmt"># Login screen with role selector</span>
+│   │   ├── <span class="ft-file">forgot-password.tsx</span>
+│   │   └── <span class="ft-file">reset-password.tsx</span>
+│   ├── <span class="ft-dir">(app)/</span>                    <span class="ft-cmt"># Protected routes (auth required)</span>
+│   │   ├── <span class="ft-dir">student/</span>
+│   │   │   ├── <span class="ft-file">_layout.tsx</span>         <span class="ft-cmt"># Bottom tab navigator</span>
+│   │   │   ├── <span class="ft-file">index.tsx</span>           <span class="ft-cmt"># Dashboard</span>
+│   │   │   ├── <span class="ft-file">attendance.tsx</span>
+│   │   │   ├── <span class="ft-file">timetable.tsx</span>
+│   │   │   ├── <span class="ft-file">results.tsx</span>
+│   │   │   ├── <span class="ft-file">fees.tsx</span>
+│   │   │   ├── <span class="ft-file">wallet.tsx</span>
+│   │   │   └── <span class="ft-file">profile.tsx</span>
+│   │   ├── <span class="ft-dir">teacher/</span>
+│   │   │   ├── <span class="ft-file">_layout.tsx</span>
+│   │   │   ├── <span class="ft-file">index.tsx</span>           <span class="ft-cmt"># KPI Dashboard</span>
+│   │   │   ├── <span class="ft-file">otp.tsx</span>             <span class="ft-cmt"># OTP Generator</span>
+│   │   │   ├── <span class="ft-file">grades.tsx</span>
+│   │   │   ├── <span class="ft-file">students.tsx</span>
+│   │   │   └── <span class="ft-file">leave.tsx</span>
+│   │   ├── <span class="ft-dir">admin/</span>
+│   │   ├── <span class="ft-dir">management/</span>
+│   │   ├── <span class="ft-dir">partner/</span>
+│   │   ├── <span class="ft-dir">parent/</span>
+│   │   └── <span class="ft-file">notifications.tsx</span>       <span class="ft-cmt"># Shared notification screen</span>
+│   ├── <span class="ft-file">_layout.tsx</span>               <span class="ft-cmt"># Root layout — auth guard</span>
+│   └── <span class="ft-file">+not-found.tsx</span>
+├── <span class="ft-dir">src/</span>
+│   ├── <span class="ft-dir">api/</span>                      <span class="ft-cmt"># API client (axios + react-query)</span>
+│   │   ├── <span class="ft-file">client.ts</span>             <span class="ft-cmt"># Axios instance + token interceptors</span>
+│   │   ├── <span class="ft-file">auth.ts</span>
+│   │   ├── <span class="ft-file">students.ts</span>
+│   │   ├── <span class="ft-file">attendance.ts</span>
+│   │   ├── <span class="ft-file">kpi.ts</span>
+│   │   └── <span class="ft-file">finance.ts</span>
+│   ├── <span class="ft-dir">components/</span>               <span class="ft-cmt"># Shared UI components</span>
+│   │   ├── <span class="ft-file">HEStatCard.tsx</span>
+│   │   ├── <span class="ft-file">HEBadge.tsx</span>
+│   │   ├── <span class="ft-file">HEAvatar.tsx</span>
+│   │   ├── <span class="ft-file">HEProgress.tsx</span>
+│   │   ├── <span class="ft-file">HETierBadge.tsx</span>
+│   │   └── <span class="ft-file">HEBottomSheet.tsx</span>
+│   ├── <span class="ft-dir">hooks/</span>                    <span class="ft-cmt"># Custom hooks</span>
+│   │   ├── <span class="ft-file">useAuth.ts</span>
+│   │   ├── <span class="ft-file">useOTP.ts</span>
+│   │   └── <span class="ft-file">useNotifications.ts</span>
+│   ├── <span class="ft-dir">store/</span>                    <span class="ft-cmt"># Zustand global state</span>
+│   │   ├── <span class="ft-file">authStore.ts</span>
+│   │   └── <span class="ft-file">settingsStore.ts</span>
+│   ├── <span class="ft-dir">i18n/</span>                     <span class="ft-cmt"># Translations</span>
+│   │   ├── <span class="ft-file">en.json</span>
+│   │   └── <span class="ft-file">vi.json</span>
+│   └── <span class="ft-dir">theme/</span>                    <span class="ft-cmt"># Design tokens</span>
+│       ├── <span class="ft-file">colors.ts</span>
+│       ├── <span class="ft-file">typography.ts</span>
+│       └── <span class="ft-file">spacing.ts</span>
+├── <span class="ft-file">app.json</span>                      <span class="ft-cmt"># Expo config</span>
+├── <span class="ft-file">eas.json</span>                      <span class="ft-cmt"># EAS Build config</span>
+└── <span class="ft-file">tsconfig.json</span>
+</div>
+  </div>
+
+  <div id="navigation">
+    <div class="section-hd">Navigation Architecture</div>
+    <div class="section-sub">Bottom tab navigator per portal, shared notification screen</div>
+
+<pre><span class="c">// app/(app)/student/_layout.tsx</span>
+<span class="k">import</span> { Tabs } <span class="k">from</span> <span class="s">'expo-router'</span>;
+<span class="k">import</span> { HEIcon } <span class="k">from</span> <span class="s">'@/components/HEIcon'</span>;
+
+<span class="k">export default function</span> <span class="v">StudentLayout</span>() {
+  <span class="k">return</span> (
+    &lt;<span class="r">Tabs</span>
+      screenOptions={{
+        tabBarStyle: { backgroundColor: <span class="s">'#05090F'</span>, borderTopColor: <span class="s">'rgba(255,255,255,0.07)'</span> },
+        tabBarActiveTintColor: <span class="s">'#93B4FF'</span>,
+        tabBarInactiveTintColor: <span class="s">'#4A5568'</span>,
+        headerShown: <span class="k">false</span>,
+      }}&gt;
+      &lt;<span class="r">Tabs.Screen</span> name=<span class="s">"index"</span> options={{ title: <span class="s">'Dashboard'</span>, tabBarIcon: ({ color }) =&gt;
+        &lt;<span class="r">HEIcon</span> name=<span class="s">"dashboard"</span> color={color} size={22} /&gt; }} /&gt;
+      &lt;<span class="r">Tabs.Screen</span> name=<span class="s">"attendance"</span> options={{ title: <span class="s">'Attendance'</span> }} /&gt;
+      &lt;<span class="r">Tabs.Screen</span> name=<span class="s">"timetable"</span>  options={{ title: <span class="s">'Timetable'</span>  }} /&gt;
+      &lt;<span class="r">Tabs.Screen</span> name=<span class="s">"fees"</span>        options={{ title: <span class="s">'Fees'</span>        }} /&gt;
+      &lt;<span class="r">Tabs.Screen</span> name=<span class="s">"profile"</span>     options={{ title: <span class="s">'Profile'</span>     }} /&gt;
+    &lt;/<span class="r">Tabs</span>&gt;
+  );
+}</pre>
+
+<pre><span class="c">// src/api/client.ts — Axios with auto-refresh</span>
+<span class="k">import</span> axios <span class="k">from</span> <span class="s">'axios'</span>;
+<span class="k">import</span> * <span class="k">as</span> SecureStore <span class="k">from</span> <span class="s">'expo-secure-store'</span>;
+
+<span class="k">const</span> api = axios.create({
+  baseURL: <span class="s">'https://api.happy-english.edu.vn/v1'</span>,
+  timeout: <span class="v">10000</span>,
+});
+
+api.interceptors.request.use(<span class="k">async</span> (config) => {
+  <span class="k">const</span> token = <span class="k">await</span> SecureStore.getItemAsync(<span class="s">'accessToken'</span>);
+  <span class="k">if</span> (token) config.headers.Authorization = <span class="s">`Bearer ${token}`</span>;
+  <span class="k">return</span> config;
+});
+
+api.interceptors.response.use(
+  (res) => res,
+  <span class="k">async</span> (err) => {
+    <span class="k">if</span> (err.response?.status === <span class="v">401</span>) {
+      <span class="c">// Attempt silent token refresh</span>
+      <span class="k">const</span> refreshed = <span class="k">await</span> refreshTokens();
+      <span class="k">if</span> (refreshed) <span class="k">return</span> api(err.config);
+      <span class="k">await</span> logout(); <span class="c">// redirect to login</span>
+    }
+    <span class="k">return</span> Promise.reject(err);
+  }
+);</pre>
+  </div>
+
+  <div id="screens">
+    <div class="section-hd">Screen Inventory</div>
+    <div class="section-sub">All screens across 6 portals</div>
+
+    <div style="margin-bottom:24px">
+      <div style="color:#4A5568;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px">Student Portal</div>
+      <div class="screen-grid">
+        <div class="screen-card"><div class="screen-icon">📊</div><div class="screen-name">Dashboard</div><div class="screen-route">/student</div></div>
+        <div class="screen-card"><div class="screen-icon">✅</div><div class="screen-name">Attendance</div><div class="screen-route">/student/attendance</div></div>
+        <div class="screen-card"><div class="screen-icon">📅</div><div class="screen-name">Timetable</div><div class="screen-route">/student/timetable</div></div>
+        <div class="screen-card"><div class="screen-icon">📝</div><div class="screen-name">Results</div><div class="screen-route">/student/results</div></div>
+        <div class="screen-card"><div class="screen-icon">💳</div><div class="screen-name">Fees</div><div class="screen-route">/student/fees</div></div>
+        <div class="screen-card"><div class="screen-icon">💰</div><div class="screen-name">E-Wallet</div><div class="screen-route">/student/wallet</div></div>
+        <div class="screen-card"><div class="screen-icon">💬</div><div class="screen-name">Messages</div><div class="screen-route">/student/messages</div></div>
+        <div class="screen-card"><div class="screen-icon">👤</div><div class="screen-name">Profile</div><div class="screen-route">/student/profile</div></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:24px">
+      <div style="color:#4A5568;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px">Teacher Portal</div>
+      <div class="screen-grid">
+        <div class="screen-card"><div class="screen-icon">📊</div><div class="screen-name">KPI Dashboard</div><div class="screen-route">/teacher</div></div>
+        <div class="screen-card"><div class="screen-icon">🔐</div><div class="screen-name">OTP Generator</div><div class="screen-route">/teacher/otp</div></div>
+        <div class="screen-card"><div class="screen-icon">✏️</div><div class="screen-name">Grade Entry</div><div class="screen-route">/teacher/grades</div></div>
+        <div class="screen-card"><div class="screen-icon">📈</div><div class="screen-name">Students</div><div class="screen-route">/teacher/students</div></div>
+        <div class="screen-card"><div class="screen-icon">🏖️</div><div class="screen-name">Leave</div><div class="screen-route">/teacher/leave</div></div>
+        <div class="screen-card"><div class="screen-icon">💬</div><div class="screen-name">Messages</div><div class="screen-route">/teacher/messages</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="notifications">
+    <div class="section-hd">Push Notifications</div>
+    <div class="section-sub">APNs (iOS) and FCM (Android) via Expo Notifications</div>
+
+<pre><span class="c">// src/hooks/useNotifications.ts</span>
+<span class="k">import</span> * <span class="k">as</span> Notifications <span class="k">from</span> <span class="s">'expo-notifications'</span>;
+<span class="k">import</span> { useEffect } <span class="k">from</span> <span class="s">'react'</span>;
+
+Notifications.setNotificationHandler({
+  handleNotification: <span class="k">async</span> () => ({
+    shouldShowAlert: <span class="k">true</span>,
+    shouldPlaySound: <span class="k">true</span>,
+    shouldSetBadge:  <span class="k">true</span>,
+  }),
+});
+
+<span class="k">export function</span> <span class="v">useNotifications</span>() {
+  useEffect(() => {
+    <span class="c">// Register device token with backend</span>
+    <span class="k">const</span> register = <span class="k">async</span> () => {
+      <span class="k">const</span> { status } = <span class="k">await</span> Notifications.requestPermissionsAsync();
+      <span class="k">if</span> (status !== <span class="s">'granted'</span>) <span class="k">return</span>;
+      <span class="k">const</span> { data: token } = <span class="k">await</span> Notifications.getExpoPushTokenAsync();
+      <span class="k">await</span> api.post(<span class="s">'/users/push-token'</span>, { token });
+    };
+    register();
+
+    <span class="c">// Handle notification taps → navigate to relevant screen</span>
+    <span class="k">const</span> sub = Notifications.addNotificationResponseReceivedListener(
+      response => {
+        <span class="k">const</span> { type, entityId } = response.notification.request.content.data;
+        <span class="k">if</span> (type === <span class="s">'fee'</span>)        router.push(<span class="s">'/student/fees'</span>);
+        <span class="k">if</span> (type === <span class="s">'attendance'</span>) router.push(<span class="s">'/student/attendance'</span>);
+        <span class="k">if</span> (type === <span class="s">'grade'</span>)      router.push(<span class="s">'/student/results'</span>);
+        <span class="k">if</span> (type === <span class="s">'otp'</span>)        router.push(<span class="s">'/student/attendance'</span>);
+      }
+    );
+    <span class="k">return</span> () => sub.remove();
+  }, []);
+}</pre>
+
+    <table>
+      <thead><tr><th>Trigger Event</th><th>Target Role(s)</th><th>Channel</th><th>Sound</th></tr></thead>
+      <tbody>
+        <tr><td>Fee overdue (7+ days)</td><td style="color:#8B9CC0">Student, Parent</td><td style="color:#8B9CC0">Push + In-app</td><td style="color:#8B9CC0">⚠️ Alert</td></tr>
+        <tr><td>Attendance below 75%</td><td style="color:#8B9CC0">Student, Parent</td><td style="color:#8B9CC0">Push + In-app</td><td style="color:#8B9CC0">⚠️ Alert</td></tr>
+        <tr><td>OTP session started</td><td style="color:#8B9CC0">Student</td><td style="color:#8B9CC0">Push + Socket</td><td style="color:#8B9CC0">🔔 Default</td></tr>
+        <tr><td>New grade posted</td><td style="color:#8B9CC0">Student, Parent</td><td style="color:#8B9CC0">Push + In-app</td><td style="color:#8B9CC0">🔔 Default</td></tr>
+        <tr><td>Message received</td><td style="color:#8B9CC0">All roles</td><td style="color:#8B9CC0">Push + Socket</td><td style="color:#8B9CC0">💬 Message</td></tr>
+        <tr><td>KPI report due (3 days)</td><td style="color:#8B9CC0">Teacher</td><td style="color:#8B9CC0">Push + In-app</td><td style="color:#8B9CC0">🔔 Default</td></tr>
+        <tr><td>Leave approved/rejected</td><td style="color:#8B9CC0">Teacher</td><td style="color:#8B9CC0">Push + Email</td><td style="color:#8B9CC0">🔔 Default</td></tr>
+        <tr><td>Commission payout processed</td><td style="color:#8B9CC0">Partner</td><td style="color:#8B9CC0">Push + Email</td><td style="color:#8B9CC0">💰 Custom</td></tr>
+        <tr><td>Tier upgrade achieved</td><td style="color:#8B9CC0">Partner</td><td style="color:#8B9CC0">Push + In-app</td><td style="color:#8B9CC0">🏆 Fanfare</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div id="offline">
+    <div class="section-hd">Offline Strategy</div>
+    <div class="section-sub">What works without internet — React Query + AsyncStorage</div>
+    <div class="grid2">
+      <div class="card"><div class="card-accent" style="background:#16A34A"></div><h3>✅ Available Offline</h3><p>Dashboard (cached data) · Timetable (current week) · Attendance records (last 30 days) · Grades and results · Fee invoices · Messages (read-only) · Profile info · Academic calendar</p></div>
+      <div class="card"><div class="card-accent" style="background:#DC2626"></div><h3>🔌 Requires Connection</h3><p>OTP generation &amp; submission · Fee payment · Wallet top-up · Sending messages · Submitting grades · Leave applications · Push notification delivery · Real-time attendance</p></div>
+    </div>
+<pre><span class="c">// React Query offline config — staleTime + gcTime</span>
+<span class="k">const</span> queryClient = <span class="k">new</span> QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: <span class="v">5 * 60 * 1000</span>,   <span class="c">// 5 min — don't refetch</span>
+      gcTime:    <span class="v">24 * 60 * 60 * 1000</span>, <span class="c">// 24h — keep in cache</span>
+      retry: <span class="v">2</span>,
+      networkMode: <span class="s">'offlineFirst'</span>,   <span class="c">// serve from cache when offline</span>
+    },
+  },
+});
+
+<span class="c">// Persist cache to AsyncStorage for app restart</span>
+<span class="k">import</span> { persistQueryClient } <span class="k">from</span> <span class="s">'@tanstack/query-persist-client-core'</span>;
+<span class="k">import</span> { createAsyncStoragePersister } <span class="k">from</span> <span class="s">'@tanstack/query-async-storage-persister'</span>;
+persistQueryClient({
+  queryClient,
+  persister: createAsyncStoragePersister({ storage: AsyncStorage }),
+});</pre>
+  </div>
+
+  <div id="security">
+    <div class="section-hd">Mobile Security</div>
+    <div class="section-sub">OWASP Mobile Top 10 mitigations</div>
+    <table>
+      <thead><tr><th>Threat</th><th>Mitigation</th></tr></thead>
+      <tbody>
+        <tr><td>Insecure token storage</td><td style="color:#8B9CC0">expo-secure-store → iOS Keychain / Android Keystore (encrypted at rest)</td></tr>
+        <tr><td>Certificate pinning bypass</td><td style="color:#8B9CC0">SSL pinning via react-native-ssl-pinning on production builds</td></tr>
+        <tr><td>Root/jailbreak detection</td><td style="color:#8B9CC0">react-native-jail-monkey — block core features on compromised devices</td></tr>
+        <tr><td>Screenshot of sensitive data</td><td style="color:#8B9CC0">FLAG_SECURE on Android; blur overlay on iOS app switcher via lifecycle events</td></tr>
+        <tr><td>Biometric bypass</td><td style="color:#8B9CC0">expo-local-authentication with fallback PIN; never store biometric hash locally</td></tr>
+        <tr><td>Reverse engineering</td><td style="color:#8B9CC0">Hermes engine; ProGuard/R8 minification; Metro bundler + code splitting</td></tr>
+        <tr><td>Deep link hijacking</td><td style="color:#8B9CC0">Verified App Links (Android) + Universal Links (iOS) with SHA-256 fingerprint</td></tr>
+        <tr><td>Data leakage in logs</td><td style="color:#8B9CC0">Disable console.log in production; no PII in Sentry breadcrumbs</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div>
+    <div class="section-hd">Build & Release</div>
+    <div class="section-sub">EAS Build for CI/CD, OTA updates via Expo Updates</div>
+<pre><span class="c"># eas.json</span>
+{
+  <span class="s">"cli"</span>: { <span class="s">"version"</span>: <span class="s">">= 7.0.0"</span> },
+  <span class="s">"build"</span>: {
+    <span class="s">"development"</span>: {
+      <span class="s">"distribution"</span>: <span class="s">"internal"</span>,
+      <span class="s">"android"</span>: { <span class="s">"buildType"</span>: <span class="s">"apk"</span> },
+      <span class="s">"ios"</span>: { <span class="s">"simulator"</span>: <span class="k">true</span> }
+    },
+    <span class="s">"preview"</span>: {
+      <span class="s">"distribution"</span>: <span class="s">"internal"</span>
+    },
+    <span class="s">"production"</span>: {
+      <span class="s">"autoIncrement"</span>: <span class="k">true</span>,
+      <span class="s">"android"</span>: { <span class="s">"buildType"</span>: <span class="s">"app-bundle"</span> },  <span class="c">// .aab for Play Store</span>
+      <span class="s">"ios"</span>: { <span class="s">"distribution"</span>: <span class="s">"store"</span> }           <span class="c">// App Store Connect</span>
+    }
+  },
+  <span class="s">"submit"</span>: {
+    <span class="s">"production"</span>: {
+      <span class="s">"ios"</span>:     { <span class="s">"appleId"</span>: <span class="s">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="741510191d1a341c1504040d59111a13181d071c5a1110015a021a">[email&#160;protected]</a>"</span> },
+      <span class="s">"android"</span>: { <span class="s">"serviceAccountKeyPath"</span>: <span class="s">"./google-key.json"</span> }
+    }
+  }
+}</pre>
+  </div>
+
+</div>
+<div style="text-align:center;padding:32px;color:#4A5568;font-size:12px;border-top:1px solid rgba(255,255,255,.05)">
+  HE-SYSTEM React Native Mobile Specification v1.0 · June 2026
+</div>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+</html>

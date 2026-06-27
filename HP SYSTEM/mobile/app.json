@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "HP System",
+    "slug": "hp-system",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": { "image": "./assets/splash.png", "resizeMode": "contain", "backgroundColor": "#1a1a2e" },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.hpsystem.lms",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Used for attendance face check-in",
+        "NSFaceIDUsageDescription": "Used for secure biometric login",
+        "NSLocationWhenInUseUsageDescription": "Used to verify you are at school for attendance"
+      }
+    },
+    "android": {
+      "package": "com.hpsystem.lms",
+      "permissions": ["CAMERA", "USE_BIOMETRIC", "USE_FINGERPRINT", "ACCESS_FINE_LOCATION"],
+      "adaptiveIcon": { "foregroundImage": "./assets/adaptive-icon.png", "backgroundColor": "#0D1626" }
+    },
+    "web": { "favicon": "./assets/favicon.png" },
+    "plugins": [
+      ["expo-camera", { "cameraPermission": "Allow HP System to access your camera for attendance" }],
+      ["expo-location", { "locationWhenInUsePermission": "Allow HP System to verify your school location" }],
+      "expo-secure-store",
+      "expo-local-authentication",
+      "expo-notifications"
+    ],
+    "extra": {
+      "apiUrl": "https://api.hpsystem.vn/api"
+    }
+  }
+}

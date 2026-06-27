@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HE-SYSTEM — Agile User Stories & Backlog</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#070C18;color:#F1F5F9;-webkit-font-smoothing:antialiased}
+.topnav{position:sticky;top:0;background:rgba(5,9,15,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.07);z-index:99;padding:0 28px;height:52px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.logo{font-family:'Oswald';font-weight:700;font-size:17px;color:#F1F5F9;flex-shrink:0}.logo span{color:#DC2626}
+.filters{display:flex;gap:6px;flex-wrap:wrap;flex:1}
+.filt{padding:4px 12px;border-radius:20px;cursor:pointer;font-size:12px;font-weight:600;border:1px solid rgba(255,255,255,.1);color:#8B9CC0;background:transparent;transition:all 150ms;font-family:inherit}
+.filt:hover{background:rgba(255,255,255,.06);color:#F1F5F9}
+.filt.active{background:#1B3D8C;border-color:rgba(27,61,140,.5);color:#fff}
+.stats-bar{display:flex;gap:24px;align-items:center;padding:12px 28px;border-bottom:1px solid rgba(255,255,255,.06);background:#05090F;flex-wrap:wrap}
+.stat{display:flex;align-items:center;gap:8px}
+.stat-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.stat-txt{color:#8B9CC0;font-size:12px}
+.stat-n{font-weight:700;color:#F1F5F9;font-size:13px}
+.wrap{max-width:1100px;margin:0 auto;padding:28px}
+.epic{margin-bottom:40px}
+.epic-hd{display:flex;align-items:center;gap:14px;padding:16px 22px;border-radius:14px 14px 0 0;border:1px solid transparent;border-bottom:none}
+.epic-title{font-family:'Oswald';font-weight:700;font-size:20px}
+.epic-sub{color:rgba(255,255,255,.5);font-size:13px;margin-top:2px}
+.epic-count{margin-left:auto;font-size:12px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(0,0,0,.3);flex-shrink:0}
+.stories{border:1px solid transparent;border-top:none;border-radius:0 0 14px 14px;overflow:hidden}
+.story{display:flex;align-items:flex-start;gap:0;border-bottom:1px solid rgba(255,255,255,.05);transition:background 150ms}
+.story:last-child{border-bottom:none}
+.story:hover{filter:brightness(1.08)}
+.story-id{font-family:'JetBrains Mono';font-size:10px;color:rgba(255,255,255,.3);padding:14px 14px 14px 18px;min-width:80px;flex-shrink:0;line-height:1.8;padding-top:16px}
+.story-body{flex:1;padding:12px 0 12px 0}
+.story-title{font-size:14px;font-weight:600;color:#F1F5F9;line-height:1.45}
+.story-text{font-size:12px;color:#8B9CC0;margin-top:4px;line-height:1.6}
+.story-accept{font-size:11px;color:#4A5568;margin-top:6px;line-height:1.6}
+.story-accept strong{color:#64748B}
+.story-meta{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.03em}
+.status-done{background:rgba(22,163,74,.15);color:#86EFAC;border:1px solid rgba(22,163,74,.2)}
+.status-progress{background:rgba(27,61,140,.2);color:#93B4FF;border:1px solid rgba(27,61,140,.3)}
+.status-planned{background:rgba(245,158,11,.12);color:#FCD34D;border:1px solid rgba(245,158,11,.25)}
+.status-future{background:rgba(100,116,139,.12);color:#94A3B8;border:1px solid rgba(100,116,139,.2)}
+.pts{background:rgba(124,58,237,.12);color:#C4B5FD;border:1px solid rgba(124,58,237,.2);border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700}
+.prio-high{background:rgba(220,38,38,.12);color:#FCA5A5;border:1px solid rgba(220,38,38,.2)}
+.prio-med{background:rgba(245,158,11,.1);color:#FCD34D;border:1px solid rgba(245,158,11,.2)}
+.prio-low{background:rgba(100,116,139,.1);color:#94A3B8;border:1px solid rgba(100,116,139,.2)}
+.story-side{padding:12px 18px 12px 12px;min-width:60px;display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="logo">HE<span>-SYSTEM</span> User Stories</div>
+  <div class="filters">
+    <button class="filt active" onclick="filterEpic(this,'all')">All</button>
+    <button class="filt" onclick="filterEpic(this,'student')">🎓 Student</button>
+    <button class="filt" onclick="filterEpic(this,'teacher')">👩‍🏫 Teacher</button>
+    <button class="filt" onclick="filterEpic(this,'admin')">⚙️ Admin</button>
+    <button class="filt" onclick="filterEpic(this,'management')">📊 Management</button>
+    <button class="filt" onclick="filterEpic(this,'partner')">🤝 Partner</button>
+    <button class="filt" onclick="filterEpic(this,'parent')">👨‍👩‍👧 Parent</button>
+    <button class="filt" onclick="filterEpic(this,'system')">🔧 System</button>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat"><div class="stat-dot" style="background:#86EFAC"></div><span class="stat-n" id="cnt-done">0</span><span class="stat-txt">Done</span></div>
+  <div class="stat"><div class="stat-dot" style="background:#93B4FF"></div><span class="stat-n" id="cnt-prog">0</span><span class="stat-txt">In Progress</span></div>
+  <div class="stat"><div class="stat-dot" style="background:#FCD34D"></div><span class="stat-n" id="cnt-plan">0</span><span class="stat-txt">Planned</span></div>
+  <div class="stat"><div class="stat-dot" style="background:#94A3B8"></div><span class="stat-n" id="cnt-fut">0</span><span class="stat-txt">Future</span></div>
+  <div class="stat" style="margin-left:auto"><span class="stat-txt">Total Story Points:</span> <span class="stat-n" id="cnt-pts">0</span></div>
+</div>
+
+<div class="wrap" id="backlog"></div>
+
+<script>
+const EPICS = [
+  { id:'student', emoji:'🎓', title:'Student Portal', color:'#1B3D8C', borderColor:'rgba(27,61,140,.25)', stories:[
+    { id:'STU-001', title:'View personalised dashboard', text:'As a student, I want to see my attendance rate, GPA, fee balance, and today\'s classes on my dashboard so that I can quickly assess my academic standing.', accept:'Given I am logged in as a student / When I open the dashboard / Then I see my current stats, today\'s timetable, and subject progress bars.', status:'done', pts:8, prio:'high' },
+    { id:'STU-002', title:'Mark attendance via OTP', text:'As a student, I want to enter a 6-digit OTP provided by my teacher to mark myself present, so that attendance is recorded accurately and in real-time.', accept:'Given a teacher has started an OTP session / When I enter the correct code within the time window / Then my attendance is marked as present.', status:'done', pts:13, prio:'high' },
+    { id:'STU-003', title:'View weekly timetable', text:'As a student, I want to see my full weekly timetable with room numbers, teacher names, and online/campus labels so I can plan my week.', accept:'Given I open the Timetable screen / Then I can switch between Mon–Fri tabs / And each class shows time, subject, teacher, room, and mode badge.', status:'done', pts:5, prio:'high' },
+    { id:'STU-004', title:'View attendance calendar', text:'As a student, I want to see a monthly calendar view of my attendance history, colour-coded as present/absent/late, so I can track my attendance rate.', accept:'Given I open the Attendance screen / Then I see a calendar with green/red/amber dots / And a subject-by-subject breakdown with percentage.', status:'done', pts:5, prio:'high' },
+    { id:'STU-005', title:'View and pay fees', text:'As a student, I want to see all my invoices (paid, pending, overdue) and make payments online so I never miss a deadline.', accept:'Given I open the Fees screen / Then I see invoice status, amounts, due dates / And overdue invoices are flagged in red / And I can tap "Pay Now".', status:'done', pts:8, prio:'high' },
+    { id:'STU-006', title:'Manage e-wallet', text:'As a student, I want to top up my campus e-wallet and use it for canteen, printing, and services, so I don\'t need cash on campus.', accept:'Given I open E-Wallet / Then I see my balance, transaction history / And I can top up with preset amounts via online banking.', status:'done', pts:8, prio:'med' },
+    { id:'STU-007', title:'View academic results', text:'As a student, I want to see my grades, GPA, and transcript for each semester, so I can monitor my academic progress.', accept:'Given I open Results / Then I see GPA, per-subject grades and scores / And a semester history table.', status:'done', pts:5, prio:'high' },
+    { id:'STU-008', title:'Message teachers', text:'As a student, I want to send direct messages to my subject teachers so I can ask questions between classes.', accept:'Given I open Messages / Then I see a thread per teacher / And I can send text messages with read receipts.', status:'done', pts:8, prio:'med' },
+    { id:'STU-009', title:'View campus map', text:'As a student, I want to see an interactive campus map with building locations so I can find my classrooms.', accept:'Given I open Location / Then I see a colour-coded campus map / And can hover buildings to see which rooms are inside.', status:'done', pts:3, prio:'low' },
+    { id:'STU-010', title:'Manage profile', text:'As a student, I want to view and edit my personal information, change my password and manage 2FA settings.', accept:'Given I open Profile / Then I see my personal info in edit mode / And changes are saved with success toast.', status:'done', pts:5, prio:'med' },
+    { id:'STU-011', title:'Receive push notifications', text:'As a student, I want to receive real-time alerts for fee deadlines, low attendance warnings, and new grades.', accept:'Given a trigger event occurs / Then a notification appears in the bell panel / And the badge count increments.', status:'done', pts:5, prio:'high' },
+    { id:'STU-012', title:'View academic calendar', text:'As a student, I want to see upcoming academic events (exams, holidays, deadlines) in a shared calendar.', accept:'Given I open the Calendar / Then I see all events colour-coded by type / And can click any date for full details.', status:'done', pts:3, prio:'med' },
+    { id:'STU-013', title:'Download transcript PDF', text:'As a student, I want to download an official PDF transcript of my results so I can share it with employers or other institutions.', accept:'Given I click Download Transcript / Then a PDF is generated with my name, ID, all grades and GPA / Within 10 seconds.', status:'planned', pts:8, prio:'med' },
+    { id:'STU-014', title:'IELTS practice tests', text:'As a student, I want to take timed online IELTS mock tests so I can prepare for my actual exam.', accept:'Given I open the IELTS Practice module / Then I can select test type and take a timed, scored practice test.', status:'future', pts:21, prio:'low' },
+  ]},
+  { id:'teacher', emoji:'👩‍🏫', title:'Teacher Portal', color:'#2E5FCC', borderColor:'rgba(46,95,204,.25)', stories:[
+    { id:'TCH-001', title:'View KPI dashboard', text:'As a teacher, I want to see my current KPI score broken down into 4 pillars (Teaching Hours, Student Outcomes, Admin, R&D) so I know exactly where to improve.', accept:'Given I open my KPI dashboard / Then I see an overall score, letter grade, and 4 pillar progress bars with weighted contributions.', status:'done', pts:8, prio:'high' },
+    { id:'TCH-002', title:'Generate OTP attendance code', text:'As a teacher, I want to generate a time-limited 6-digit OTP for each class session so students can digitally mark their attendance.', accept:'Given I start a session for a class / Then a 6-digit OTP is generated / And a countdown timer shows remaining seconds / And I can view live student check-ins.', status:'done', pts:13, prio:'high' },
+    { id:'TCH-003', title:'Enter grades for assessments', text:'As a teacher, I want to enter marks for Assessment 1, Assessment 2, and Final Exam for each student, with the system auto-calculating the overall grade.', accept:'Given I open Grade Entry for a class / Then I can edit each student\'s marks / And overall % and grade are auto-calculated / And I can submit all grades at once.', status:'done', pts:8, prio:'high' },
+    { id:'TCH-004', title:'View student progress', text:'As a teacher, I want to see all students in my class with their grades and attendance, with at-risk students highlighted.', accept:'Given I open Student Progress / Then students scoring below 65% are flagged in red / And I can see per-student grade breakdowns.', status:'done', pts:5, prio:'high' },
+    { id:'TCH-005', title:'Apply for leave', text:'As a teacher, I want to apply for leave online with reason, dates and cover teacher, so I don\'t have to fill in paper forms.', accept:'Given I complete the leave form / Then the request is submitted / And my leave balance is reduced / And I receive confirmation.', status:'done', pts:5, prio:'med' },
+    { id:'TCH-006', title:'View leave balance and history', text:'As a teacher, I want to see how many days of each leave type I have remaining and my full leave history.', accept:'Given I open Leave / Then I see Annual, Medical, Emergency, Conference balances / And a history table with statuses.', status:'done', pts:3, prio:'med' },
+    { id:'TCH-007', title:'Submit monthly KPI report', text:'As a teacher, I want to submit my monthly KPI report through the portal, attaching evidence for each pillar.', accept:'Given I complete my report / Then I can submit it as "Submitted" / And management receives a notification to review.', status:'planned', pts:8, prio:'high' },
+    { id:'TCH-008', title:'Receive KPI improvement recommendations', text:'As a teacher, I want AI-generated recommendations based on my KPI score so I know exactly what to focus on to improve.', accept:'Given my KPI score is below 80 / Then the system shows specific, actionable improvement tips per underperforming pillar.', status:'future', pts:13, prio:'low' },
+  ]},
+  { id:'admin', emoji:'⚙️', title:'Admin Portal', color:'#475569', borderColor:'rgba(71,85,105,.3)', stories:[
+    { id:'ADM-001', title:'Enrol a new student (4-step wizard)', text:'As an admin, I want to register a new student through a guided 4-step wizard (Personal → Academic → Documents → Review) so that enrolments are complete and consistent.', accept:'Given I complete all 4 steps / Then a student account is created, a student ID is generated, and a welcome email is sent automatically.', status:'done', pts:13, prio:'high' },
+    { id:'ADM-002', title:'Manage student directory', text:'As an admin, I want to view, search, and filter all students by status (active/pending/inactive) and update their records.', accept:'Given I open Students / Then I can filter by status / And search by name or ID / And click to view/edit any student.', status:'done', pts:8, prio:'high' },
+    { id:'ADM-003', title:'Create and manage fee invoices', text:'As an admin, I want to create invoices for student fees, mark them as paid, and send automated reminders for overdue accounts.', accept:'Given I create an invoice / Then it appears in the student\'s fee list / And I can mark paid, download receipt, or send reminder.', status:'done', pts:8, prio:'high' },
+    { id:'ADM-004', title:'Manage staff directory', text:'As an admin, I want to view all staff members with their KPI scores, employment type, and documents, and add new staff.', accept:'Given I open Staff / Then I see a searchable table / With KPI score bars and employment badges / And can view individual profiles.', status:'done', pts:5, prio:'high' },
+    { id:'ADM-005', title:'Manage partner accounts', text:'As an admin, I want to register and manage referring partner accounts, view their tier and commission totals.', accept:'Given I open Partners / Then I see all partners with tier badges and commission totals / And can view detail or edit status.', status:'done', pts:5, prio:'high' },
+    { id:'ADM-006', title:'Generate and export reports', text:'As an admin, I want to generate attendance, academic, financial, enrolment, KPI, and partner reports and export them as PDF, CSV, or Excel.', accept:'Given I select a report type and date range / Then a report is generated / And download buttons for PDF/CSV/Excel appear.', status:'done', pts:8, prio:'high' },
+    { id:'ADM-007', title:'Build and publish class timetables', text:'As an admin, I want to create and publish class timetables, assign teachers and rooms, and detect scheduling conflicts.', accept:'Given I open the Timetable Builder / Then I can drag-and-drop sessions / And the system warns on conflicts.', status:'progress', pts:21, prio:'high' },
+    { id:'ADM-008', title:'Send bulk fee reminders', text:'As an admin, I want to select multiple overdue invoices and send a bulk reminder email/SMS to all affected students and parents.', accept:'Given I select overdue invoices / When I click "Send Bulk Reminder" / Then emails are queued and sent within 5 minutes.', status:'planned', pts:8, prio:'high' },
+    { id:'ADM-009', title:'Bulk import students from CSV', text:'As an admin, I want to import a CSV of student records to bulk-enrol a new intake without entering each one manually.', accept:'Given I upload a CSV / Then the system validates each row / Shows errors inline / And enrols valid records in bulk.', status:'planned', pts:13, prio:'med' },
+  ]},
+  { id:'management', emoji:'📊', title:'Management Portal', color:'#7C3AED', borderColor:'rgba(124,58,237,.25)', stories:[
+    { id:'MGT-001', title:'View executive dashboard', text:'As a management user, I want a real-time overview of revenue, enrolment, KPI average, and key alerts so I can identify issues immediately.', accept:'Given I open the dashboard / Then I see 4 key metrics, alert banners, revenue chart, and top teacher KPI table.', status:'done', pts:13, prio:'high' },
+    { id:'MGT-002', title:'View all-staff KPI league table', text:'As a management user, I want to see all teachers\' KPI scores in one sortable, filterable table so I can identify high performers and those needing support.', accept:'Given I open KPI Overview / Then I can sort by score and filter by grade / And each row shows KPI bar, grade, type, and trend.', status:'done', pts:8, prio:'high' },
+    { id:'MGT-003', title:'View financial P&L dashboard', text:'As a management user, I want a full profit & loss view with revenue breakdown, expense categories, and net profit margin.', accept:'Given I open Finance / Then I see revenue breakdown, expense breakdown, monthly trend chart, and net profit.', status:'done', pts:8, prio:'high' },
+    { id:'MGT-004', title:'View student analytics', text:'As a management user, I want to see at-risk students, retention rates, and enrolment by programme so I can make data-driven decisions.', accept:'Given I open Analytics / Then I see at-risk student list, retention trend chart, and programme enrolment breakdown.', status:'done', pts:8, prio:'high' },
+    { id:'MGT-005', title:'Approve leave requests', text:'As a management user, I want to review and approve/reject teacher leave applications.', accept:'Given a leave request is submitted / Then I see it in my dashboard / And can approve or reject with a reason.', status:'planned', pts:5, prio:'high' },
+    { id:'MGT-006', title:'Approve KPI reports', text:'As a management user, I want to review submitted teacher KPI reports and approve or request changes.', accept:'Given a KPI report is submitted / Then I can review all pillars / And approve or return with comments.', status:'planned', pts:8, prio:'high' },
+    { id:'MGT-007', title:'Set institutional targets', text:'As a management user, I want to set annual revenue, enrolment, and KPI targets so that dashboards show progress-vs-target.', accept:'Given I open Settings / Then I can enter targets for current year / And dashboards update to show % vs target.', status:'planned', pts:5, prio:'med' },
+    { id:'MGT-008', title:'View projected revenue forecast', text:'As a management user, I want to see a 3-month projected revenue forecast based on current enrolment and historical data.', accept:'Given I open Finance / Then a forecast section shows projected next 3 months with confidence interval.', status:'future', pts:21, prio:'low' },
+  ]},
+  { id:'partner', emoji:'🤝', title:'Partner Portal', color:'#D97706', borderColor:'rgba(217,119,6,.25)', stories:[
+    { id:'PTR-001', title:'View partner dashboard and tier status', text:'As a partner, I want to see my current tier, commission rate, total earnings, and progress to the next tier so I am motivated to recruit more students.', accept:'Given I open my dashboard / Then I see my tier badge, commission rate, total earned, pending payout / And a progress bar to next tier.', status:'done', pts:8, prio:'high' },
+    { id:'PTR-002', title:'View commission breakdown', text:'As a partner, I want to see how my commission is calculated and see a monthly breakdown of earnings.', accept:'Given I open Commission Tracker / Then I see the formula, my current rate, and a monthly earnings table.', status:'done', pts:5, prio:'high' },
+    { id:'PTR-003', title:'Request a payout', text:'As a partner, I want to submit a payout request with my bank details so that I receive my earned commission.', accept:'Given I click Request Payout / Then I enter bank details / And the request is recorded / And admin receives notification.', status:'done', pts:8, prio:'high' },
+    { id:'PTR-004', title:'View my referred students', text:'As a partner, I want to see all students I have referred, their enrolment status, and commission per student.', accept:'Given I open My Students / Then I see a table with name, programme, status, commission earned, and date.', status:'done', pts:5, prio:'high' },
+    { id:'PTR-005', title:'View leaderboard', text:'As a partner, I want to see my ranking compared to other partners by students recruited, to stay motivated.', accept:'Given I open the Leaderboard / Then I see top partners ranked / And my own row is highlighted / With tier badges visible.', status:'done', pts:3, prio:'med' },
+    { id:'PTR-006', title:'Generate referral link', text:'As a partner, I want a unique trackable referral link so I can share it online and have referrals automatically attributed to me.', accept:'Given I open my profile / Then I see a unique referral URL / And can copy or share it.', status:'planned', pts:8, prio:'high' },
+    { id:'PTR-007', title:'Receive tier upgrade notification', text:'As a partner, I want to receive a congratulatory notification when I reach a new tier so I know my rate has increased.', accept:'Given I reach the threshold for a new tier / Then I receive an in-app notification and email / And my dashboard updates immediately.', status:'planned', pts:3, prio:'med' },
+  ]},
+  { id:'parent', emoji:'👨‍👩‍👧', title:'Parent Portal', color:'#16A34A', borderColor:'rgba(22,163,74,.25)', stories:[
+    { id:'PAR-001', title:'View child dashboard', text:'As a parent, I want to see a summary of my child\'s attendance, GPA, and fee balance so I can monitor their academic health.', accept:'Given I open the parent dashboard / Then I see stats for each linked child / And can switch between children with one tap.', status:'done', pts:8, prio:'high' },
+    { id:'PAR-002', title:'Receive attendance alerts', text:'As a parent, I want to receive an immediate notification when my child is absent or late so I can follow up.', accept:'Given my child is marked absent or late / Then within 5 minutes I receive a push notification / With the date, time, and subject.', status:'done', pts:5, prio:'high' },
+    { id:'PAR-003', title:'View attendance calendar', text:'As a parent, I want to see my child\'s monthly attendance calendar so I can spot patterns of absenteeism.', accept:'Given I open Attendance / Then I see the same calendar the student sees / Colour-coded by present/absent/late.', status:'done', pts:3, prio:'high' },
+    { id:'PAR-004', title:'View academic results', text:'As a parent, I want to see my child\'s grades, GPA and semester history so I know how they are performing.', accept:'Given I open Results / Then I see the report card with all subjects, grades, scores / And a downloadable PDF option.', status:'done', pts:5, prio:'high' },
+    { id:'PAR-005', title:'Pay fees', text:'As a parent, I want to view outstanding fee invoices and pay them directly in the app so I don\'t need to visit the school.', accept:'Given I open Fees / Then I see outstanding amount / And can tap "Pay Now" to be redirected to a secure payment gateway.', status:'done', pts:8, prio:'high' },
+    { id:'PAR-006', title:'Message teachers', text:'As a parent, I want to send messages to my child\'s subject teachers to discuss progress or concerns.', accept:'Given I open Messages / Then I see a thread per teacher / And my messages are clearly labelled as Parent.', status:'done', pts:5, prio:'med' },
+    { id:'PAR-007', title:'Link multiple children', text:'As a parent with multiple children enrolled, I want to switch between them with a single tap to manage all accounts from one login.', accept:'Given I have 2+ linked children / Then the dashboard shows child switcher tabs / And all screens update for the selected child.', status:'done', pts:5, prio:'high' },
+  ]},
+  { id:'system', emoji:'🔧', title:'System / Cross-Cutting', color:'#64748B', borderColor:'rgba(100,116,139,.25)', stories:[
+    { id:'SYS-001', title:'JWT authentication with refresh tokens', text:'As a system, I need secure, stateless authentication using short-lived JWTs (15min) and rotating refresh tokens (7 days) stored in HTTP-only cookies.', accept:'Given a user logs in / Then an access token and refresh cookie are issued / And the access token expires in 15min / And refresh auto-renews without re-login.', status:'done', pts:13, prio:'high' },
+    { id:'SYS-002', title:'Role-based access control', text:'As a system, I need to enforce RBAC so each user can only access endpoints and data relevant to their role.', accept:'Given any API request / Then the role guard validates the token role / And returns 403 for unauthorised access / And ownership checks prevent cross-user data access.', status:'done', pts:8, prio:'high' },
+    { id:'SYS-003', title:'Real-time Socket.IO events', text:'As a system, I need a WebSocket layer for live OTP broadcasting, attendance updates, and notification delivery.', accept:'Given a teacher starts an OTP session / Then all students in that class room receive the code via socket / And attendance check-ins appear live for the teacher.', status:'done', pts:13, prio:'high' },
+    { id:'SYS-004', title:'Dark/light mode', text:'As any user, I want to switch between dark and light interface themes, with my preference persisted across sessions.', accept:'Given I toggle the theme / Then the UI immediately updates / And my preference is saved in localStorage / And persists on next login.', status:'done', pts:3, prio:'med' },
+    { id:'SYS-005', title:'Bilingual EN/VI toggle', text:'As any user, I want to switch the entire UI between English and Vietnamese, so non-English-speaking stakeholders can use the platform.', accept:'Given I tap the language toggle / Then all labels, headings and navigation update to the selected language / Without page reload.', status:'done', pts:5, prio:'high' },
+    { id:'SYS-006', title:'Notification system', text:'As any user, I want a role-appropriate notification panel showing urgent and informational alerts with unread count badge.', accept:'Given an event triggers a notification / Then the bell badge increments / And opening the panel shows the notification with type, urgency, and action button.', status:'done', pts:8, prio:'high' },
+    { id:'SYS-007', title:'Rate limiting & security', text:'As a system, I need rate limiting (100 req/min), login throttling (5 attempts/15min), and OTP attempt limits (3 per session) to prevent abuse.', accept:'Given the rate limit is exceeded / Then a 429 response is returned / With a Retry-After header / And the limit resets automatically.', status:'done', pts:8, prio:'high' },
+    { id:'SYS-008', title:'Audit logging', text:'As a system, all write operations (create, update, delete) must be logged to an immutable audit_logs table.', accept:'Given any write operation / Then a row is inserted to audit_logs with user_id, action, entity, old_value, new_value, timestamp / And no UPDATE/DELETE allowed on audit rows.', status:'done', pts:5, prio:'high' },
+    { id:'SYS-009', title:'Payment gateway integration', text:'As a system, I need to process fee payments and wallet top-ups via Stripe and FPX/bank transfer.', accept:'Given a user initiates payment / Then they are redirected to a hosted payment page / On success the invoice is updated and a receipt emailed.', status:'progress', pts:21, prio:'high' },
+    { id:'SYS-010', title:'Native mobile apps (iOS + Android)', text:'As a user, I want native iOS and Android apps with push notifications, offline access, and biometric login.', accept:'Given the apps are installed / Then core portal features work offline / And push notifications are delivered via APNs/FCM / And Face ID/Touch ID can log in.', status:'planned', pts:55, prio:'high' },
+    { id:'SYS-011', title:'Automated PDF invoice generation', text:'As a system, invoices and receipts must be auto-generated as downloadable PDFs with the HE logo and correct data.', accept:'Given an invoice is created / Then a PDF is generated within 30 seconds / Accessible via download link in the portal.', status:'planned', pts:8, prio:'med' },
+    { id:'SYS-012', title:'AI essay feedback engine', text:'As a student, I want AI-powered feedback on my IELTS writing submissions so I can improve faster.', accept:'Given I submit an essay / Then the AI scores it against IELTS criteria / And provides band-specific improvement suggestions within 60 seconds.', status:'future', pts:34, prio:'low' },
+  ]},
+];
+
+const STATUS_LABELS = { done:'Done', progress:'In Progress', planned:'Planned', future:'Future' };
+
+function renderBacklog(filter) {
+  const el = document.getElementById('backlog');
+  el.innerHTML = '';
+  let done=0,prog=0,plan=0,fut=0,pts=0;
+
+  EPICS.filter(e => filter==='all' || e.id===filter).forEach(epic => {
+    const div = document.createElement('div');
+    div.className = 'epic';
+    div.dataset.epic = epic.id;
+
+    const storyHTML = epic.stories.map(s => {
+      done+=(s.status==='done'?1:0); prog+=(s.status==='progress'?1:0);
+      plan+=(s.status==='planned'?1:0); fut+=(s.status==='future'?1:0);
+      pts+=s.pts;
+      const sc = {'done':'status-done','progress':'status-progress','planned':'status-planned','future':'status-future'}[s.status];
+      const pc = {'high':'prio-high','med':'prio-med','low':'prio-low'}[s.prio];
+      return `<div class="story">
+        <div class="story-id">${s.id}</div>
+        <div class="story-body">
+          <div class="story-title">${s.title}</div>
+          <div class="story-text">${s.text}</div>
+          <div class="story-accept"><strong>Acceptance:</strong> ${s.accept}</div>
+          <div class="story-meta">
+            <span class="tag ${sc}">${STATUS_LABELS[s.status]}</span>
+            <span class="tag ${pc}">${{high:'🔴 High',med:'🟡 Med',low:'🟢 Low'}[s.prio]}</span>
+          </div>
+        </div>
+        <div class="story-side"><span class="pts">${s.pts} pts</span></div>
+      </div>`;
+    }).join('');
+
+    div.innerHTML = `
+      <div class="epic-hd" style="background:${epic.color}10;border-color:${epic.borderColor};">
+        <span style="font-size:28px;">${epic.emoji}</span>
+        <div><div class="epic-title">${epic.title}</div><div class="epic-sub">${epic.stories.length} user stories</div></div>
+        <span class="epic-count" style="color:${epic.color==='#D97706'?'#FCD34D':'#93B4FF'};">${epic.stories.reduce((a,s)=>a+s.pts,0)} pts</span>
+      </div>
+      <div class="stories" style="border-color:${epic.borderColor};background:${epic.color}06;">${storyHTML}</div>`;
+    el.appendChild(div);
+  });
+
+  document.getElementById('cnt-done').textContent = done;
+  document.getElementById('cnt-prog').textContent = prog;
+  document.getElementById('cnt-plan').textContent = plan;
+  document.getElementById('cnt-fut').textContent = fut;
+  document.getElementById('cnt-pts').textContent = pts;
+}
+
+function filterEpic(btn, id) {
+  document.querySelectorAll('.filt').forEach(f=>f.classList.remove('active'));
+  btn.classList.add('active');
+  renderBacklog(id);
+}
+
+renderBacklog('all');
+</script>
+</body>
+</html>

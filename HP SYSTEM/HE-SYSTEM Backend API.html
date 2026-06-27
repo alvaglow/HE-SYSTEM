@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>HE-SYSTEM — Backend API & Database Specification</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:#070C18;color:#F1F5F9;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:#93B4FF;text-decoration:none}
+a:hover{text-decoration:underline}
+.wrap{max-width:1140px;margin:0 auto;padding:0 24px}
+/* Nav */
+.topnav{position:sticky;top:0;background:rgba(5,9,15,0.92);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.07);z-index:100;padding:0 24px;height:52px;display:flex;align-items:center;gap:24px}
+.topnav .logo{font-family:'Oswald';font-weight:700;font-size:17px;color:#F1F5F9;white-space:nowrap}
+.topnav .logo span{color:#DC2626}
+.topnav nav{display:flex;gap:6px;flex-wrap:wrap}
+.topnav nav a{padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;color:#8B9CC0;transition:all 150ms;white-space:nowrap}
+.topnav nav a:hover{background:rgba(255,255,255,0.06);color:#F1F5F9;text-decoration:none}
+/* Hero */
+.hero{padding:72px 0 48px;border-bottom:1px solid rgba(255,255,255,0.07)}
+.hero h1{font-family:'Oswald';font-weight:800;font-size:48px;line-height:1.1;letter-spacing:-0.02em;margin-bottom:12px}
+.hero h1 span{color:#DC2626}
+.hero .sub{color:#8B9CC0;font-size:16px;max-width:640px;margin-bottom:28px}
+.tag{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.04em;margin-right:6px;margin-bottom:6px}
+.tag.green{background:rgba(22,163,74,0.15);color:#86EFAC;border:1px solid rgba(22,163,74,0.3)}
+.tag.blue{background:rgba(27,61,140,0.18);color:#93B4FF;border:1px solid rgba(27,61,140,0.35)}
+.tag.gold{background:rgba(245,158,11,0.15);color:#FCD34D;border:1px solid rgba(245,158,11,0.3)}
+.tag.purple{background:rgba(124,58,237,0.15);color:#C4B5FD;border:1px solid rgba(124,58,237,0.3)}
+/* Section */
+section{padding:48px 0;border-bottom:1px solid rgba(255,255,255,0.06)}
+section:last-child{border-bottom:none}
+.section-title{font-family:'Oswald';font-weight:700;font-size:26px;color:#F1F5F9;margin-bottom:6px}
+.section-sub{color:#8B9CC0;font-size:14px;margin-bottom:28px}
+/* Cards grid */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+@media(max-width:768px){.grid2,.grid3{grid-template-columns:1fr}}
+.card{background:#0F1729;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:20px}
+.card h3{font-family:'Oswald';font-size:16px;font-weight:700;color:#F1F5F9;margin-bottom:6px}
+.card p{color:#8B9CC0;font-size:13px;line-height:1.6}
+.card .accent{position:absolute;top:0;left:0;right:0;height:3px;border-radius:12px 12px 0 0}
+.card{position:relative;overflow:hidden}
+/* Table */
+.tbl{width:100%;border-collapse:collapse;font-size:13px;margin:16px 0}
+.tbl th{padding:9px 14px;background:#0A1020;color:#4A5568;font-weight:700;text-transform:uppercase;font-size:10px;letter-spacing:0.06em;text-align:left;border-bottom:1px solid rgba(255,255,255,0.07)}
+.tbl td{padding:9px 14px;border-bottom:1px solid rgba(255,255,255,0.05);color:#8B9CC0;vertical-align:top}
+.tbl td:first-child{color:#F1F5F9;font-family:'JetBrains Mono';font-size:12px;white-space:nowrap}
+.tbl tr:hover td{background:rgba(255,255,255,0.02)}
+/* Code block */
+pre{background:#05090F;border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:18px 20px;overflow-x:auto;font-family:'JetBrains Mono';font-size:12px;line-height:1.7;color:#CBD5E1;margin:12px 0}
+.k{color:#93B4FF} .s{color:#86EFAC} .c{color:#4A5568;font-style:italic} .n{color:#FCD34D} .t{color:#FCA5A5} .m{color:#C4B5FD}
+/* Method badge */
+.method{display:inline-block;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:800;font-family:'JetBrains Mono';letter-spacing:0.04em;margin-right:8px}
+.GET{background:rgba(22,163,74,0.2);color:#86EFAC}
+.POST{background:rgba(27,61,140,0.2);color:#93B4FF}
+.PUT{background:rgba(245,158,11,0.2);color:#FCD34D}
+.PATCH{background:rgba(124,58,237,0.2);color:#C4B5FD}
+.DELETE{background:rgba(220,38,38,0.2);color:#FCA5A5}
+/* Endpoint rows */
+.ep{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:flex-start;gap:12}
+.ep:hover{background:rgba(255,255,255,0.02)}
+.ep-path{font-family:'JetBrains Mono';font-size:12px;color:#CBD5E1;flex:1}
+.ep-desc{color:#8B9CC0;font-size:12px;margin-top:2px}
+/* Schema field */
+.sf{display:flex;gap:12;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04);align-items:flex-start}
+.sf-name{font-family:'JetBrains Mono';font-size:12px;color:#FCD34D;min-width:160px;flex-shrink:0}
+.sf-type{font-family:'JetBrains Mono';font-size:11px;color:#C4B5FD;min-width:100px;flex-shrink:0}
+.sf-desc{color:#8B9CC0;font-size:12px}
+.sf-req{color:#FCA5A5;font-size:10px;font-weight:700;margin-left:4px}
+/* Stack arch */
+.arch-row{display:flex;align-items:center;gap:16px;padding:14px 18px;background:#0A1020;border:1px solid rgba(255,255,255,0.07);border-radius:10px;margin-bottom:10px}
+.arch-icon{font-size:22px;width:36px;text-align:center;flex-shrink:0}
+.arch-label{color:#F1F5F9;font-weight:600;font-size:14px}
+.arch-detail{color:#8B9CC0;font-size:12px;margin-top:2px}
+.arch-tag{margin-left:auto;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="logo">HE<span>-SYSTEM</span> &nbsp;API Spec</div>
+  <nav>
+    <a href="#stack">Tech Stack</a>
+    <a href="#auth">Auth</a>
+    <a href="#schema">DB Schema</a>
+    <a href="#endpoints">Endpoints</a>
+    <a href="#portals">Portal APIs</a>
+    <a href="#realtime">Real-time</a>
+    <a href="#security">Security</a>
+    <a href="#deploy">Deployment</a>
+  </nav>
+</div>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>HE-SYSTEM<br/><span>Backend API</span> Specification</h1>
+    <p class="sub">Complete technical blueprint for the Happy English Learning Management Platform — Node.js · Express · PostgreSQL · Redis · Socket.IO</p>
+    <div>
+      <span class="tag green">v1.0</span>
+      <span class="tag blue">REST + WebSocket</span>
+      <span class="tag gold">6 Portals</span>
+      <span class="tag purple">JWT Auth</span>
+      <span class="tag green">PostgreSQL</span>
+      <span class="tag blue">Redis Cache</span>
+    </div>
+  </div>
+
+  <!-- TECH STACK -->
+  <section id="stack">
+    <div class="section-title">Tech Stack</div>
+    <div class="section-sub">Full-stack architecture overview</div>
+    <div class="grid2">
+      <div>
+        <div style="color:#4A5568;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:12px">Backend</div>
+        <div class="arch-row"><div class="arch-icon">🟢</div><div><div class="arch-label">Node.js 22 LTS + Express 5</div><div class="arch-detail">REST API server, middleware, routing</div></div><span class="tag green arch-tag">Runtime</span></div>
+        <div class="arch-row"><div class="arch-icon">🐘</div><div><div class="arch-label">PostgreSQL 16</div><div class="arch-detail">Primary relational database, 24+ tables</div></div><span class="tag blue arch-tag">Primary DB</span></div>
+        <div class="arch-row"><div class="arch-icon">🔴</div><div><div class="arch-label">Redis 7</div><div class="arch-detail">Session cache, OTP store, rate limiting</div></div><span class="tag gold arch-tag">Cache</span></div>
+        <div class="arch-row"><div class="arch-icon">⚡</div><div><div class="arch-label">Socket.IO 4</div><div class="arch-detail">Real-time notifications, OTP broadcast</div></div><span class="tag purple arch-tag">WebSocket</span></div>
+        <div class="arch-row"><div class="arch-icon">📦</div><div><div class="arch-label">Prisma ORM</div><div class="arch-detail">Type-safe DB access, migrations</div></div><span class="tag green arch-tag">ORM</span></div>
+        <div class="arch-row"><div class="arch-icon">📧</div><div><div class="arch-label">Nodemailer + SendGrid</div><div class="arch-detail">Transactional email, fee reminders</div></div><span class="tag blue arch-tag">Email</span></div>
+      </div>
+      <div>
+        <div style="color:#4A5568;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:12px">Frontend & DevOps</div>
+        <div class="arch-row"><div class="arch-icon">⚛️</div><div><div class="arch-label">React 18 + TypeScript</div><div class="arch-detail">SPA frontend, Vite build system</div></div><span class="tag purple arch-tag">Frontend</span></div>
+        <div class="arch-row"><div class="arch-icon">🐳</div><div><div class="arch-label">Docker + Docker Compose</div><div class="arch-detail">Containerised dev & prod environments</div></div><span class="tag blue arch-tag">Containers</span></div>
+        <div class="arch-row"><div class="arch-icon">☁️</div><div><div class="arch-label">AWS EC2 + RDS + S3</div><div class="arch-detail">App server, managed DB, file storage</div></div><span class="tag gold arch-tag">Cloud</span></div>
+        <div class="arch-row"><div class="arch-icon">🔒</div><div><div class="arch-label">Nginx reverse proxy + SSL</div><div class="arch-detail">HTTPS, load balancing, static assets</div></div><span class="tag green arch-tag">Proxy</span></div>
+        <div class="arch-row"><div class="arch-icon">📊</div><div><div class="arch-label">Winston + Datadog</div><div class="arch-detail">Structured logging, APM monitoring</div></div><span class="tag purple arch-tag">Observability</span></div>
+        <div class="arch-row"><div class="arch-icon">🔄</div><div><div class="arch-label">GitHub Actions CI/CD</div><div class="arch-detail">Automated test, build & deploy pipelines</div></div><span class="tag blue arch-tag">CI/CD</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AUTH -->
+  <section id="auth">
+    <div class="section-title">Authentication & Roles</div>
+    <div class="section-sub">JWT-based auth with role-based access control (RBAC)</div>
+    <div class="grid2">
+      <div>
+        <div class="card" style="margin-bottom:14px">
+          <div class="accent" style="background:#1B3D8C"></div>
+          <h3>JWT Flow</h3>
+          <p>Short-lived access tokens (15m) + refresh tokens (7d) stored in HTTP-only cookies. Refresh tokens rotated on every use.</p>
+        </div>
+        <div class="card">
+          <div class="accent" style="background:#16A34A"></div>
+          <h3>Role Permissions</h3>
+          <table class="tbl">
+            <tr><th>Role</th><th>Access Level</th></tr>
+            <tr><td>student</td><td style="color:#8B9CC0">Own records only</td></tr>
+            <tr><td>teacher</td><td style="color:#8B9CC0">Assigned classes + KPI</td></tr>
+            <tr><td>admin</td><td style="color:#8B9CC0">All students + invoices + staff</td></tr>
+            <tr><td>management</td><td style="color:#8B9CC0">Full read + analytics</td></tr>
+            <tr><td>partner</td><td style="color:#8B9CC0">Own referrals + commissions</td></tr>
+            <tr><td>parent</td><td style="color:#8B9CC0">Linked children records</td></tr>
+          </table>
+        </div>
+      </div>
+      <div>
+<pre><span class="c">// POST /api/auth/login</span>
+<span class="c">// Request body:</span>
+{
+  <span class="s">"email"</span>: <span class="s">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d5a6a1a0b1b0bba195bdb4a5a5acfbb0b1a0fba3bb">[email&#160;protected]</a>"</span>,
+  <span class="s">"password"</span>: <span class="s">"hashed_password"</span>,
+  <span class="s">"role"</span>: <span class="s">"student"</span>
+}
+
+<span class="c">// Response 200:</span>
+{
+  <span class="s">"accessToken"</span>: <span class="s">"eyJhbG..."</span>,
+  <span class="s">"user"</span>: {
+    <span class="s">"id"</span>: <span class="s">"uuid"</span>,
+    <span class="s">"name"</span>: <span class="s">"Nguyen Van An"</span>,
+    <span class="s">"role"</span>: <span class="s">"student"</span>,
+    <span class="s">"portalId"</span>: <span class="s">"APD21110001"</span>
+  }
+}
+
+<span class="c">// JWT Payload:</span>
+{
+  <span class="s">"sub"</span>: <span class="s">"uuid"</span>,
+  <span class="s">"role"</span>: <span class="s">"student"</span>,
+  <span class="s">"iat"</span>: <span class="n">1748000000</span>,
+  <span class="s">"exp"</span>: <span class="n">1748000900</span>  <span class="c">// 15 min</span>
+}</pre>
+      </div>
+    </div>
+    <div style="margin-top:20px">
+      <div style="background:#0F1729;border:1px solid rgba(255,255,255,0.07);border-radius:10px;overflow:hidden">
+        <div class="ep"><span class="method POST">POST</span><div><div class="ep-path">/api/auth/login</div><div class="ep-desc">Login with email + password. Returns access token + sets refresh cookie.</div></div></div>
+        <div class="ep"><span class="method POST">POST</span><div><div class="ep-path">/api/auth/refresh</div><div class="ep-desc">Refresh access token using HTTP-only cookie.</div></div></div>
+        <div class="ep"><span class="method POST">POST</span><div><div class="ep-path">/api/auth/logout</div><div class="ep-desc">Invalidate refresh token, clear cookie.</div></div></div>
+        <div class="ep"><span class="method POST">POST</span><div><div class="ep-path">/api/auth/forgot-password</div><div class="ep-desc">Send password reset email with time-limited token.</div></div></div>
+        <div class="ep"><span class="method POST">POST</span><div><div class="ep-path">/api/auth/reset-password</div><div class="ep-desc">Reset password using token from email.</div></div></div>
+        <div class="ep"><span class="method POST">POST</span><div><div class="ep-path">/api/auth/change-password</div><div class="ep-desc">Authenticated user changes own password.</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DB SCHEMA -->
+  <section id="schema">
+    <div class="section-title">Database Schema</div>
+    <div class="section-sub">PostgreSQL 16 — 24 core tables across 6 domains</div>
+
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px">
+      <div class="card"><div class="accent" style="background:#1B3D8C"></div><h3>👤 Users Domain</h3><p>users, students, teachers, admins, partners, parents, parent_children</p></div>
+      <div class="card"><div class="accent" style="background:#16A34A"></div><h3>📚 Academic Domain</h3><p>programmes, classes, enrolments, timetable_slots, attendance_sessions, attendance_records</p></div>
+      <div class="card"><div class="accent" style="background:#D97706"></div><h3>💰 Finance Domain</h3><p>invoices, payments, e_wallet_accounts, wallet_transactions, partner_commissions, payout_requests</p></div>
+      <div class="card"><div class="accent" style="background:#7C3AED"></div><h3>📊 Assessment Domain</h3><p>assessments, assessment_results, kpi_reports, kpi_pillars</p></div>
+      <div class="card"><div class="accent" style="background:#DC2626"></div><h3>💬 Communication</h3><p>messages, message_threads, notifications, academic_calendar_events</p></div>
+      <div class="card"><div class="accent" style="background:#0EA5E9"></div><h3>⚙️ System Domain</h3><p>audit_logs, otp_sessions, leave_requests, system_settings</p></div>
+    </div>
+
+    <div style="font-family:'Oswald';font-size:16px;font-weight:700;color:#F1F5F9;margin-bottom:14px">Core Table: <span style="color:#FCD34D">students</span></div>
+    <pre><span class="k">CREATE TABLE</span> students (
+  id              UUID          <span class="k">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  user_id         UUID          <span class="k">REFERENCES</span> users(id) <span class="k">ON DELETE CASCADE</span>,
+  student_id      VARCHAR(<span class="n">20</span>)   <span class="k">UNIQUE NOT NULL</span>,    <span class="c">-- e.g. APD21110001</span>
+  programme_id    UUID          <span class="k">REFERENCES</span> programmes(id),
+  intake_date     DATE          <span class="k">NOT NULL</span>,
+  semester        SMALLINT      <span class="k">DEFAULT</span> <span class="n">1</span>,
+  status          VARCHAR(<span class="n">20</span>)   <span class="k">DEFAULT</span> <span class="s">'active'</span>,  <span class="c">-- active|inactive|graduated|suspended</span>
+  class_mode      VARCHAR(<span class="n">10</span>)   <span class="k">DEFAULT</span> <span class="s">'hybrid'</span>,  <span class="c">-- hybrid|campus|remote</span>
+  referring_partner_id UUID     <span class="k">REFERENCES</span> partners(id),
+  guardian_id     UUID          <span class="k">REFERENCES</span> users(id),
+  created_at      TIMESTAMPTZ   <span class="k">DEFAULT NOW</span>(),
+  updated_at      TIMESTAMPTZ   <span class="k">DEFAULT NOW</span>()
+);
+<span class="k">CREATE INDEX</span> idx_students_status    <span class="k">ON</span> students(status);
+<span class="k">CREATE INDEX</span> idx_students_programme <span class="k">ON</span> students(programme_id);</pre>
+
+    <div style="font-family:'Oswald';font-size:16px;font-weight:700;color:#F1F5F9;margin-bottom:14px;margin-top:22px">Core Table: <span style="color:#FCD34D">attendance_sessions</span> (OTP)</div>
+    <pre><span class="k">CREATE TABLE</span> attendance_sessions (
+  id          UUID        <span class="k">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  class_id    UUID        <span class="k">REFERENCES</span> classes(id),
+  teacher_id  UUID        <span class="k">REFERENCES</span> teachers(id),
+  otp_code    VARCHAR(<span class="n">10</span>) <span class="k">NOT NULL</span>,
+  session_date DATE       <span class="k">NOT NULL</span>,
+  start_time  TIME        <span class="k">NOT NULL</span>,
+  expires_at  TIMESTAMPTZ <span class="k">NOT NULL</span>,
+  is_active   BOOLEAN     <span class="k">DEFAULT TRUE</span>,
+  created_at  TIMESTAMPTZ <span class="k">DEFAULT NOW</span>()
+);
+<span class="c">-- OTP codes also cached in Redis with TTL = session duration
+-- Key: otp:{session_id}  Value: otp_code  TTL: 900s (15min)</span></pre>
+
+    <div style="font-family:'Oswald';font-size:16px;font-weight:700;color:#F1F5F9;margin-bottom:14px;margin-top:22px">Core Table: <span style="color:#FCD34D">kpi_reports</span></div>
+    <pre><span class="k">CREATE TABLE</span> kpi_reports (
+  id            UUID        <span class="k">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  teacher_id    UUID        <span class="k">REFERENCES</span> teachers(id),
+  period_month  DATE        <span class="k">NOT NULL</span>,                <span class="c">-- first day of month</span>
+  overall_score NUMERIC(<span class="n">5</span>,<span class="n">2</span>) <span class="k">NOT NULL</span>,
+  grade         CHAR(<span class="n">2</span>)     <span class="k">NOT NULL</span>,               <span class="c">-- A, A-, B+, B …</span>
+  status        VARCHAR(<span class="n">20</span>) <span class="k">DEFAULT</span> <span class="s">'draft'</span>,        <span class="c">-- draft|submitted|approved</span>
+  submitted_at  TIMESTAMPTZ,
+  approved_by   UUID        <span class="k">REFERENCES</span> users(id),
+  notes         TEXT,
+  created_at    TIMESTAMPTZ <span class="k">DEFAULT NOW</span>(),
+  <span class="k">UNIQUE</span>(teacher_id, period_month)
+);</pre>
+
+    <div style="font-family:'Oswald';font-size:16px;font-weight:700;color:#F1F5F9;margin-bottom:14px;margin-top:22px">Core Table: <span style="color:#FCD34D">partner_commissions</span></div>
+    <pre><span class="k">CREATE TABLE</span> partner_commissions (
+  id              UUID           <span class="k">PRIMARY KEY DEFAULT</span> gen_random_uuid(),
+  partner_id      UUID           <span class="k">REFERENCES</span> partners(id),
+  student_id      UUID           <span class="k">REFERENCES</span> students(id),
+  invoice_id      UUID           <span class="k">REFERENCES</span> invoices(id),
+  rate            NUMERIC(<span class="n">5</span>,<span class="n">2</span>)  <span class="k">NOT NULL</span>,    <span class="c">-- percentage at time of earning</span>
+  base_amount     NUMERIC(<span class="n">10</span>,<span class="n">2</span>) <span class="k">NOT NULL</span>,
+  commission_amt  NUMERIC(<span class="n">10</span>,<span class="n">2</span>) <span class="k">NOT NULL</span>,
+  status          VARCHAR(<span class="n">20</span>)   <span class="k">DEFAULT</span> <span class="s">'pending'</span>,  <span class="c">-- pending|paid|cancelled</span>
+  period_month    DATE           <span class="k">NOT NULL</span>,
+  paid_at         TIMESTAMPTZ,
+  created_at      TIMESTAMPTZ    <span class="k">DEFAULT NOW</span>()
+);</pre>
+  </section>
+
+  <!-- ENDPOINTS -->
+  <section id="endpoints">
+    <div class="section-title">Core API Endpoints</div>
+    <div class="section-sub">Base URL: <code style="font-family:'JetBrains Mono';color:#FCD34D">https://api.happy-english.edu.vn/v1</code> · All routes require <code style="font-family:'JetBrains Mono';color:#93B4FF">Authorization: Bearer &lt;token&gt;</code></div>
+
+    <div style="margin-bottom:28px">
+      <div style="font-family:'Oswald';font-size:15px;font-weight:700;color:#93B4FF;margin-bottom:10px">Students</div>
+      <div style="background:#0F1729;border:1px solid rgba(255,255,255,0.07);border-radius:10px;overflow:hidden">
+        <div class="ep"><span class="method GET">GET</span><div><div class="ep-path">/students</div><div class="ep-desc">List all students. Supports ?status=active&programme_id=&search= Roles: admin, management, teacher</div></div></div>
+        <div class="ep"><span class="method POST">POST</span><div><div class="ep-path">/students</div><div class="ep-desc">Enrol a new student. Generates student_id, creates user account, sends welcome email. Roles: admin</div></div></div>
+        <div class="ep"><span class="method GET">GET</span><div><div class="ep-path">/students/:id</div><div class="ep-desc">Get full student profile. Roles: admin, management, teacher (own class), parent (own child), student (self)</div></div></div>
+        <div class="ep"><span class="method PATCH">PATCH</span><div><div class="ep-path">/students/:id</div><div class="ep-desc">Update student details. Roles: admin</div></div></div>
+        <div class="ep"><span class="method GET">GET</span><div><div class="ep-path">/students/:id/attendance</div><div class="ep-desc">Get attendance records for a student. Supports ?month=2026-06 Roles: all related roles</div></div></div>
+        <div class="ep"><span class="method GET">GET</span><div><div class="ep-path">/students/:id/grades</div><div class="ep-desc">Get all assessment results grouped by subject. Roles: student, parent, teacher, admin</div></div></div>
+        <div class="ep"><span class="method GET">GET</span><div><div class="ep-path">/students/:id/invoices</div><div class="ep-desc">Get all fee invoices for the student. Roles: student, parent, admin</div></div></div>
+        <div class="ep"><span class="method GET">GET</span><div><div class="ep-path">/students/:id/wallet</div><div class="ep-desc">Get e-wallet balance and transaction history. Roles: student, parent</div></div></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:28px">
+      <div style="font-family:'Oswald';font-size:15px;font-weight:700;color:#FCD34D;margin-bottom:10px">Attendance & OTP</div>
+      <div style="background:#0F1729;border:1px solid rgba(255,255,255,0.07);border-radius:10px;overflow:hidden">
+        <div class="ep"><span class="method POST">POST</span><div><div class="ep-path">/attendance/sessions</div><div class="ep-desc">Teacher creates OTP session. Generates code, stores in Redis with TTL, broadcasts via Socket.IO. Roles: teacher</div></div></div>
+        <div class="ep"><span class="method GET">GET</span><div><div class="ep-path">/attendance/sessions/:id</div><div class="ep-desc">Get session details and remaining seconds. Roles: teacher</div></div></div>
+        <div class="ep"><span class="method POST">POST</span><div><div class="ep-path">/attendance/sessions/:id/verify</div><div class="ep-desc">Student submits OTP code. Validates against Redis. Records attendance. Roles: student</div></div></div>
+        <div class="ep"><span class="method GET">GET</span><div><div class="ep-path">/attendance/sessions/:id/records</div><div class="ep-desc">Get all student records for a session. Roles: teacher, admin</div></div></div>
+        <div class="ep"><span class="method PATCH">PATCH</span><div><div class="ep-path">/attendance/records/:id</div><div class="ep-desc">Override a student attendance status (present/absent/late/excused). Roles: teacher, admin</div></div></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:28px">
+      <div style="font-family:'Oswald';font-size:15px;font-weight:700;color:#86EFAC;margin-bottom:10px">Finance</div>
+      <div style="background:#0F1729;border:1px solid rgba(255,255,255,0.07);border-radius:10px;overflow:hidden">
+        <div class="ep"><span class="method GET">GET</span><div><div class="ep-path">/invoices</div><div class="ep-desc">List invoices. Supports ?status=overdue&student_id= Roles: admin, management</div></div></div>
+        <div class="ep"><span class="method POST">POST</span><div><div class="ep-path">/invoices</div><div class="ep-desc">Create a new fee invoice for a student. Roles: admin</div></div></div>
+        <div class="ep"><span class="method PATCH">PATCH</span><div><div class="ep-path">/invoices/:id/pay</div><div class="ep-desc">Mark invoice as paid, record payment method + reference. Roles: admin</div></div></div>
+        <div class="ep"><span class="method POST">POST</span><div><div class="ep-path">/invoices/:id/remind</div><div class="ep-desc">Send payment reminder email/SMS to student + parent. Roles: admin</div></div></div>
+        <div class="ep"><span class="method POST">POST</span><div><div class="ep-path">/wallet/topup</div><div class="ep-desc">Process e-wallet top-up via payment gateway. Roles: student, parent, admin</div></div></div>
+        <div class="ep"><span class="method POST">POST</span><div><div class="ep-path">/wallet/debit</div><div class="ep-desc">Debit wallet for campus service (canteen, printing). Internal service-to-service only.</div></div></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:28px">
+      <div style="font-family:'Oswald';font-size:15px;font-weight:700;color:#C4B5FD;margin-bottom:10px">KPI & Assessments</div>
+      <div style="background:#0F1729;border:1px solid rgba(255,255,255,0.07);border-radius:10px;overflow:hidden">
+        <div class="ep"><span class="method GET">GET</span><div><div class="ep-path">/kpi/reports</div><div class="ep-desc">All teacher KPI reports. Supports ?month=2026-06&teacher_id= Roles: management, admin</div></div></div>
+        <div class="ep"><span class="method GET">GET</span><div><div class="ep-path">/kpi/reports/:teacherId/current</div><div class="ep-desc">Current month KPI for a teacher with all 4 pillar scores. Roles: teacher (own), management</div></div></div>
+        <div class="ep"><span class="method PATCH">PATCH</span><div><div class="ep-path">/kpi/reports/:id</div><div class="ep-desc">Submit or update KPI report. Roles: teacher (draft→submitted), management (approve)</div></div></div>
+        <div class="ep"><span class="method POST">POST</span><div><div class="ep-path">/assessments/:classId/grades</div><div class="ep-desc">Bulk submit grades for all students in a class. Roles: teacher</div></div></div>
+        <div class="ep"><span class="method GET">GET</span><div><div class="ep-path">/assessments/:classId/grades</div><div class="ep-desc">Get all grades for a class assessment. Roles: teacher, admin</div></div></div>
+      </div>
+    </div>
+
+    <div style="margin-bottom:28px">
+      <div style="font-family:'Oswald';font-size:15px;font-weight:700;color:#FCA5A5;margin-bottom:10px">Partner & Commission</div>
+      <div style="background:#0F1729;border:1px solid rgba(255,255,255,0.07);border-radius:10px;overflow:hidden">
+        <div class="ep"><span class="method GET">GET</span><div><div class="ep-path">/partners/:id/commissions</div><div class="ep-desc">Partner's commission breakdown by month and student. Roles: partner (own), admin, management</div></div></div>
+        <div class="ep"><span class="method GET">GET</span><div><div class="ep-path">/partners/:id/leaderboard</div><div class="ep-desc">Leaderboard position + all visible partners ranked by recruited count. Roles: partner</div></div></div>
+        <div class="ep"><span class="method POST">POST</span><div><div class="ep-path">/partners/:id/payouts</div><div class="ep-desc">Request payout. Validates pending balance, creates payout_request record. Roles: partner</div></div></div>
+        <div class="ep"><span class="method PATCH">PATCH</span><div><div class="ep-path">/partners/payouts/:id/approve</div><div class="ep-desc">Approve and mark payout as processed. Roles: admin, management</div></div></div>
+      </div>
+    </div>
+
+    <div>
+      <div style="font-family:'Oswald';font-size:15px;font-weight:700;color:#7DD3FC;margin-bottom:10px">Analytics (Management)</div>
+      <div style="background:#0F1729;border:1px solid rgba(255,255,255,0.07);border-radius:10px;overflow:hidden">
+        <div class="ep"><span class="method GET">GET</span><div><div class="ep-path">/analytics/revenue</div><div class="ep-desc">Monthly revenue breakdown, YTD vs target. Supports ?year=2026 Roles: management</div></div></div>
+        <div class="ep"><span class="method GET">GET</span><div><div class="ep-path">/analytics/enrolment</div><div class="ep-desc">Enrolment trends by programme, intake, mode. Roles: management, admin</div></div></div>
+        <div class="ep"><span class="method GET">GET</span><div><div class="ep-path">/analytics/at-risk</div><div class="ep-desc">Students with attendance &lt;75% or GPA &lt;2.5, paginated. Roles: management, admin, teacher</div></div></div>
+        <div class="ep"><span class="method GET">GET</span><div><div class="ep-path">/analytics/kpi-summary</div><div class="ep-desc">Distribution of KPI grades across all teachers. Roles: management</div></div></div>
+        <div class="ep"><span class="method GET">GET</span><div><div class="ep-path">/reports/generate</div><div class="ep-desc">Generate PDF or CSV report. Body: {type, dateFrom, dateTo, groupBy}. Async, returns job_id. Roles: admin, management</div></div></div>
+        <div class="ep"><span class="method GET">GET</span><div><div class="ep-path">/reports/jobs/:jobId</div><div class="ep-desc">Poll report generation status. Returns download URL when complete.</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REAL-TIME -->
+  <section id="realtime">
+    <div class="section-title">Real-Time Layer — Socket.IO</div>
+    <div class="section-sub">WebSocket events for OTP, notifications, and live dashboards</div>
+    <div class="grid2">
+      <div>
+        <div style="color:#4A5568;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px">Server → Client Events</div>
+        <table class="tbl">
+          <tr><th>Event</th><th>Payload</th></tr>
+          <tr><td>otp:started</td><td style="color:#8B9CC0">sessionId, code, expiresAt</td></tr>
+          <tr><td>otp:expiring</td><td style="color:#8B9CC0">sessionId, secsRemaining</td></tr>
+          <tr><td>otp:expired</td><td style="color:#8B9CC0">sessionId</td></tr>
+          <tr><td>attendance:marked</td><td style="color:#8B9CC0">studentId, status, time</td></tr>
+          <tr><td>notification:new</td><td style="color:#8B9CC0">id, type, title, msg, urgent</td></tr>
+          <tr><td>invoice:overdue</td><td style="color:#8B9CC0">invoiceId, studentId, amount</td></tr>
+          <tr><td>kpi:updated</td><td style="color:#8B9CC0">teacherId, score, grade</td></tr>
+          <tr><td>message:received</td><td style="color:#8B9CC0">threadId, from, text, time</td></tr>
+        </table>
+      </div>
+      <div>
+<pre><span class="c">// Server-side: OTP session broadcast</span>
+io.to(<span class="s">`class:${classId}`</span>).emit(<span class="s">'otp:started'</span>, {
+  sessionId, code, expiresAt,
+  className: <span class="s">'EAP301'</span>
+});
+
+<span class="c">// Student client: join class room on login</span>
+socket.emit(<span class="s">'join:class'</span>, { classId, token });
+
+<span class="c">// Student marks attendance</span>
+socket.emit(<span class="s">'attendance:submit'</span>, {
+  sessionId,
+  otpCode: <span class="s">'472819'</span>
+});
+
+<span class="c">// Teacher receives live update</span>
+socket.on(<span class="s">'attendance:marked'</span>, ({ studentId, status }) => {
+  <span class="c">// update student list in real-time</span>
+});
+
+<span class="c">// Notification broadcast to user room</span>
+io.to(<span class="s">`user:${userId}`</span>).emit(<span class="s">'notification:new'</span>, {
+  id, type: <span class="s">'fee'</span>, urgent: <span class="k">true</span>,
+  title: <span class="s">'Fee Overdue'</span>, msg: <span class="s">'...'</span>
+});</pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECURITY -->
+  <section id="security">
+    <div class="section-title">Security Implementation</div>
+    <div class="section-sub">Production-grade security controls</div>
+    <div class="grid3">
+      <div class="card"><div class="accent" style="background:#DC2626"></div><h3>Rate Limiting</h3><p>100 req/min per IP globally. Login endpoint: 5 attempts/15min. OTP verification: 3 attempts per session before lockout. Stored in Redis.</p></div>
+      <div class="card"><div class="accent" style="background:#1B3D8C"></div><h3>Input Validation</h3><p>All request bodies validated with Zod schemas before processing. SQL injection prevention via Prisma parameterised queries. XSS sanitisation via DOMPurify on text inputs.</p></div>
+      <div class="card"><div class="accent" style="background:#7C3AED"></div><h3>RBAC Middleware</h3><p>Every route has a role guard. Fine-grained ownership checks (student can only access own records). Middleware order: JWT decode → role check → ownership check.</p></div>
+      <div class="card"><div class="accent" style="background:#16A34A"></div><h3>Data Encryption</h3><p>Passwords hashed with bcrypt (12 rounds). Bank account numbers encrypted at rest with AES-256-GCM. All PII fields marked and audited. HTTPS everywhere (TLS 1.3).</p></div>
+      <div class="card"><div class="accent" style="background:#D97706"></div><h3>Audit Logging</h3><p>All write operations logged to audit_logs table: who, what, when, old value, new value. Immutable — no UPDATE/DELETE on audit rows. 90-day retention.</p></div>
+      <div class="card"><div class="accent" style="background:#0EA5E9"></div><h3>CORS & Headers</h3><p>Strict CORS whitelist (no wildcard). Helmet.js for security headers: CSP, HSTS, X-Frame-Options, Referrer-Policy. Cookie: SameSite=Strict, Secure, HttpOnly.</p></div>
+    </div>
+  </section>
+
+  <!-- DEPLOYMENT -->
+  <section id="deploy">
+    <div class="section-title">Deployment Architecture</div>
+    <div class="section-sub">Docker Compose for development · AWS for production</div>
+<pre><span class="c"># docker-compose.yml (development)</span>
+<span class="k">version:</span> <span class="s">'3.9'</span>
+<span class="k">services:</span>
+  <span class="n">api:</span>
+    <span class="k">build:</span> <span class="s">./backend</span>
+    <span class="k">ports:</span> [<span class="s">"3000:3000"</span>]
+    <span class="k">environment:</span>
+      DATABASE_URL: postgresql://he:password@postgres:5432/hesystem
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: your_secret_here
+      JWT_REFRESH_SECRET: your_refresh_secret
+    <span class="k">depends_on:</span> [postgres, redis]
+
+  <span class="n">postgres:</span>
+    <span class="k">image:</span> postgres:16-alpine
+    <span class="k">environment:</span>
+      POSTGRES_DB: hesystem
+      POSTGRES_USER: he
+      POSTGRES_PASSWORD: password
+    <span class="k">volumes:</span> [pgdata:/var/lib/postgresql/data]
+
+  <span class="n">redis:</span>
+    <span class="k">image:</span> redis:7-alpine
+    <span class="k">command:</span> redis-server --requirepass redispass
+
+  <span class="n">frontend:</span>
+    <span class="k">build:</span> <span class="s">./frontend</span>
+    <span class="k">ports:</span> [<span class="s">"5173:5173"</span>]
+    <span class="k">environment:</span>
+      VITE_API_URL: http://localhost:3000/v1
+
+<span class="k">volumes:</span>
+  pgdata:</pre>
+    <div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div class="card"><div class="accent" style="background:#D97706"></div><h3>Production Infra (AWS)</h3><p><strong style="color:#F1F5F9">EC2 t3.medium</strong> — Node.js API server (2 instances behind ALB)<br/><strong style="color:#F1F5F9">RDS PostgreSQL</strong> — db.t3.medium, Multi-AZ, automated backups<br/><strong style="color:#F1F5F9">ElastiCache Redis</strong> — cache.t3.micro, replication group<br/><strong style="color:#F1F5F9">S3 + CloudFront</strong> — static frontend assets, document uploads<br/><strong style="color:#F1F5F9">SES + SNS</strong> — transactional email and SMS notifications</p></div>
+      <div class="card"><div class="accent" style="background:#16A34A"></div><h3>Environment Variables</h3><pre style="background:#05090F;padding:12px;border-radius:8px;font-size:11px;margin:0">DATABASE_URL=postgresql://...
+REDIS_URL=redis://...
+JWT_SECRET=&lt;256-bit secret&gt;
+JWT_REFRESH_SECRET=&lt;256-bit secret&gt;
+SENDGRID_API_KEY=SG....
+AWS_S3_BUCKET=he-system-docs
+STRIPE_SECRET_KEY=sk_live_...
+FRONTEND_URL=https://app.happy-english.edu.vn
+SOCKET_CORS_ORIGIN=https://app.happy-english.edu.vn</pre></div>
+    </div>
+  </section>
+
+</div>
+
+<div style="text-align:center;padding:40px 24px;color:#4A5568;font-size:12px;border-top:1px solid rgba(255,255,255,0.05)">
+  HE-SYSTEM Backend API Specification v1.0 · Happy English Learning Platform · June 2026
+</div>
+
+<template id="__bundler_thumbnail" data-bg-color="#070C18">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#070C18"/>
+    <rect x="80" y="80" width="120" height="120" rx="24" fill="#1B3D8C"/>
+    <rect x="80" y="80" width="120" height="14" rx="4" fill="#F59E0B"/>
+    <rect x="80" y="186" width="120" height="14" rx="0" fill="#DC2626"/>
+    <text x="140" y="160" font-family="Arial" font-weight="900" font-size="52" fill="white" text-anchor="middle">HE</text>
+    <text x="260" y="148" font-family="Arial" font-weight="800" font-size="56" fill="#F1F5F9" letter-spacing="-2">HE-SYSTEM</text>
+    <text x="260" y="188" font-family="Arial" font-size="22" fill="#8B9CC0">Backend API Specification</text>
+    <rect x="80" y="240" width="1040" height="2" fill="#1B3D8C" opacity="0.4"/>
+    <rect x="80" y="280" width="300" height="16" rx="4" fill="#0F1729"/>
+    <rect x="80" y="280" width="200" height="16" rx="4" fill="#1B3D8C"/>
+    <rect x="80" y="310" width="300" height="10" rx="3" fill="#0F1729"/>
+    <rect x="80" y="310" width="140" height="10" rx="3" fill="#16A34A" opacity="0.6"/>
+    <rect x="80" y="334" width="300" height="10" rx="3" fill="#0F1729"/>
+    <rect x="80" y="334" width="220" height="10" rx="3" fill="#7C3AED" opacity="0.6"/>
+    <rect x="80" y="358" width="300" height="10" rx="3" fill="#0F1729"/>
+    <rect x="80" y="358" width="80" height="10" rx="3" fill="#DC2626" opacity="0.6"/>
+    <rect x="430" y="270" width="690" height="320" rx="12" fill="#05090F" stroke="#1B3D8C" stroke-width="1" stroke-opacity="0.3"/>
+    <rect x="454" y="294" width="60" height="16" rx="4" fill="#16A34A" opacity="0.3"/>
+    <text x="466" y="307" font-family="monospace" font-size="11" fill="#86EFAC">GET</text>
+    <text x="526" y="307" font-family="monospace" font-size="11" fill="#CBD5E1">/api/v1/students</text>
+    <rect x="454" y="322" width="60" height="16" rx="4" fill="#1B3D8C" opacity="0.3"/>
+    <text x="462" y="335" font-family="monospace" font-size="11" fill="#93B4FF">POST</text>
+    <text x="526" y="335" font-family="monospace" font-size="11" fill="#CBD5E1">/api/v1/attendance/sessions</text>
+    <rect x="454" y="350" width="60" height="16" rx="4" fill="#16A34A" opacity="0.3"/>
+    <text x="466" y="363" font-family="monospace" font-size="11" fill="#86EFAC">GET</text>
+    <text x="526" y="363" font-family="monospace" font-size="11" fill="#CBD5E1">/api/v1/kpi/reports</text>
+    <rect x="454" y="378" width="70" height="16" rx="4" fill="#7C3AED" opacity="0.3"/>
+    <text x="460" y="391" font-family="monospace" font-size="11" fill="#C4B5FD">PATCH</text>
+    <text x="536" y="391" font-family="monospace" font-size="11" fill="#CBD5E1">/api/v1/invoices/:id/pay</text>
+    <rect x="454" y="406" width="60" height="16" rx="4" fill="#1B3D8C" opacity="0.3"/>
+    <text x="462" y="419" font-family="monospace" font-size="11" fill="#93B4FF">POST</text>
+    <text x="526" y="419" font-family="monospace" font-size="11" fill="#CBD5E1">/api/v1/partners/:id/payouts</text>
+    <rect x="454" y="434" width="60" height="16" rx="4" fill="#16A34A" opacity="0.3"/>
+    <text x="466" y="447" font-family="monospace" font-size="11" fill="#86EFAC">GET</text>
+    <text x="526" y="447" font-family="monospace" font-size="11" fill="#CBD5E1">/api/v1/analytics/revenue</text>
+    <rect x="80" y="640" width="140" height="26" rx="6" fill="#16A34A" opacity="0.15"/>
+    <text x="100" y="658" font-family="Arial" font-size="12" font-weight="700" fill="#86EFAC">✓ PostgreSQL 16</text>
+    <rect x="236" y="640" width="110" height="26" rx="6" fill="#1B3D8C" opacity="0.2"/>
+    <text x="254" y="658" font-family="Arial" font-size="12" font-weight="700" fill="#93B4FF">✓ Redis 7</text>
+    <rect x="362" y="640" width="130" height="26" rx="6" fill="#7C3AED" opacity="0.15"/>
+    <text x="380" y="658" font-family="Arial" font-size="12" font-weight="700" fill="#C4B5FD">✓ Socket.IO</text>
+    <rect x="508" y="640" width="100" height="26" rx="6" fill="#D97706" opacity="0.15"/>
+    <text x="526" y="658" font-family="Arial" font-size="12" font-weight="700" fill="#FCD34D">✓ JWT Auth</text>
+  </svg>
+</template>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+</html>

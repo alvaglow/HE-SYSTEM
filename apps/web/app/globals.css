@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-blue: #1B3D8C;
+  --brand-red:  #DC2626;
+  --brand-gold: #F59E0B;
+}
+
+@layer base {
+  h1, h2, h3 { font-family: 'Oswald', sans-serif; }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-brand-blue text-white px-4 py-2 rounded-lg font-medium hover:bg-brand-blue-600 transition-colors;
+  }
+  .btn-danger {
+    @apply bg-brand-red text-white px-4 py-2 rounded-lg font-medium hover:opacity-90 transition-opacity;
+  }
+  .card {
+    @apply bg-white rounded-xl border border-gray-100 shadow-sm p-5;
+  }
+}
