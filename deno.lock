@@ -1,0 +1,49 @@
+{
+  "version": "5",
+  "redirects": {
+    "https://esm.sh/@supabase/supabase-js@2": "https://esm.sh/@supabase/supabase-js@2.110.1"
+  },
+  "remote": {
+    "https://esm.sh/@supabase/supabase-js@2.110.1": "3e6ac10368fe97f2b18aab157383635843c15e029846ad33a56bd754d09c2fe0"
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:@stripe/stripe-js@^3.4.0",
+        "npm:@supabase/ssr@0.4",
+        "npm:@supabase/supabase-js@^2.43.0",
+        "npm:@types/node@20",
+        "npm:@types/react-dom@18",
+        "npm:@types/react@18",
+        "npm:@upstash/redis@^1.31.0",
+        "npm:@vercel/postgres@~0.8.1",
+        "npm:autoprefixer@10",
+        "npm:axios@^1.6.2",
+        "npm:bcryptjs@^2.4.3",
+        "npm:cors@^2.8.5",
+        "npm:eslint-config-next@14.2.3",
+        "npm:eslint@8",
+        "npm:express-rate-limit@^7.1.5",
+        "npm:helmet@^7.1.0",
+        "npm:html-pdf-node@^1.0.8",
+        "npm:jsonwebtoken@^9.0.2",
+        "npm:multer@^1.4.5-lts.1",
+        "npm:next@14.2.3",
+        "npm:nodemailer@^6.9.13",
+        "npm:postcss@8",
+        "npm:qrcode@^1.5.3",
+        "npm:react-dom@18",
+        "npm:react@18",
+        "npm:recharts@^2.12.0",
+        "npm:speakeasy@2",
+        "npm:stripe@^15.7.0",
+        "npm:tailwindcss@^3.4.0",
+        "npm:typescript@^5.4.0",
+        "npm:uuid@9",
+        "npm:winston@^3.11.0",
+        "npm:zod@^3.23.0",
+        "npm:zustand@^4.5.0"
+      ]
+    }
+  }
+}

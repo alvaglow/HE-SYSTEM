@@ -1,0 +1,90 @@
+# Supabase project configuration
+# https://supabase.com/docs/guides/local-development
+
+[api]
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[studio]
+port = 54323
+api_url = "http://localhost"
+
+[inbucket]
+port = 54324
+smtp_port = 54325
+pop3_port = 54326
+
+[storage]
+file_size_limit = "50MiB"
+
+[auth]
+site_url = "http://localhost:3000"
+additional_redirect_urls = [
+  "https://app.happyenglish.edu.vn",
+  "he-system://login"
+]
+jwt_expiry = 3600
+# AUDIT FIX: this was `false`, which silently breaks the /register page and
+# the auth-register edge function (Supabase rejects auth.signUp() outright
+# at the project level when this is off, regardless of anything the function
+# code checks). Self-signup is intentionally still gated in application code:
+# auth-register only accepts role 'student' or 'partner' and a valid,
+# active institution_slug — admin/teacher/staff accounts must still be
+# provisioned by an institution admin, not through public signup.
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = true
+
+# KPI calculate — runs 1st of every month at midnight UTC
+[functions.kpi-calculate]
+schedule = "0 0 1 * *"
+
+# Merkle build — runs daily at 23:55 UTC, builds the tamper-proof attendance
+# root for every active institution for that day (see merkle-build/index.ts)
+[functions.merkle-build]
+schedule = "55 23 * * *"
+
+# ZaloPay retry sweep for payments stuck in 'pending' more than a few minutes
+# (see payment-zalopay's `query` action — call it per-transaction from a small
+# retry loop; ZaloPay/VNPay/MoMo don't need a scheduled function themselves,
+# their callbacks/IPN/return-URL drive status updates directly)
+
+# ── verify_jwt = false ────────────────────────────────────────────────────────
+# AUDIT FIX: Supabase verifies a Supabase-issued JWT on every edge function
+# call by default. Stripe/ZaloPay/VNPay/MoMo cannot produce one — their
+# webhook/callback/IPN/return-URL requests would be rejected by the platform
+# gateway before ever reaching our code. These four functions must run with
+# JWT verification OFF at the platform level; each one still authenticates its
+# *app-initiated* actions (create/query) in code via requireSelfOrStaff
+# (see supabase/functions/_shared/auth.ts), and authenticates its *gateway*
+# callbacks via HMAC/signature verification specific to that gateway. Turning
+# this off does not remove those checks — it only lets the gateways reach the
+# function at all.
+[functions.payment-webhook]
+verify_jwt = false
+
+[functions.payment-zalopay]
+verify_jwt = false
+
+[functions.payment-vnpay]
+verify_jwt = false
+
+[functions.payment-momo]
+verify_jwt = false
+
+# auth-register: caller has no Supabase session yet at signup time (that's
+# the whole point of the function), so a platform-level JWT can't be
+# required. Access is instead controlled by ALLOWED_ROLES + the institution
+# lookup inside the function itself (see supabase/functions/auth-register).
+[functions.auth-register]
+verify_jwt = false

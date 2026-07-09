@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "HE-SYSTEM",
+    "slug": "he-system",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1B3D8C"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "vn.happyenglish.hesystem"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1B3D8C"
+      },
+      "package": "vn.happyenglish.hesystem"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-location",
+      ["expo-notifications", { "icon": "./assets/notification-icon.png" }]
+    ],
+    "scheme": "he-system",
+    "extra": {
+      "eas": { "projectId": "YOUR_EAS_PROJECT_ID" }
+    }
+  }
+}

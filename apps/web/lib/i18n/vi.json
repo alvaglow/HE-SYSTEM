@@ -1,0 +1,28 @@
+{
+  "nav": {
+    "dashboard": "Trang chủ",
+    "attendance": "Điểm danh",
+    "timetable": "Thời khoá biểu",
+    "results": "Kết quả",
+    "fees": "Học phí",
+    "wallet": "Ví điện tử",
+    "location": "Địa điểm",
+    "messages": "Tin nhắn",
+    "kpi": "KPI",
+    "students": "Học viên",
+    "commission": "Hoa hồng",
+    "payouts": "Thanh toán",
+    "leaderboard": "Bảng xếp hạng",
+    "logout": "Đăng xuất"
+  },
+  "common": {
+    "loading": "Đang tải...",
+    "error": "Có lỗi xảy ra",
+    "save": "Lưu",
+    "cancel": "Huỷ",
+    "confirm": "Xác nhận",
+    "search": "Tìm kiếm",
+    "filter": "Lọc",
+    "export": "Xuất file"
+  }
+}
