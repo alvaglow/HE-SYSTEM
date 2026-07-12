@@ -7,8 +7,13 @@ function formatClassTime(iso: string) {
 export default async function TeacherDashboard() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  const { data: profile } = await supabase.from('users').select('full_name').eq('id', user!.id).single()
-  const { data: teacher } = await supabase.from('teachers').select('id').eq('user_id', user!.id).single()
+  const { data: profileRaw } = await supabase.from('users').select('full_name').eq('id', user!.id).single()
+  const { data: teacherRaw } = await supabase.from('teachers').select('id').eq('user_id', user!.id).single()
+
+  // AUDIT FIX (build): plain single-row selects can also collapse to `never`
+  // under this project's generated Database types — cast both here.
+  const profile = profileRaw as unknown as { full_name: string | null } | null
+  const teacher = teacherRaw as unknown as { id: string } | null
 
   // AUDIT FIX: this whole dashboard used to render "—" for every stat and a
   // static "Connect to Supabase to load your schedule" note regardless of
