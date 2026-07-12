@@ -23,6 +23,19 @@ export default async function AdminDashboard() {
 
   const pendingActionsCount = (pendingPayouts ?? 0) + (pendingExpenses ?? 0) + (overdueCount ?? 0)
 
+  // AUDIT FIX: Supabase's generated types couldn't resolve the `users(full_name)`
+  // embedded-resource shape on this query, which collapsed `recentStudents` to
+  // `never[]` and broke the build with "Property 'id' does not exist on type
+  // 'never'". Casting once here (rather than fighting the generated types)
+  // keeps the runtime behavior identical while giving TypeScript a real shape
+  // to check `.map()` against.
+  const students = (recentStudents ?? []) as unknown as Array<{
+    id: string
+    student_number: string
+    created_at: string
+    users: { full_name?: string } | null
+  }>
+
   return (
     <div>
       <h1 className="text-3xl font-display font-bold text-brand-blue mb-8">Admin Dashboard</h1>
@@ -47,11 +60,11 @@ export default async function AdminDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="card">
           <h2 className="font-display font-semibold text-brand-blue mb-4">Recent Enrolments</h2>
-          {recentStudents && recentStudents.length > 0 ? (
+          {students.length > 0 ? (
             <ul className="space-y-3">
-              {recentStudents.map(s => (
+              {students.map(s => (
                 <li key={s.id} className="flex justify-between text-sm">
-                  <span className="text-gray-700">{(s.users as unknown as { full_name?: string } | null)?.full_name ?? s.student_number}</span>
+                  <span className="text-gray-700">{s.users?.full_name ?? s.student_number}</span>
                   <span className="text-gray-400">{new Date(s.created_at).toLocaleDateString()}</span>
                 </li>
               ))}

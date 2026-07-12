@@ -16,7 +16,20 @@ export default async function ParentDashboard() {
     .select('*, students(*, users(full_name))')
     .eq('parent_user_id', user!.id)
 
-  const children = links?.map(l => l.students).filter(Boolean) ?? []
+  // AUDIT FIX: Supabase's generated types couldn't resolve the nested
+  // `students(*, users(full_name))` embedded-resource shape on this query,
+  // which collapsed `links` to `never[]` and broke the build with "Property
+  // 'students' does not exist on type 'never'". Casting once here (rather
+  // than fighting the generated types) keeps the runtime behavior identical
+  // while giving TypeScript a real shape to check against.
+  const parentLinks = (links ?? []) as unknown as Array<{
+    students: {
+      id: string
+      users: { full_name?: string } | null
+    } | null
+  }>
+
+  const children = parentLinks.map(l => l.students).filter(Boolean)
 
   // AUDIT FIX: every child card used to render "—%", "RM —", and "—" no
   // matter what the actual data said. Now each child's three stats are real,
@@ -60,19 +73,4 @@ export default async function ParentDashboard() {
                   <p className="text-2xl font-bold text-brand-blue">{stats.attendancePct != null ? `${stats.attendancePct}%` : '—'}</p>
                   <p className="text-xs text-gray-500">Attendance</p>
                 </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-brand-red">{stats.outstanding > 0 ? formatMoney(stats.outstanding, stats.currency) : 'Paid up'}</p>
-                  <p className="text-xs text-gray-500">Outstanding Fees</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-green-600">{stats.resultsCount}</p>
-                  <p className="text-xs text-gray-500">Results</p>
-                </div>
-              </div>
-            </div>
-          )
-        })
-      )}
-    </div>
-  )
-}
+                <div className

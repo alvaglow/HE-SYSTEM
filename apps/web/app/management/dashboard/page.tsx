@@ -32,9 +32,20 @@ export default async function ManagementDashboard() {
     supabase.from('kpi_records').select('total_score').eq('period_year', now.getFullYear()).eq('period_month', now.getMonth() + 1),
   ])
 
+  // AUDIT FIX: Supabase's generated types couldn't resolve the
+  // `invoice:fee_invoices(currency)` embedded-resource shape on this query,
+  // which collapsed `paymentsThisMonth` to `never[]` and broke the build with
+  // "Property 'amount'/'invoice' does not exist on type 'never'". Casting
+  // once here (rather than fighting the generated types) keeps the runtime
+  // behavior identical while giving TypeScript a real shape to check against.
+  const payments = (paymentsThisMonth ?? []) as unknown as Array<{
+    amount: number
+    invoice: { currency?: string } | null
+  }>
+
   const revenueByCurrency = new Map<string, number>()
-  for (const p of paymentsThisMonth ?? []) {
-    const currency = (p.invoice as unknown as { currency?: string } | null)?.currency ?? 'USD'
+  for (const p of payments) {
+    const currency = p.invoice?.currency ?? 'USD'
     revenueByCurrency.set(currency, (revenueByCurrency.get(currency) ?? 0) + Number(p.amount))
   }
   const revenueLabel = revenueByCurrency.size > 0
@@ -71,18 +82,4 @@ export default async function ManagementDashboard() {
           <p className="text-gray-400 text-sm">
             {revenueByCurrency.size > 0
               ? `This month so far: ${revenueLabel}. Set a target in budgets to compare against.`
-              : 'No payments recorded yet this month.'}
-          </p>
-        </div>
-        <div className="card">
-          <h2 className="font-display font-semibold text-gray-800 mb-4">KPI Summary</h2>
-          <p className="text-gray-400 text-sm">
-            {kpiScores.length > 0
-              ? `${kpiScores.length} staff/teacher KPI record${kpiScores.length === 1 ? '' : 's'} this month, averaging ${avgKpi}%.`
-              : 'No KPI records calculated for this month yet.'}
-          </p>
-        </div>
-      </div>
-    </div>
-  )
-}
+              : 'No pa

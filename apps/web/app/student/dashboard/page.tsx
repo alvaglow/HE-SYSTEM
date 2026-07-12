@@ -23,11 +23,23 @@ export default async function StudentDashboard() {
   const { data: profile } = await supabase.from('users').select('full_name, institution_id').eq('id', user!.id).single()
   const { data: student } = await supabase.from('students').select('id, programme_id, programmes(name)').eq('user_id', user!.id).single()
 
+  // AUDIT FIX: Supabase's generated types couldn't resolve the
+  // `programmes(name)` embedded-resource shape on this query, which collapsed
+  // `student` to `never` and broke the build with "Property 'id' does not
+  // exist on type 'never'". Casting once here (rather than fighting the
+  // generated types) keeps the runtime behavior identical while giving
+  // TypeScript a real shape to check against.
+  const studentData = student as unknown as {
+    id: string
+    programme_id: string | null
+    programmes: { name?: string } | null
+  } | null
+
   // AUDIT FIX: everything below used to be hardcoded (87% attendance,
   // "RM 1,200", "Today 2pm", "3 published") regardless of who was signed in.
   // These are now real queries scoped to this student.
 
-  const studentId = student?.id ?? null
+  const studentId = studentData?.id ?? null
 
   const [attendanceRes, invoicesRes, resultsRes, notificationsRes, enrollmentsRes] = await Promise.all([
     studentId ? supabase.from('attendance_records').select('status').eq('student_id', studentId) : Promise.resolve({ data: [] as { status: string }[] }),
@@ -76,7 +88,7 @@ export default async function StudentDashboard() {
       <h1 className="text-3xl font-display font-bold text-brand-blue mb-1">
         Welcome back, {profile?.full_name?.split(' ')[0]} 👋
       </h1>
-      <p className="text-gray-500 text-sm mb-8">{(student?.programmes as unknown as { name?: string } | null)?.name ?? ''}</p>
+      <p className="text-gray-500 text-sm mb-8">{studentData?.programmes?.name ?? ''}</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
         <StatCard label="Attendance" value={attendancePct !== null ? `${attendancePct}%` : 'No records yet'} color="blue" />
@@ -137,17 +149,4 @@ export default async function StudentDashboard() {
   )
 }
 
-function StatCard({ label, value, color }: { label: string; value: string; color: string }) {
-  const colors: Record<string, string> = {
-    blue: 'bg-brand-blue-100 text-brand-blue',
-    red:  'bg-brand-red-100 text-brand-red',
-    gold: 'bg-brand-gold-100 text-amber-700',
-    green:'bg-green-50 text-green-700',
-  }
-  return (
-    <div className="card">
-      <p className="text-xs font-medium text-gray-500 mb-1">{label}</p>
-      <p className={`text-2xl font-display font-bold ${colors[color]?.split(' ')[1]}`}>{value}</p>
-    </div>
-  )
-}
+function StatCard({ la

@@ -11,7 +11,19 @@ export default async function PartnerDashboard() {
     .eq('user_id', user!.id)
     .single()
 
-  const students = partner?.total_recruited ?? 0
+  // AUDIT FIX: Supabase's generated types couldn't resolve the
+  // `users(full_name)` embedded-resource shape on this query, which collapsed
+  // `partner` to `never` and broke the build with "Property 'total_recruited'
+  // does not exist on type 'never'". Casting once here (rather than fighting
+  // the generated types) keeps the runtime behavior identical while giving
+  // TypeScript a real shape to check against.
+  const partnerData = partner as unknown as {
+    total_recruited: number | null
+    total_earned: number | null
+    referral_code: string
+  } | null
+
+  const students = partnerData?.total_recruited ?? 0
   const pct = getCommissionPct(students)
   const tier = getPartnerTier(students)
 
@@ -34,7 +46,7 @@ export default async function PartnerDashboard() {
         <div className="card border-l-4 border-green-500">
           <p className="text-xs text-gray-500 mb-1">Total Earned</p>
           <p className="text-3xl font-display font-bold text-green-600">
-            RM {(partner?.total_earned ?? 0).toLocaleString()}
+            RM {(partnerData?.total_earned ?? 0).toLocaleString()}
           </p>
         </div>
       </div>
@@ -55,21 +67,4 @@ export default async function PartnerDashboard() {
         {tier.maxStudents && (
           <p className="text-xs text-gray-400 mt-2">
             {tier.maxStudents - students} more students to next tier
-          </p>
-        )}
-      </div>
-
-      <div className="card">
-        <h2 className="font-display font-semibold text-brand-blue mb-3">Referral Link</h2>
-        <div className="flex gap-2">
-          <input
-            readOnly
-            value={`https://app.happyenglish.edu.vn/enrol?ref=${partner?.referral_code}`}
-            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50"
-          />
-          <CopyReferralButton text={`https://app.happyenglish.edu.vn/enrol?ref=${partner?.referral_code}`} />
-        </div>
-      </div>
-    </div>
-  )
-}
+     
