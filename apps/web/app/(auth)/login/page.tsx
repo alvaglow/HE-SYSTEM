@@ -56,6 +56,12 @@ export default function LoginPage() {
         <a href="/forgot-password" className="block text-center text-sm text-gray-500 mt-4 hover:text-brand-blue">
           Forgot password?
         </a>
+        <p className="text-center text-sm text-gray-500 mt-2">
+          Don&apos;t have an account?{' '}
+          <a href="/register" className="text-brand-blue font-medium hover:underline">
+            Register
+          </a>
+        </p>
       </div>
     </div>
   )
