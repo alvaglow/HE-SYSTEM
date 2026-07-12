@@ -31,6 +31,10 @@ export default function AnnouncementsManager({
     e.preventDefault()
     setLoading(true)
     setError('')
+    // AUDIT FIX (build): this project's generated Database types collapse
+    // Supabase insert()/update() payload types to `never` (same issue seen
+    // across every select() elsewhere in the app) — cast once here rather
+    // than fighting the generated types.
     const { error } = await supabase.from('announcements').insert({
       institution_id: institutionId,
       created_by: userId,
@@ -38,7 +42,7 @@ export default function AnnouncementsManager({
       target_roles: roles,
       is_published: true,
       published_at: new Date().toISOString(),
-    })
+    } as unknown as never)
     setLoading(false)
     if (error) { setError(error.message); return }
     setTitle(''); setBody(''); setRoles(ALL_ROLES); setOpen(false)
@@ -49,7 +53,7 @@ export default function AnnouncementsManager({
     await supabase.from('announcements').update({
       is_published: !a.is_published,
       published_at: !a.is_published ? new Date().toISOString() : a.published_at,
-    }).eq('id', a.id)
+    } as unknown as never).eq('id', a.id)
     router.refresh()
   }
 
