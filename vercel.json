@@ -3,6 +3,5 @@
   "buildCommand": "pnpm turbo run build --filter=@he-system/web",
   "installCommand": "pnpm install --no-frozen-lockfile",
   "framework": "nextjs",
-  "outputDirectory": "apps/web/.next",
-  "nodeVersion": "22.x"
+  "outputDirectory": "apps/web/.next"
 }
