@@ -12,6 +12,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { invoiceEmailHtml } from '../_shared/email-template.ts'
 import { isServiceRoleCall, requireStaff, authErrorResponse } from '../_shared/auth.ts'
 import { requireFields, isValidationError, validationErrorResponse } from '../_shared/resilience.ts'
+import { corsHeaders, handleCors } from '../_shared/cors.ts'
 
 // deno-lint-ignore no-explicit-any
 async function logAudit(
@@ -36,6 +37,8 @@ async function logAudit(
 }
 
 serve(async (req) => {
+  const preflight = handleCors(req)
+  if (preflight) return preflight
   // AUDIT FIX: previously any authenticated user could generate an invoice
   // for any student. Only staff (admin/management) or a trusted service-role
   // caller may create invoices.
@@ -53,7 +56,7 @@ serve(async (req) => {
   try {
     payload = await req.json()
   } catch {
-    return new Response(JSON.stringify({ error: 'Invalid JSON body' }), { status: 400, headers: { 'Content-Type': 'application/json' } })
+    return new Response(JSON.stringify({ error: 'Invalid JSON body' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
 
   try {
@@ -68,10 +71,10 @@ serve(async (req) => {
   }
 
   if (typeof amount !== 'number' || amount <= 0) {
-    return new Response(JSON.stringify({ error: 'amount must be a positive number' }), { status: 400, headers: { 'Content-Type': 'application/json' } })
+    return new Response(JSON.stringify({ error: 'amount must be a positive number' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
   if (Number.isNaN(Date.parse(due_date))) {
-    return new Response(JSON.stringify({ error: 'due_date must be a valid date' }), { status: 400, headers: { 'Content-Type': 'application/json' } })
+    return new Response(JSON.stringify({ error: 'due_date must be a valid date' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
 
   const supabase = createClient(
@@ -107,7 +110,7 @@ serve(async (req) => {
       .select()
       .single()
 
-    if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { 'Content-Type': 'application/json' } })
+    if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 
     await logAudit(supabase, {
       institutionId: institution_id, userId: callerUserId, action: 'invoice.generated',
@@ -140,12 +143,12 @@ serve(async (req) => {
     }
 
     return new Response(JSON.stringify(invoice), {
-      headers: { 'Content-Type': 'application/json' }, status: 201
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 201
     })
   } catch (err) {
     console.error('invoice-generate unhandled error:', err)
     return new Response(JSON.stringify({ error: 'Internal error', detail: err instanceof Error ? err.message : String(err) }), {
-      status: 500, headers: { 'Content-Type': 'application/json' },
+      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   }
 })

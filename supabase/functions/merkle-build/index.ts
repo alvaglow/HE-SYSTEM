@@ -18,9 +18,10 @@ import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { isServiceRoleCall, requireCaller, requireStaff, authErrorResponse } from '../_shared/auth.ts'
 import { requireFields, isValidationError, validationErrorResponse } from '../_shared/resilience.ts'
+import { corsHeaders, handleCors } from '../_shared/cors.ts'
 
 function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
+  return new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 }
 
 // deno-lint-ignore no-explicit-any
@@ -104,6 +105,8 @@ function canonicalLeafInput(r: { id: string; student_id: string; class_id: strin
 }
 
 serve(async (req) => {
+  const preflight = handleCors(req)
+  if (preflight) return preflight
   const supabase = supa()
   let body: Record<string, unknown>
   try {

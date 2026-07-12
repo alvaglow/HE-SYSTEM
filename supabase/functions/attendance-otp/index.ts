@@ -18,13 +18,14 @@ import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { requireCaller, requireSelfOrStaff, authErrorResponse } from '../_shared/auth.ts'
 import { requireFields, isValidationError, validationErrorResponse } from '../_shared/resilience.ts'
+import { corsHeaders, handleCors } from '../_shared/cors.ts'
 
 function generateOtp(): string {
   return Math.floor(100000 + Math.random() * 900000).toString()
 }
 
 function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
+  return new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 }
 
 function supa() {
@@ -32,6 +33,8 @@ function supa() {
 }
 
 serve(async (req) => {
+  const preflight = handleCors(req)
+  if (preflight) return preflight
   let payload: Record<string, unknown>
   try {
     payload = await req.json()

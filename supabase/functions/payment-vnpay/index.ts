@@ -26,6 +26,7 @@ import {
   requireSecrets, requireFields, fetchWithTimeout, retry,
   isConfigError, isValidationError, configErrorResponse, validationErrorResponse,
 } from '../_shared/resilience.ts'
+import { corsHeaders, handleCors } from '../_shared/cors.ts'
 
 const TMN_CODE = Deno.env.get('VNPAY_TMN_CODE')
 const HASH_SECRET = Deno.env.get('VNPAY_HASH_SECRET')
@@ -34,7 +35,7 @@ const QUERY_URL = Deno.env.get('VNPAY_QUERY_URL') || 'https://sandbox.vnpayment.
 const RETURN_URL = Deno.env.get('VNPAY_RETURN_URL')
 
 function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
+  return new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 }
 
 async function hmacHex(key: string, data: string) {
@@ -106,6 +107,8 @@ async function checkAnomaly(supabase: any, userId: string, amountVnd: number) {
 }
 
 serve(async (req) => {
+  const preflight = handleCors(req)
+  if (preflight) return preflight
   const supabase = supa()
   const url = new URL(req.url)
 

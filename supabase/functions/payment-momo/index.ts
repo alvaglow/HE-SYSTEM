@@ -25,6 +25,7 @@ import {
   requireSecrets, requireFields, fetchWithTimeout, retry,
   isConfigError, isValidationError, configErrorResponse, validationErrorResponse,
 } from '../_shared/resilience.ts'
+import { corsHeaders, handleCors } from '../_shared/cors.ts'
 
 const PARTNER_CODE = Deno.env.get('MOMO_PARTNER_CODE')
 const ACCESS_KEY = Deno.env.get('MOMO_ACCESS_KEY')
@@ -34,7 +35,7 @@ const NOTIFY_URL = Deno.env.get('MOMO_NOTIFY_URL')
 const RETURN_URL = Deno.env.get('MOMO_RETURN_URL')
 
 function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
+  return new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 }
 
 async function hmacHex(key: string, data: string) {
@@ -93,6 +94,8 @@ async function checkAnomaly(supabase: any, userId: string, amountVnd: number) {
 }
 
 serve(async (req) => {
+  const preflight = handleCors(req)
+  if (preflight) return preflight
   const supabase = supa()
   let body: Record<string, unknown>
   try {

@@ -14,6 +14,7 @@ import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { isServiceRoleCall, requireStaff, authErrorResponse } from '../_shared/auth.ts'
 import { requireFields, isValidationError, validationErrorResponse } from '../_shared/resilience.ts'
+import { corsHeaders, handleCors } from '../_shared/cors.ts'
 
 const BASE_PCT = 8, RATE = 0.4, MAX = 35
 
@@ -49,6 +50,8 @@ async function logAudit(
 }
 
 serve(async (req) => {
+  const preflight = handleCors(req)
+  if (preflight) return preflight
   // AUDIT FIX: this used to be callable by anyone with zero checks, letting
   // any authenticated user credit an arbitrary partner. Only a trusted
   // service-role caller (e.g. a Supabase DB webhook on partner_recruits) or
@@ -65,7 +68,7 @@ serve(async (req) => {
   try {
     payload = await req.json()
   } catch {
-    return new Response(JSON.stringify({ error: 'Invalid JSON body' }), { status: 400, headers: { 'Content-Type': 'application/json' } })
+    return new Response(JSON.stringify({ error: 'Invalid JSON body' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
 
   try {
@@ -88,8 +91,8 @@ serve(async (req) => {
       .eq('id', recruit_id)
       .single()
 
-    if (error || !recruit) return new Response(JSON.stringify({ error: 'Recruit not found' }), { status: 404, headers: { 'Content-Type': 'application/json' } })
-    if (recruit.status !== 'enrolled') return new Response(JSON.stringify({ error: 'Not enrolled' }), { status: 400, headers: { 'Content-Type': 'application/json' } })
+    if (error || !recruit) return new Response(JSON.stringify({ error: 'Recruit not found' }), { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+    if (recruit.status !== 'enrolled') return new Response(JSON.stringify({ error: 'Not enrolled' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 
     const partner = recruit.partners
     const newTotal = partner.total_recruited + 1
@@ -107,7 +110,7 @@ serve(async (req) => {
       amount_earned: earned,
       tier_at_time: tier,
     })
-    if (commissionErr) return new Response(JSON.stringify({ error: commissionErr.message }), { status: 500, headers: { 'Content-Type': 'application/json' } })
+    if (commissionErr) return new Response(JSON.stringify({ error: commissionErr.message }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 
     const { error: updateErr } = await supabase.from('partners')
       .update({ total_recruited: newTotal, total_earned: partner.total_earned + earned })
@@ -133,12 +136,12 @@ serve(async (req) => {
     }).catch((err: unknown) => console.error('notify-send invoke failed (non-fatal):', err))
 
     return new Response(JSON.stringify({ pct, earned, tier, newTotal }), {
-      headers: { 'Content-Type': 'application/json' }, status: 200
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200
     })
   } catch (err) {
     console.error('commission-calculate unhandled error:', err)
     return new Response(JSON.stringify({ error: 'Internal error', detail: err instanceof Error ? err.message : String(err) }), {
-      status: 500, headers: { 'Content-Type': 'application/json' },
+      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   }
 })

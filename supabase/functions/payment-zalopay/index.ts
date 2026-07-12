@@ -24,6 +24,7 @@ import {
   requireSecrets, requireFields, fetchWithTimeout, retry,
   isConfigError, isValidationError, configErrorResponse, validationErrorResponse,
 } from '../_shared/resilience.ts'
+import { corsHeaders, handleCors } from '../_shared/cors.ts'
 
 const APP_ID = Deno.env.get('ZALOPAY_APP_ID')
 const KEY1 = Deno.env.get('ZALOPAY_KEY1') // HMAC key for requests
@@ -32,7 +33,7 @@ const ENDPOINT = Deno.env.get('ZALOPAY_ENDPOINT') || 'https://sb-openapi.zalopay
 const CALLBACK_URL = Deno.env.get('ZALOPAY_CALLBACK_URL')
 
 function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
+  return new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 }
 
 async function hmacHex(key: string, data: string, hash: 'SHA-256' = 'SHA-256') {
@@ -107,6 +108,8 @@ async function checkAnomaly(supabase: any, userId: string, amountVnd: number) {
 }
 
 serve(async (req) => {
+  const preflight = handleCors(req)
+  if (preflight) return preflight
   const supabase = supa()
   let body: Record<string, unknown>
   try {

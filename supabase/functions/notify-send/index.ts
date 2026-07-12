@@ -23,6 +23,7 @@ import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { isServiceRoleCall, requireStaff, authErrorResponse } from '../_shared/auth.ts'
 import { requireFields, fetchWithTimeout, retry, isValidationError, validationErrorResponse } from '../_shared/resilience.ts'
+import { corsHeaders, handleCors } from '../_shared/cors.ts'
 
 const FCM_PROJECT_ID = Deno.env.get('FIREBASE_PROJECT_ID')
 const FCM_CLIENT_EMAIL = Deno.env.get('FIREBASE_CLIENT_EMAIL')
@@ -123,6 +124,8 @@ async function sendZaloOA(zaloOaId: string, templateId: string, templateData: Re
 }
 
 serve(async (req) => {
+  const preflight = handleCors(req)
+  if (preflight) return preflight
   // AUDIT FIX: this is a system-level dispatcher (always called by other edge
   // functions today, using the service-role key). It previously had no check
   // at all, so any authenticated user could spam push/SMS/email notifications
@@ -140,7 +143,7 @@ serve(async (req) => {
   try {
     payload = await req.json()
   } catch {
-    return new Response(JSON.stringify({ error: 'Invalid JSON body' }), { status: 400, headers: { 'Content-Type': 'application/json' } })
+    return new Response(JSON.stringify({ error: 'Invalid JSON body' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
 
   try {
@@ -167,7 +170,7 @@ serve(async (req) => {
   const { data: user, error: userErr } = await supabase
     .from('users').select('expo_push_token, fcm_token, phone, email, institution_id, zalo_oa_id').eq('id', user_id).single()
 
-  if (userErr || !user) return new Response(JSON.stringify({ error: 'User not found' }), { status: 404, headers: { 'Content-Type': 'application/json' } })
+  if (userErr || !user) return new Response(JSON.stringify({ error: 'User not found' }), { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 
   const channels: string[] = Array.isArray(channel) ? channel : [channel]
   // deno-lint-ignore no-explicit-any
@@ -181,7 +184,7 @@ serve(async (req) => {
       try {
         const res = await fetchWithTimeout('https://exp.host/--/api/v2/push/send', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           body: JSON.stringify({ to: user.expo_push_token, title, body, sound: 'default' }),
         }, 8000)
         results.push = { sent: res.ok }
@@ -297,6 +300,6 @@ serve(async (req) => {
   }
 
   return new Response(JSON.stringify({ sent: true, results }), {
-    headers: { 'Content-Type': 'application/json' }, status: 200
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200
   })
 })

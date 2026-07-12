@@ -17,6 +17,7 @@
  */
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { requireStaff, authErrorResponse } from '../_shared/auth.ts'
+import { corsHeaders, handleCors } from '../_shared/cors.ts'
 
 const ALLOWED_ROLES = new Set(['student', 'teacher', 'staff', 'parent', 'partner', 'admin', 'management'])
 
@@ -26,10 +27,12 @@ function randomCode(prefix: string): string {
 }
 
 function json(body: unknown, status = 200): Response {
-  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
+  return new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 }
 
 Deno.serve(async (req) => {
+  const preflight = handleCors(req)
+  if (preflight) return preflight
   if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405)
 
   let caller

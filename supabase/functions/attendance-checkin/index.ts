@@ -10,11 +10,12 @@ import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { requireSelfOrStaff, authErrorResponse } from '../_shared/auth.ts'
 import { requireSecrets, requireFields, isConfigError, isValidationError, configErrorResponse, validationErrorResponse } from '../_shared/resilience.ts'
+import { corsHeaders, handleCors } from '../_shared/cors.ts'
 
 const LIVENESS_SECRET = Deno.env.get('LIVENESS_SECRET')
 
 function json(body: unknown, status = 200) {
-  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
+  return new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 }
 
 function supa() {
@@ -170,6 +171,8 @@ async function doCheckin(supabase: any, p: {
 }
 
 serve(async (req) => {
+  const preflight = handleCors(req)
+  if (preflight) return preflight
   const supabase = supa()
   let body: Record<string, unknown>
   try {

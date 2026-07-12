@@ -12,6 +12,8 @@
 //
 // Import with: import { requireSecrets, fetchWithTimeout, retry } from '../_shared/resilience.ts'
 
+import { corsHeaders } from './cors.ts'
+
 export class ConfigError extends Error {
   missing: string[]
   constructor(missing: string[]) {
@@ -44,14 +46,14 @@ export function requireSecrets(names: string[]): void {
 export function configErrorResponse(err: ConfigError): Response {
   return new Response(
     JSON.stringify({ error: 'Service not configured', missing: err.missing }),
-    { status: 503, headers: { 'Content-Type': 'application/json' } },
+    { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
   )
 }
 
 export function validationErrorResponse(err: ValidationError): Response {
   return new Response(
     JSON.stringify({ error: err.message, fields: err.fields }),
-    { status: 400, headers: { 'Content-Type': 'application/json' } },
+    { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
   )
 }
 

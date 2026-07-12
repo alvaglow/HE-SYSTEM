@@ -24,6 +24,7 @@
  * function.
  */
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { corsHeaders, handleCors } from '../_shared/cors.ts'
 
 const ALLOWED_ROLES = new Set(['student', 'partner'])
 
@@ -33,10 +34,18 @@ function randomCode(prefix: string): string {
 }
 
 function json(body: unknown, status = 200): Response {
-  return new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } })
+  return new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 }
 
 Deno.serve(async (req) => {
+  // AUDIT FIX (found live): browsers send a CORS preflight OPTIONS request
+  // before the actual POST from supabase.functions.invoke(). Without
+  // answering it, the browser never gets past the preflight and the whole
+  // call fails with a generic "Failed to send a request to the Edge
+  // Function" — this was caught by actually click-testing the Register
+  // button, not just by reading the code.
+  const preflight = handleCors(req)
+  if (preflight) return preflight
   if (req.method !== 'POST') return json({ error: 'Method not allowed' }, 405)
 
   let payload: {

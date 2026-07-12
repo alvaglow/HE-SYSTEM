@@ -29,6 +29,7 @@
 // in supabase/config.toml since they can't produce a Supabase JWT at all.
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { corsHeaders } from './cors.ts'
 
 export class AuthError extends Error {
   status: number
@@ -107,7 +108,7 @@ export async function requireSelfOrStaff(req: Request, targetUserId: string): Pr
 
 export function authErrorResponse(err: unknown): Response {
   if (err instanceof AuthError) {
-    return new Response(JSON.stringify({ error: err.message }), { status: err.status, headers: { 'Content-Type': 'application/json' } })
+    return new Response(JSON.stringify({ error: err.message }), { status: err.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
   }
-  return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { 'Content-Type': 'application/json' } })
+  return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 }
