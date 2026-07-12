@@ -20,7 +20,11 @@ function formatClassTime(iso: string) {
 export default async function StudentDashboard() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  const { data: profile } = await supabase.from('users').select('full_name, institution_id').eq('id', user!.id).single()
+  const { data: profileRaw } = await supabase.from('users').select('full_name, institution_id').eq('id', user!.id).single()
+  // AUDIT FIX (build): plain (non-embedded-relation) selects can still
+  // collapse to `never` under this project's generated Database types
+  // (same issue as `studentData` below). Cast once here.
+  const profile = profileRaw as unknown as { full_name: string | null; institution_id: string } | null
   const { data: student } = await supabase.from('students').select('id, programme_id, programmes(name)').eq('user_id', user!.id).single()
 
   // AUDIT FIX: Supabase's generated types couldn't resolve the
@@ -51,6 +55,11 @@ export default async function StudentDashboard() {
           .order('due_date', { ascending: true })
       : Promise.resolve({ data: [] as { id: string; amount: number; amount_paid: number; currency: string; status: string; due_date: string | null; institution_id: string }[] }),
     studentId ? supabase.from('exam_results').select('id').eq('student_id', studentId).eq('is_published', true) : Promise.resolve({ data: [] as { id: string }[] }),
+    // AUDIT FIX (build): this is the only unconditional (non-ternary-guarded)
+    // query in this Promise.all — the ternary-guarded ones stay safe because
+    // their `never` branch gets absorbed into the union with the typed
+    // Promise.resolve fallback, but this one has no such fallback to absorb
+    // into, so it must be cast after destructuring instead (see below).
     supabase.from('notifications').select('id, title, body, is_read, created_at').eq('user_id', user!.id).order('created_at', { ascending: false }).limit(5),
     studentId ? supabase.from('class_enrollments').select('class_id').eq('student_id', studentId).eq('is_active', true) : Promise.resolve({ data: [] as { class_id: string }[] }),
   ])
@@ -66,7 +75,13 @@ export default async function StudentDashboard() {
   const feeCurrency = nextInvoice?.currency ?? 'USD'
 
   const resultsCount = (resultsRes.data ?? []).length
-  const notifications = notificationsRes.data ?? []
+  const notifications = (notificationsRes.data ?? []) as unknown as {
+    id: string
+    title: string
+    body: string | null
+    is_read: boolean
+    created_at: string
+  }[]
 
   const classIds = (enrollmentsRes.data ?? []).map(e => e.class_id)
   const nowIso = new Date().toISOString()

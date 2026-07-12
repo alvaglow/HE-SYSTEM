@@ -19,7 +19,7 @@ export default async function TeacherDashboard() {
   const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0)
   const todayEnd = new Date(); todayEnd.setHours(23, 59, 59, 999)
 
-  const [kpiRes, classesTodayRes, pendingMarkingRes, myClassesRes] = await Promise.all([
+  const [kpiResRaw, classesTodayRes, pendingMarkingRes, myClassesRes] = await Promise.all([
     supabase.from('kpi_records').select('total_score, grade').eq('user_id', user!.id)
       .order('period_year', { ascending: false }).order('period_month', { ascending: false }).limit(1).maybeSingle(),
     teacherId
@@ -32,12 +32,19 @@ export default async function TeacherDashboard() {
     teacherId ? supabase.from('classes').select('id').eq('teacher_id', teacherId) : Promise.resolve({ data: [] as { id: string }[] }),
   ])
 
+  // AUDIT FIX (build): plain (non-embedded-relation) Supabase selects can
+  // still have their result type collapse to `never` under this project's
+  // generated Database types (seen with kpi_records elsewhere too) — cast
+  // once here rather than fighting the generated types.
+  const kpiRes = kpiResRaw as unknown as { data: { total_score: number | null; grade: string | null } | null }
+
   // At-risk students: enrolled in one of this teacher's classes, with an
   // attendance rate under 75% across at least 3 recorded sessions there.
   const classIds = (myClassesRes.data ?? []).map(c => c.id)
   let atRiskCount = 0
   if (classIds.length > 0) {
-    const { data: records } = await supabase.from('attendance_records').select('student_id, status').in('class_id', classIds)
+    const { data: recordsRaw } = await supabase.from('attendance_records').select('student_id, status').in('class_id', classIds)
+    const records = (recordsRaw ?? []) as unknown as { student_id: string; status: string }[]
     const byStudent = new Map<string, { present: number; total: number }>()
     for (const r of records ?? []) {
       const entry = byStudent.get(r.student_id) ?? { present: 0, total: 0 }

@@ -52,7 +52,12 @@ export default async function ManagementDashboard() {
     ? [...revenueByCurrency.entries()].map(([cur, amt]) => formatMoney(amt, cur)).join(' + ')
     : '—'
 
-  const kpiScores = (kpiThisMonth ?? []).map(k => Number(k.total_score)).filter(n => !Number.isNaN(n))
+  // AUDIT FIX (build): same never-collapse issue as `paymentsThisMonth` above
+  // — this query sits in the same Promise.all destructure, and TypeScript's
+  // inference for the whole array collapsed this element too. Cast for the
+  // same reason.
+  const kpiRecords = (kpiThisMonth ?? []) as unknown as Array<{ total_score: number | null }>
+  const kpiScores = kpiRecords.map(k => Number(k.total_score)).filter(n => !Number.isNaN(n))
   const avgKpi = kpiScores.length > 0 ? Math.round(kpiScores.reduce((a, b) => a + b, 0) / kpiScores.length) : null
 
   return (

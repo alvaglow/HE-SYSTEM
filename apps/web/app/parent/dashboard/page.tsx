@@ -36,11 +36,16 @@ export default async function ParentDashboard() {
   // per-student queries (same shape as the student dashboard's own numbers).
   const childStats = await Promise.all(
     children.map(async (child: any) => {
-      const [{ data: attendance }, { data: invoices }, { count: resultsCount }] = await Promise.all([
+      const [{ data: attendanceRaw }, { data: invoicesRaw }, { count: resultsCount }] = await Promise.all([
         supabase.from('attendance_records').select('status').eq('student_id', child.id),
         supabase.from('fee_invoices').select('amount, amount_paid, currency').eq('student_id', child.id).in('status', ['sent', 'overdue']),
         supabase.from('exam_results').select('id', { count: 'exact', head: true }).eq('student_id', child.id).eq('is_published', true),
       ])
+
+      // AUDIT FIX (build): same never-collapse issue seen elsewhere in this
+      // file — cast both query results to explicit shapes before use.
+      const attendance = (attendanceRaw ?? []) as unknown as { status: string }[]
+      const invoices = (invoicesRaw ?? []) as unknown as { amount: number; amount_paid: number; currency: string }[]
 
       const total = attendance?.length ?? 0
       const present = attendance?.filter((a: { status: string }) => a.status === 'present' || a.status === 'late').length ?? 0
