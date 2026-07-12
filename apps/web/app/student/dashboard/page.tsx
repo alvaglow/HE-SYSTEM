@@ -149,4 +149,17 @@ export default async function StudentDashboard() {
   )
 }
 
-function StatCard({ la
+function StatCard({ label, value, color }: { label: string; value: string; color: string }) {
+  const colors: Record<string, string> = {
+    blue: 'bg-brand-blue-100 text-brand-blue',
+    red:  'bg-brand-red-100 text-brand-red',
+    gold: 'bg-brand-gold-100 text-amber-700',
+    green:'bg-green-50 text-green-700',
+  }
+  return (
+    <div className="card">
+      <p className="text-xs font-medium text-gray-500 mb-1">{label}</p>
+      <p className={`text-2xl font-display font-bold ${colors[color]?.split(' ')[1]}`}>{value}</p>
+    </div>
+  )
+}

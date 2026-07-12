@@ -67,4 +67,21 @@ export default async function PartnerDashboard() {
         {tier.maxStudents && (
           <p className="text-xs text-gray-400 mt-2">
             {tier.maxStudents - students} more students to next tier
-     
+          </p>
+        )}
+      </div>
+
+      <div className="card">
+        <h2 className="font-display font-semibold text-brand-blue mb-3">Referral Link</h2>
+        <div className="flex gap-2">
+          <input
+            readOnly
+            value={`https://app.happyenglish.edu.vn/enrol?ref=${partnerData?.referral_code}`}
+            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm bg-gray-50"
+          />
+          <CopyReferralButton text={`https://app.happyenglish.edu.vn/enrol?ref=${partnerData?.referral_code}`} />
+        </div>
+      </div>
+    </div>
+  )
+}

@@ -73,4 +73,19 @@ export default async function ParentDashboard() {
                   <p className="text-2xl font-bold text-brand-blue">{stats.attendancePct != null ? `${stats.attendancePct}%` : '—'}</p>
                   <p className="text-xs text-gray-500">Attendance</p>
                 </div>
-                <div className
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-brand-red">{stats.outstanding > 0 ? formatMoney(stats.outstanding, stats.currency) : 'Paid up'}</p>
+                  <p className="text-xs text-gray-500">Outstanding Fees</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-green-600">{stats.resultsCount}</p>
+                  <p className="text-xs text-gray-500">Results</p>
+                </div>
+              </div>
+            </div>
+          )
+        })
+      )}
+    </div>
+  )
+}

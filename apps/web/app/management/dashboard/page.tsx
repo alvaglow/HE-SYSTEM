@@ -82,4 +82,18 @@ export default async function ManagementDashboard() {
           <p className="text-gray-400 text-sm">
             {revenueByCurrency.size > 0
               ? `This month so far: ${revenueLabel}. Set a target in budgets to compare against.`
-              : 'No pa
+              : 'No payments recorded yet this month.'}
+          </p>
+        </div>
+        <div className="card">
+          <h2 className="font-display font-semibold text-gray-800 mb-4">KPI Summary</h2>
+          <p className="text-gray-400 text-sm">
+            {kpiScores.length > 0
+              ? `${kpiScores.length} staff/teacher KPI record${kpiScores.length === 1 ? '' : 's'} this month, averaging ${avgKpi}%.`
+              : 'No KPI records calculated for this month yet.'}
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
