@@ -1,38 +1,29 @@
-import LogoutButton from '@/components/LogoutButton'
 import ErrorBoundary from '@/components/ErrorBoundary'
+import PortalSidebar from '@/components/PortalSidebar'
+
+const NAV_ITEMS: Array<[string, string]> = [
+  ['Dashboard', '/parent/dashboard'],
+  ['Attendance', '/parent/attendance'],
+  ['Results', '/parent/results'],
+  ['Assignments', '/parent/assignments'],
+  ['Exam Timetable', '/parent/exams'],
+  ['Transcript', '/parent/transcript'],
+  ['Financial Aid', '/parent/financial-aid'],
+  ['Campus Shuttle', '/parent/shuttle'],
+  ['Support', '/parent/support'],
+  ['Fees', '/parent/fees'],
+  ['Location', '/parent/location'],
+  ['Messages', '/parent/messages'],
+  ['Announcements', '/parent/announcements'],
+]
 
 export default function ParentLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <aside className="w-60 bg-brand-blue text-white flex flex-col py-6 px-4 fixed h-full">
-        <div className="mb-8">
-          <img src="/HE-SYSTEM_Logo.svg" alt="HE-SYSTEM" className="h-10 brightness-0 invert" />
-          <span className="text-xs text-white/50 mt-1 block">Parent Portal</span>
-        </div>
-        <nav className="flex-1 space-y-1 text-sm">
-          {[
-            ['Dashboard', '/parent/dashboard'],
-            ['Attendance', '/parent/attendance'],
-            ['Results', '/parent/results'],
-            ['Assignments', '/parent/assignments'],
-            ['Exam Timetable', '/parent/exams'],
-            ['Transcript', '/parent/transcript'],
-            ['Financial Aid', '/parent/financial-aid'],
-            ['Campus Shuttle', '/parent/shuttle'],
-            ['Support', '/parent/support'],
-            ['Fees', '/parent/fees'],
-            ['Location', '/parent/location'],
-            ['Messages', '/parent/messages'],
-            ['Announcements', '/parent/announcements'],
-          ].map(([label, href]) => (
-            <a key={href} href={href} className="flex items-center px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
-              {label}
-            </a>
-          ))}
-        </nav>
-        <LogoutButton />
-      </aside>
-      <main className="ml-60 flex-1 p-8"><ErrorBoundary>{children}</ErrorBoundary></main>
+    <div className="flex min-h-screen flex-col lg:flex-row bg-gray-50 dark:bg-gray-950">
+      <PortalSidebar portalName="Parent Portal" navItems={NAV_ITEMS} accent="blue" />
+      <main className="flex-1 lg:ml-60 p-4 sm:p-8">
+        <ErrorBoundary>{children}</ErrorBoundary>
+      </main>
     </div>
   )
 }

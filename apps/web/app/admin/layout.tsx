@@ -1,45 +1,36 @@
-import LogoutButton from '@/components/LogoutButton'
 import ErrorBoundary from '@/components/ErrorBoundary'
+import PortalSidebar from '@/components/PortalSidebar'
+
+const NAV_ITEMS: Array<[string, string]> = [
+  ['Dashboard', '/admin/dashboard'],
+  ['Students', '/admin/students'],
+  ['Staff', '/admin/staff'],
+  ['Enrolment', '/admin/enrolment'],
+  ['Invoices', '/admin/invoices'],
+  ['Partners', '/admin/partners'],
+  ['Payouts', '/admin/payouts'],
+  ['Leave', '/admin/leave'],
+  ['Timetable', '/admin/timetable'],
+  ['KPI', '/admin/kpi'],
+  ['Announcements', '/admin/announcements'],
+  ['Library', '/admin/library'],
+  ['Rooms', '/admin/rooms'],
+  ['Exams', '/admin/exams'],
+  ['Financial Aid', '/admin/financial-aid'],
+  ['Shuttle', '/admin/shuttle'],
+  ['Audit Log', '/admin/audit-log'],
+  ['Support', '/admin/support'],
+  ['Room Bookings', '/admin/bookings'],
+  ['Graduation', '/admin/graduation'],
+]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <aside className="w-60 bg-brand-blue text-white flex flex-col py-6 px-4 fixed h-full">
-        <div className="mb-8">
-          <img src="/HE-SYSTEM_Logo.svg" alt="HE-SYSTEM" className="h-10 brightness-0 invert" />
-          <span className="text-xs text-white/50 mt-1 block">Admin Portal</span>
-        </div>
-        <nav className="flex-1 space-y-1 text-sm">
-          {[
-            ['Dashboard', '/admin/dashboard'],
-            ['Students', '/admin/students'],
-            ['Staff', '/admin/staff'],
-            ['Enrolment', '/admin/enrolment'],
-            ['Invoices', '/admin/invoices'],
-            ['Partners', '/admin/partners'],
-            ['Payouts', '/admin/payouts'],
-            ['Leave', '/admin/leave'],
-            ['Timetable', '/admin/timetable'],
-            ['KPI', '/admin/kpi'],
-            ['Announcements', '/admin/announcements'],
-            ['Library', '/admin/library'],
-            ['Rooms', '/admin/rooms'],
-            ['Exams', '/admin/exams'],
-            ['Financial Aid', '/admin/financial-aid'],
-            ['Shuttle', '/admin/shuttle'],
-            ['Audit Log', '/admin/audit-log'],
-            ['Support', '/admin/support'],
-            ['Room Bookings', '/admin/bookings'],
-            ['Graduation', '/admin/graduation'],
-          ].map(([label, href]) => (
-            <a key={href} href={href} className="flex items-center px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
-              {label}
-            </a>
-          ))}
-        </nav>
-        <LogoutButton />
-      </aside>
-      <main className="ml-60 flex-1 p-8"><ErrorBoundary>{children}</ErrorBoundary></main>
+    <div className="flex min-h-screen flex-col lg:flex-row bg-gray-50 dark:bg-gray-950">
+      <PortalSidebar portalName="Admin Portal" navItems={NAV_ITEMS} accent="blue" />
+      <main className="flex-1 lg:ml-60 p-4 sm:p-8">
+        <ErrorBoundary>{children}</ErrorBoundary>
+      </main>
     </div>
   )
 }

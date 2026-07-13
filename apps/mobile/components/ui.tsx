@@ -122,11 +122,25 @@ export function LoadingView() {
   )
 }
 
-export function MenuCard({ label, sublabel, onPress, accent }: { label: string; sublabel?: string; onPress: () => void; accent?: string }) {
+export function MenuCard({ label, sublabel, onPress, accent, icon }: { label: string; sublabel?: string; onPress: () => void; accent?: string; icon?: string }) {
   return (
-    <TouchableOpacity style={[styles.menuCard, accent ? { borderLeftColor: accent, borderLeftWidth: 4 } : null]} onPress={onPress}>
-      <Text style={styles.menuCardLabel}>{label}</Text>
-      {sublabel ? <Text style={styles.menuCardSub}>{sublabel}</Text> : null}
+    <TouchableOpacity
+      activeOpacity={0.7}
+      style={[styles.menuCard, accent ? { borderLeftColor: accent, borderLeftWidth: 4 } : null]}
+      onPress={onPress}
+    >
+      <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+        {icon ? (
+          <View style={[styles.menuCardIconWrap, { backgroundColor: `${accent ?? colors.blue}1A` }]}>
+            <Text style={styles.menuCardIcon}>{icon}</Text>
+          </View>
+        ) : null}
+        <View style={{ flex: 1 }}>
+          <Text style={styles.menuCardLabel}>{label}</Text>
+          {sublabel ? <Text style={styles.menuCardSub}>{sublabel}</Text> : null}
+        </View>
+        <Text style={styles.menuCardChevron}>›</Text>
+      </View>
     </TouchableOpacity>
   )
 }
@@ -139,7 +153,7 @@ export function MenuCard({ label, sublabel, onPress, accent }: { label: string; 
 export function TileCard({ icon, label, onPress, accent }: { icon: string; label: string; onPress: () => void; accent?: string }) {
   const tint = accent ?? colors.blue
   return (
-    <TouchableOpacity style={styles.tileCard} onPress={onPress}>
+    <TouchableOpacity activeOpacity={0.7} style={styles.tileCard} onPress={onPress}>
       <View style={[styles.tileIconWrap, { backgroundColor: `${tint}1A` }]}>
         <Text style={styles.tileIcon}>{icon}</Text>
       </View>
@@ -154,7 +168,7 @@ export function TileGrid({ children }: { children: ReactNode }) {
 
 export function PrimaryButton({ label, onPress, loading, disabled }: { label: string; onPress: () => void; loading?: boolean; disabled?: boolean }) {
   return (
-    <TouchableOpacity style={[styles.primaryBtn, disabled ? { opacity: 0.5 } : null]} onPress={onPress} disabled={disabled || loading}>
+    <TouchableOpacity activeOpacity={0.85} style={[styles.primaryBtn, disabled ? { opacity: 0.5 } : null]} onPress={onPress} disabled={disabled || loading}>
       {loading ? <ActivityIndicator color={colors.white} /> : <Text style={styles.primaryBtnText}>{label}</Text>}
     </TouchableOpacity>
   )
@@ -183,8 +197,8 @@ export function TextField({
 }
 
 const styles = StyleSheet.create({
-  card: { backgroundColor: colors.white, borderRadius: 14, padding: 16, marginBottom: 14, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 1 },
-  statCard: { backgroundColor: colors.white, borderRadius: 14, padding: 14, flex: 1, minWidth: 140, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 1 },
+  card: { backgroundColor: colors.white, borderRadius: 16, padding: 16, marginBottom: 14, shadowColor: '#0F172A', shadowOpacity: 0.06, shadowRadius: 10, shadowOffset: { width: 0, height: 3 }, elevation: 2 },
+  statCard: { backgroundColor: colors.white, borderRadius: 16, padding: 14, flex: 1, minWidth: 140, shadowColor: '#0F172A', shadowOpacity: 0.06, shadowRadius: 10, shadowOffset: { width: 0, height: 3 }, elevation: 2 },
   statLabel: { fontSize: 12, color: colors.gray, marginBottom: 4 },
   statValue: { fontSize: 22, fontWeight: '700', color: colors.blue },
   badge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999, alignSelf: 'flex-start' },
@@ -198,4 +212,20 @@ const styles = StyleSheet.create({
   rowTitle: { fontSize: 14, color: colors.text, fontWeight: '500' },
   rowSubtitle: { fontSize: 12, color: colors.gray, marginTop: 2 },
   empty: { paddingVertical: 24, alignItems: 'center' },
-  emptyText: { fontSize: 13, color: colors.muted, textAlign: 'ce
+  emptyText: { fontSize: 13, color: colors.muted, textAlign: 'center' },
+  loading: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.white },
+  menuCard: { backgroundColor: colors.white, borderRadius: 14, padding: 14, marginBottom: 10, shadowColor: '#0F172A', shadowOpacity: 0.05, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 1 },
+  menuCardLabel: { fontSize: 15, fontWeight: '600', color: colors.text },
+  menuCardSub: { fontSize: 12, color: colors.gray, marginTop: 2 },
+  menuCardIconWrap: { width: 36, height: 36, borderRadius: 10, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
+  menuCardIcon: { fontSize: 17 },
+  menuCardChevron: { fontSize: 20, color: colors.muted, marginLeft: 8 },
+  primaryBtn: { backgroundColor: colors.blue, borderRadius: 12, paddingVertical: 13, alignItems: 'center', shadowColor: colors.blue, shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 3 }, elevation: 2 },
+  primaryBtnText: { color: colors.white, fontWeight: '600', fontSize: 14 },
+  input: { borderWidth: 1, borderColor: colors.border, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 11, fontSize: 14, marginBottom: 10, color: colors.text, backgroundColor: colors.white },
+  tileGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 14 },
+  tileCard: { width: '47%', backgroundColor: colors.white, borderRadius: 18, padding: 16, alignItems: 'center', shadowColor: '#0F172A', shadowOpacity: 0.06, shadowRadius: 10, shadowOffset: { width: 0, height: 3 }, elevation: 2 },
+  tileIconWrap: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
+  tileIcon: { fontSize: 22 },
+  tileLabel: { fontSize: 13, fontWeight: '600', color: colors.text, textAlign: 'center' },
+})

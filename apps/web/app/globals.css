@@ -9,22 +9,63 @@
 }
 
 @layer base {
-  h1, h2, h3 { font-family: 'Oswald', sans-serif; }
+  h1, h2, h3 { font-family: 'Oswald', sans-serif; letter-spacing: -0.01em; }
+
+  /* Frontend refresh: a visible, on-brand focus ring everywhere instead of
+     the browser default (or nothing) — every interactive element in the app
+     inherits this from one place. */
+  a, button, input, select, textarea {
+    transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease, opacity 150ms ease, box-shadow 150ms ease;
+  }
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+    @apply outline-none ring-2 ring-brand-blue-400 ring-offset-2 ring-offset-white dark:ring-offset-gray-950;
+  }
+
+  /* Custom scrollbar — thin, on-brand, and not the OS default gray slab. */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { @apply bg-gray-300 dark:bg-gray-700 rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-gray-400 dark:bg-gray-600; }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-brand-blue text-white px-4 py-2 rounded-lg font-medium hover:bg-brand-blue-600 transition-colors;
+    @apply bg-brand-blue text-white px-4 py-2.5 rounded-lg font-medium text-sm shadow-soft
+      hover:bg-brand-blue-600 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none transition-all;
+  }
+  .btn-secondary {
+    @apply bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-800
+      px-4 py-2.5 rounded-lg font-medium text-sm shadow-soft
+      hover:bg-gray-50 dark:hover:bg-gray-800 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none transition-all;
   }
   .btn-danger {
-    @apply bg-brand-red text-white px-4 py-2 rounded-lg font-medium hover:opacity-90 transition-opacity;
+    @apply bg-brand-red text-white px-4 py-2.5 rounded-lg font-medium text-sm shadow-soft
+      hover:opacity-90 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none transition-all;
   }
   /* Batch 3 personalization: dark-mode variants on the shared card class
      cover every portal page at once since `.card` is used everywhere,
      without having to touch each page's own bg-white/border-gray classes
-     individually. */
+     individually. Frontend refresh: softer layered shadow + subtle hover
+     lift so cards feel tactile instead of flat. */
   .card {
-    @apply bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm p-5;
+    @apply bg-white dark:bg-gray-900 rounded-xl2 border border-gray-100 dark:border-gray-800 shadow-soft p-5
+      transition-shadow duration-200 ease-out-soft hover:shadow-lifted;
+  }
+  .input {
+    @apply w-full border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900
+      text-gray-900 dark:text-gray-100 rounded-lg px-3 py-2 text-sm placeholder:text-gray-400
+      focus-visible:border-brand-blue-400 transition-colors;
+  }
+  .badge {
+    @apply inline-flex items-center text-xs font-semibold px-2.5 py-0.5 rounded-full;
+  }
+  .page-title {
+    @apply text-3xl font-display font-bold text-brand-blue dark:text-brand-blue-200 mb-8 tracking-tight;
+  }
+  /* Skeleton placeholder for async content — replaces silent blank cards
+     while a portal page's Supabase queries resolve. */
+  .skeleton {
+    @apply animate-pulse bg-gray-100 dark:bg-gray-800 rounded-lg;
   }
 }
 
