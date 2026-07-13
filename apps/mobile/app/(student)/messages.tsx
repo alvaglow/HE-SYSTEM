@@ -3,7 +3,7 @@
  */
 import { useCallback, useState } from 'react'
 import { View, Text, ScrollView, StyleSheet, RefreshControl } from 'react-native'
-import { useFocusEffect } from 'expo-router'
+import { useFocusEffect, useLocalSearchParams } from 'expo-router'
 import { supabase } from '../../lib/supabase'
 import { getMe } from '../../lib/session'
 import { messageSend } from '../../lib/edgeFunctions'
@@ -13,6 +13,7 @@ type FeedItem = { id: string; direction: 'sent' | 'received'; other: string; con
 type Recipient = { id: string; label: string }
 
 export default function StudentMessagesScreen() {
+  const params = useLocalSearchParams<{ to?: string; name?: string }>()
   const [userId, setUserId] = useState('')
   const [institutionId, setInstitutionId] = useState('')
   const [feed, setFeed] = useState<FeedItem[]>([])
@@ -53,10 +54,17 @@ export default function StudentMessagesScreen() {
       if (t?.user_id) teacherMap.set(t.user_id, t.users?.full_name ?? 'Teacher')
     }
 
+    // A "Message" tap from the Staff Directory can target any teacher/staff
+    // member in the institution, not just this student's own class teachers.
+    if (params.to && !teacherMap.has(params.to)) {
+      teacherMap.set(params.to, params.name ?? 'Contact')
+    }
+
     setFeed(combined)
     setRecipients([...teacherMap.entries()].map(([id, label]) => ({ id, label })))
+    if (params.to) setRecipientId(params.to)
     setLoading(false)
-  }, [])
+  }, [params.to, params.name])
 
   useFocusEffect(useCallback(() => { load() }, [load]))
 

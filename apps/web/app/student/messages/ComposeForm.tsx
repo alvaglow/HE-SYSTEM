@@ -5,8 +5,8 @@ import { messageSend } from '@/lib/edgeFunctions'
 
 type Recipient = { id: string; label: string }
 
-export default function ComposeForm({ recipients }: { recipients: Recipient[] }) {
-  const [recipientId, setRecipientId] = useState('')
+export default function ComposeForm({ recipients, initialRecipientId }: { recipients: Recipient[]; initialRecipientId?: string }) {
+  const [recipientId, setRecipientId] = useState(initialRecipientId ?? '')
   const [content, setContent] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')

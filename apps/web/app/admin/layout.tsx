@@ -23,6 +23,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             ['KPI', '/admin/kpi'],
             ['Announcements', '/admin/announcements'],
             ['Library', '/admin/library'],
+            ['Rooms', '/admin/rooms'],
+            ['Exams', '/admin/exams'],
+            ['Financial Aid', '/admin/financial-aid'],
+            ['Shuttle', '/admin/shuttle'],
           ].map(([label, href]) => (
             <a key={href} href={href} className="flex items-center px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
               {label}

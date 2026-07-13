@@ -20,6 +20,10 @@ export default function ManagementLayout({ children }: { children: React.ReactNo
             ['Leave', '/management/leave'],
             ['Reports', '/management/reports'],
             ['Library', '/management/library'],
+            ['Rooms', '/management/rooms'],
+            ['Exams', '/management/exams'],
+            ['Financial Aid', '/management/financial-aid'],
+            ['Shuttle', '/management/shuttle'],
           ].map(([label, href]) => (
             <a key={href} href={href} className="flex items-center px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
               {label}

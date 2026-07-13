@@ -144,6 +144,10 @@ export default function AdminDashboard() {
           <MenuCard label="Leave" sublabel="Approve staff leave requests" onPress={() => router.push('/(admin)/leave')} accent={colors.red} />
           <MenuCard label="Reports" sublabel="Export CSV reports" onPress={() => router.push('/(admin)/reports')} accent={colors.gray} />
           <MenuCard label="Library" sublabel="Digital library resources" onPress={() => router.push('/(admin)/library')} accent={colors.blue} />
+          <MenuCard label="Rooms" sublabel="Campus room directory" onPress={() => router.push('/(admin)/rooms')} accent={colors.blue} />
+          <MenuCard label="Exams" sublabel="Exam timetable" onPress={() => router.push('/(admin)/exams')} accent={colors.red} />
+          <MenuCard label="Financial Aid" sublabel="Scholarships & loans" onPress={() => router.push('/(admin)/financial-aid')} accent={colors.amber} />
+          <MenuCard label="Shuttle" sublabel="Campus bus routes" onPress={() => router.push('/(admin)/shuttle')} accent={colors.blue} />
         </>
       ) : (
         <>
@@ -158,6 +162,10 @@ export default function AdminDashboard() {
           <MenuCard label="Timetable" sublabel="Class schedule" onPress={() => router.push('/(admin)/timetable')} accent={colors.blue} />
           <MenuCard label="Announcements" sublabel="Institution-wide messages" onPress={() => router.push('/(admin)/announcements')} accent={colors.gray} />
           <MenuCard label="Library" sublabel="Digital library resources" onPress={() => router.push('/(admin)/library')} accent={colors.blue} />
+          <MenuCard label="Rooms" sublabel="Campus room directory" onPress={() => router.push('/(admin)/rooms')} accent={colors.blue} />
+          <MenuCard label="Exams" sublabel="Exam timetable" onPress={() => router.push('/(admin)/exams')} accent={colors.red} />
+          <MenuCard label="Financial Aid" sublabel="Scholarships & loans" onPress={() => router.push('/(admin)/financial-aid')} accent={colors.amber} />
+          <MenuCard label="Shuttle" sublabel="Campus bus routes" onPress={() => router.push('/(admin)/shuttle')} accent={colors.blue} />
         </>
       )}
     </ScrollView>

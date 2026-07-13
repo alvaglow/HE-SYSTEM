@@ -23,6 +23,12 @@ const DEFAULT_TILES: QuickTile[] = [
   { key: '/(student)/library', icon: '📚', label: 'Library', accent: colors.blue, route: '/(student)/library' },
   { key: '/(student)/directory', icon: '🧑‍🏫', label: 'Staff Directory', accent: colors.green, route: '/(student)/directory' },
   { key: '/(student)/profile', icon: '🪪', label: 'My Profile', accent: colors.gray, route: '/(student)/profile' },
+  { key: '/(student)/assistant', icon: '💬', label: 'Assistant', accent: colors.purple, route: '/(student)/assistant' },
+  { key: '/(student)/facilities', icon: '🏫', label: 'Facility Finder', accent: colors.blue, route: '/(student)/facilities' },
+  { key: '/(student)/exams', icon: '📝', label: 'Exam Timetable', accent: colors.red, route: '/(student)/exams' },
+  { key: '/(student)/transcript', icon: '📜', label: 'Transcript', accent: colors.green, route: '/(student)/transcript' },
+  { key: '/(student)/financial-aid', icon: '🎓', label: 'Financial Aid', accent: colors.amber, route: '/(student)/financial-aid' },
+  { key: '/(student)/shuttle', icon: '🚌', label: 'Campus Shuttle', accent: colors.blue, route: '/(student)/shuttle' },
 ]
 
 const ACCENT_OPTIONS: Record<string, string> = {

@@ -15,6 +15,11 @@ const QUICK_ACCESS = [
   { href: '/student/library', icon: '📚', label: 'Library', color: 'text-brand-blue bg-brand-blue-100' },
   { href: '/student/directory', icon: '🧑‍🏫', label: 'Staff Directory', color: 'text-green-700 bg-green-50' },
   { href: '/student/profile', icon: '🪪', label: 'My Profile', color: 'text-gray-700 bg-gray-100' },
+  { href: '/student/facilities', icon: '🏫', label: 'Facility Finder', color: 'text-brand-blue bg-brand-blue-100' },
+  { href: '/student/exams', icon: '📝', label: 'Exam Timetable', color: 'text-brand-red bg-brand-red-100' },
+  { href: '/student/transcript', icon: '📜', label: 'Transcript', color: 'text-green-700 bg-green-50' },
+  { href: '/student/financial-aid', icon: '🎓', label: 'Financial Aid', color: 'text-amber-700 bg-brand-gold-100' },
+  { href: '/student/shuttle', icon: '🚌', label: 'Campus Shuttle', color: 'text-brand-blue bg-brand-blue-100' },
 ]
 
 function formatMoney(amount: number, currency: string) {

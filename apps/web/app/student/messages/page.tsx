@@ -1,7 +1,11 @@
 import { createClient } from '@/lib/supabase/server'
 import ComposeForm from './ComposeForm'
 
-export default async function StudentMessagesPage() {
+export default async function StudentMessagesPage({
+  searchParams,
+}: {
+  searchParams: { to?: string; name?: string }
+}) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   const { data: meRaw } = await supabase.from('users').select('institution_id').eq('id', user!.id).single()
@@ -34,6 +38,13 @@ export default async function StudentMessagesPage() {
     const t = e.classes?.teachers
     if (t?.user_id) teacherMap.set(t.user_id, t.users?.full_name ?? 'Teacher')
   }
+  // A "Message" link from the Staff Directory can point at any teacher/staff
+  // member in the institution, not just this student's own class teachers --
+  // merge it in (deduped) so the dropdown includes them even if they aren't
+  // already a class teacher.
+  if (searchParams.to && !teacherMap.has(searchParams.to)) {
+    teacherMap.set(searchParams.to, searchParams.name ?? 'Contact')
+  }
   const recipients = [...teacherMap.entries()].map(([id, label]) => ({ id, label }))
 
   return (
@@ -42,7 +53,7 @@ export default async function StudentMessagesPage() {
 
       <div className="card mb-6">
         <h2 className="text-lg font-display font-semibold text-brand-blue mb-4">New Message</h2>
-        <ComposeForm recipients={recipients} />
+        <ComposeForm recipients={recipients} initialRecipientId={searchParams.to} />
       </div>
 
       <div className="card">

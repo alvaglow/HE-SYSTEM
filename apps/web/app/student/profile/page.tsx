@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import ThemeToggle from '@/components/ThemeToggle'
 
 function formatDate(d: string | null) {
   return d ? new Date(d).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : '—'
@@ -13,8 +14,8 @@ export default async function StudentProfilePage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  const { data: profileRaw } = await supabase.from('users').select('full_name, email, institution_id').eq('id', user!.id).single()
-  const profile = profileRaw as unknown as { full_name: string | null; email: string; institution_id: string } | null
+  const { data: profileRaw } = await supabase.from('users').select('full_name, email, institution_id, theme').eq('id', user!.id).single()
+  const profile = profileRaw as unknown as { full_name: string | null; email: string; institution_id: string; theme: string | null } | null
 
   const { data: studentRaw } = await supabase
     .from('students')
@@ -38,7 +39,10 @@ export default async function StudentProfilePage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-display font-bold text-brand-blue mb-8">My Profile</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-display font-bold text-brand-blue">My Profile</h1>
+        <ThemeToggle userId={user!.id} initialTheme={profile?.theme === 'dark' ? 'dark' : 'light'} />
+      </div>
 
       <div className="card mb-6">
         <div className="flex items-center gap-4 mb-2">

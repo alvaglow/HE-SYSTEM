@@ -19,7 +19,15 @@
   .btn-danger {
     @apply bg-brand-red text-white px-4 py-2 rounded-lg font-medium hover:opacity-90 transition-opacity;
   }
+  /* Batch 3 personalization: dark-mode variants on the shared card class
+     cover every portal page at once since `.card` is used everywhere,
+     without having to touch each page's own bg-white/border-gray classes
+     individually. */
   .card {
-    @apply bg-white rounded-xl border border-gray-100 shadow-sm p-5;
+    @apply bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm p-5;
   }
+}
+
+@media print {
+  .no-print { display: none !important; }
 }

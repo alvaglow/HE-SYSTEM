@@ -1,6 +1,11 @@
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
+  // Batch 3 (APSpace-inspired personalization): light/dark theme toggle.
+  // 'class' strategy — dark mode is driven by a `dark` class on <html>
+  // (see components/ThemeInit.tsx), not the OS-level prefers-color-scheme,
+  // so it can be a per-user preference stored in `users.theme`.
+  darkMode: 'class',
   content: [
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',

@@ -2,7 +2,7 @@
  * Mirrors apps/web/app/student/profile (StudentProfilePage).
  */
 import { useCallback, useState } from 'react'
-import { View, Text, ScrollView, StyleSheet, RefreshControl } from 'react-native'
+import { View, Text, ScrollView, StyleSheet, RefreshControl, TouchableOpacity } from 'react-native'
 import { useFocusEffect } from 'expo-router'
 import { supabase } from '../../lib/supabase'
 import { getMe } from '../../lib/session'
@@ -26,16 +26,21 @@ type Profile = {
 export default function StudentProfileScreen() {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
+  const [userId, setUserId] = useState('')
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
+  const [savingTheme, setSavingTheme] = useState(false)
 
   const load = useCallback(async () => {
     const me = await getMe()
     if (!me) { setLoading(false); return }
+    setUserId(me.id)
 
     const [{ data: userRaw }, { data: studentRaw }, { data: instRaw }] = await Promise.all([
-      supabase.from('users').select('full_name, email').eq('id', me.id).single(),
+      supabase.from('users').select('full_name, email, theme').eq('id', me.id).single(),
       supabase.from('students').select('student_number, intake_date, expected_grad, nationality, passport_number, emgs_status, student_pass_expiry, programmes(name, code)').eq('user_id', me.id).single(),
       supabase.from('institutions').select('name').eq('id', me.institutionId).single(),
     ])
+    setTheme((userRaw as unknown as { theme?: string } | null)?.theme === 'dark' ? 'dark' : 'light')
 
     const u = userRaw as unknown as { full_name: string | null; email: string } | null
     const s = studentRaw as unknown as {
@@ -57,6 +62,14 @@ export default function StudentProfileScreen() {
 
   useFocusEffect(useCallback(() => { load() }, [load]))
 
+  async function toggleTheme() {
+    const next = theme === 'dark' ? 'light' : 'dark'
+    setSavingTheme(true)
+    setTheme(next)
+    await supabase.from('users').update({ theme: next } as unknown as never).eq('id', userId)
+    setSavingTheme(false)
+  }
+
   if (loading) return <LoadingView />
 
   const passExpiryDays = daysUntil(profile?.studentPassExpiry ?? null)
@@ -65,6 +78,18 @@ export default function StudentProfileScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ padding: 16 }} refreshControl={<RefreshControl refreshing={false} onRefresh={load} />}>
       <ScreenHeader title="My Profile" />
+
+      <Card>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Text style={styles.sectionTitle}>Appearance</Text>
+          <TouchableOpacity onPress={toggleTheme} disabled={savingTheme} style={styles.themeBtn}>
+            <Text style={styles.themeBtnText}>{theme === 'dark' ? '🌙 Dark' : '☀️ Light'}</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.themeNote}>
+          Saved to your account — full in-app dark theming is coming to the mobile app soon; this sets your preference for now.
+        </Text>
+      </Card>
 
       <Card>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
@@ -121,4 +146,7 @@ const styles = StyleSheet.create({
   rowLabel: { fontSize: 13, color: colors.gray },
   rowValue: { fontSize: 13, color: colors.text, fontWeight: '600', textAlign: 'right', flexShrink: 1, marginLeft: 10 },
   warning: { fontSize: 12, color: colors.red, backgroundColor: colors.redLight, borderRadius: 8, padding: 10, marginTop: 8 },
+  themeBtn: { backgroundColor: colors.blueLight, borderRadius: 999, paddingHorizontal: 14, paddingVertical: 7 },
+  themeBtnText: { fontSize: 13, fontWeight: '600', color: colors.blue },
+  themeNote: { fontSize: 12, color: colors.gray, marginTop: 8, lineHeight: 17 },
 })
