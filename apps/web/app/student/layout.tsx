@@ -21,6 +21,8 @@ export default async function StudentLayout({ children }: { children: React.Reac
             ['Attendance', '/student/attendance'],
             ['Timetable', '/student/timetable'],
             ['Results', '/student/results'],
+            ['Assignments', '/student/assignments'],
+            ['Course Registration', '/student/registration'],
             ['Fees', '/student/fees'],
             ['Wallet', '/student/wallet'],
             ['Location', '/student/location'],
@@ -29,22 +31,4 @@ export default async function StudentLayout({ children }: { children: React.Reac
             ['Messages', '/student/messages'],
             ['Announcements', '/student/announcements'],
             ['My Profile', '/student/profile'],
-            ['Facility Finder', '/student/facilities'],
-            ['Exam Timetable', '/student/exams'],
-            ['Transcript', '/student/transcript'],
-            ['Financial Aid', '/student/financial-aid'],
-            ['Campus Shuttle', '/student/shuttle'],
-          ].map(([label, href]) => (
-            <a key={href} href={href}
-              className="flex items-center px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
-              {label}
-            </a>
-          ))}
-        </nav>
-        <LogoutButton />
-      </aside>
-      <main className="ml-60 flex-1 p-8 print:ml-0"><ErrorBoundary>{children}</ErrorBoundary></main>
-      <div className="no-print"><AiAssistantWidget /></div>
-    </div>
-  )
-}
+            ['Facility Finder', '/studen

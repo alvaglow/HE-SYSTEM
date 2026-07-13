@@ -14,19 +14,14 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
             ['Dashboard', '/parent/dashboard'],
             ['Attendance', '/parent/attendance'],
             ['Results', '/parent/results'],
+            ['Assignments', '/parent/assignments'],
+            ['Exam Timetable', '/parent/exams'],
+            ['Transcript', '/parent/transcript'],
+            ['Financial Aid', '/parent/financial-aid'],
+            ['Campus Shuttle', '/parent/shuttle'],
             ['Fees', '/parent/fees'],
             ['Location', '/parent/location'],
             ['Messages', '/parent/messages'],
             ['Announcements', '/parent/announcements'],
           ].map(([label, href]) => (
-            <a key={href} href={href} className="flex items-center px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
-              {label}
-            </a>
-          ))}
-        </nav>
-        <LogoutButton />
-      </aside>
-      <main className="ml-60 flex-1 p-8"><ErrorBoundary>{children}</ErrorBoundary></main>
-    </div>
-  )
-}
+            <a key={href} href={href} className="flex items-center px-3 py-2 rounde

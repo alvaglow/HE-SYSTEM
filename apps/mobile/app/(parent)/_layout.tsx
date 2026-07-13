@@ -10,6 +10,11 @@ export default function ParentLayout() {
       <Stack.Screen name="messages" />
       <Stack.Screen name="results" />
       <Stack.Screen name="announcements" />
+      <Stack.Screen name="assignments" />
+      <Stack.Screen name="exams" />
+      <Stack.Screen name="transcript" />
+      <Stack.Screen name="financial-aid" />
+      <Stack.Screen name="shuttle" />
     </Stack>
   )
 }

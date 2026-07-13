@@ -22,6 +22,8 @@ export default function StudentLayout() {
       <Stack.Screen name="transcript" />
       <Stack.Screen name="financial-aid" />
       <Stack.Screen name="shuttle" />
+      <Stack.Screen name="assignments" />
+      <Stack.Screen name="registration" />
     </Stack>
   )
 }

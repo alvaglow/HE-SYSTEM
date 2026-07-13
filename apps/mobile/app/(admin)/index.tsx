@@ -148,6 +148,7 @@ export default function AdminDashboard() {
           <MenuCard label="Exams" sublabel="Exam timetable" onPress={() => router.push('/(admin)/exams')} accent={colors.red} />
           <MenuCard label="Financial Aid" sublabel="Scholarships & loans" onPress={() => router.push('/(admin)/financial-aid')} accent={colors.amber} />
           <MenuCard label="Shuttle" sublabel="Campus bus routes" onPress={() => router.push('/(admin)/shuttle')} accent={colors.blue} />
+          <MenuCard label="Audit Log" sublabel="Tamper-evident activity record" onPress={() => router.push('/(admin)/audit-log')} accent={colors.gray} />
         </>
       ) : (
         <>
@@ -159,25 +160,4 @@ export default function AdminDashboard() {
           <MenuCard label="Partners" sublabel="Referral partners & recruits" onPress={() => router.push('/(admin)/partners')} accent={colors.amber} />
           <MenuCard label="Payouts" sublabel="Approve partner payout requests" onPress={() => router.push('/(admin)/payouts')} accent={colors.green} />
           <MenuCard label="Leave" sublabel="Approve staff leave requests" onPress={() => router.push('/(admin)/leave')} accent={colors.red} />
-          <MenuCard label="Timetable" sublabel="Class schedule" onPress={() => router.push('/(admin)/timetable')} accent={colors.blue} />
-          <MenuCard label="Announcements" sublabel="Institution-wide messages" onPress={() => router.push('/(admin)/announcements')} accent={colors.gray} />
-          <MenuCard label="Library" sublabel="Digital library resources" onPress={() => router.push('/(admin)/library')} accent={colors.blue} />
-          <MenuCard label="Rooms" sublabel="Campus room directory" onPress={() => router.push('/(admin)/rooms')} accent={colors.blue} />
-          <MenuCard label="Exams" sublabel="Exam timetable" onPress={() => router.push('/(admin)/exams')} accent={colors.red} />
-          <MenuCard label="Financial Aid" sublabel="Scholarships & loans" onPress={() => router.push('/(admin)/financial-aid')} accent={colors.amber} />
-          <MenuCard label="Shuttle" sublabel="Campus bus routes" onPress={() => router.push('/(admin)/shuttle')} accent={colors.blue} />
-        </>
-      )}
-    </ScrollView>
-  )
-}
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
-  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 },
-  title: { fontSize: 22, fontWeight: '700', color: colors.blue },
-  subtitle: { fontSize: 13, color: colors.gray, marginTop: 2 },
-  signOut: { fontSize: 13, color: colors.red, fontWeight: '600' },
-  statsRow: { flexDirection: 'row', gap: 12, marginBottom: 12 },
-  sectionLabel: { fontSize: 13, fontWeight: '700', color: colors.gray, marginTop: 8, marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 },
-})
+          <MenuCard label="Timetable" sublabel="Class schedule" onPress={() => router.push('/(admin)/timetabl

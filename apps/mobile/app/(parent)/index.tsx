@@ -103,6 +103,11 @@ export default function ParentDashboard() {
       <Text style={styles.sectionLabel}>Manage</Text>
       <MenuCard label="Attendance" sublabel="Class attendance per child" onPress={() => router.push('/(parent)/attendance')} accent={colors.blue} />
       <MenuCard label="Results" sublabel="Published exam results" onPress={() => router.push('/(parent)/results')} accent={colors.green} />
+      <MenuCard label="Assignments" sublabel="Coursework & submission status" onPress={() => router.push('/(parent)/assignments')} accent={colors.purple} />
+      <MenuCard label="Exam Timetable" sublabel="Upcoming exam schedule" onPress={() => router.push('/(parent)/exams')} accent={colors.red} />
+      <MenuCard label="Transcript" sublabel="CGPA & published grades" onPress={() => router.push('/(parent)/transcript')} accent={colors.green} />
+      <MenuCard label="Financial Aid" sublabel="Scholarships & loans" onPress={() => router.push('/(parent)/financial-aid')} accent={colors.amber} />
+      <MenuCard label="Campus Shuttle" sublabel="Shuttle routes & times" onPress={() => router.push('/(parent)/shuttle')} accent={colors.blue} />
       <MenuCard label="Fees" sublabel="Invoices & pay outstanding fees" onPress={() => router.push('/(parent)/fees')} accent={colors.red} />
       <MenuCard label="Location" sublabel="GPS/biometric check-in history" onPress={() => router.push('/(parent)/location')} accent={colors.purple} />
       <MenuCard label="Messages" sublabel="Message your children's teachers" onPress={() => router.push('/(parent)/messages')} accent={colors.amber} />
@@ -113,14 +118,4 @@ export default function ParentDashboard() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
-  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 },
-  title: { fontSize: 22, fontWeight: '700', color: colors.blue },
-  subtitle: { fontSize: 13, color: colors.gray, marginTop: 2 },
-  signOut: { fontSize: 13, color: colors.red, fontWeight: '600' },
-  childName: { fontSize: 15, fontWeight: '700', color: colors.blue, marginBottom: 10 },
-  statsRow: { flexDirection: 'row', justifyContent: 'space-between' },
-  stat: { alignItems: 'center', flex: 1 },
-  statValue: { fontSize: 18, fontWeight: '700' },
-  statLabel: { fontSize: 11, color: colors.gray, marginTop: 2 },
-  sectionLabel: { fontSize: 13, fontWeight: '700', color: colors.gray, marginTop: 8, marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 },
-})
+  headerRow: { flexDirection: 'row', justif
