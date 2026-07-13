@@ -22,6 +22,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             ['Timetable', '/admin/timetable'],
             ['KPI', '/admin/kpi'],
             ['Announcements', '/admin/announcements'],
+            ['Library', '/admin/library'],
           ].map(([label, href]) => (
             <a key={href} href={href} className="flex items-center px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
               {label}

@@ -22,6 +22,7 @@ export default function AdminLayout() {
       <Stack.Screen name="announcements" />
       <Stack.Screen name="finance" />
       <Stack.Screen name="reports" />
+      <Stack.Screen name="library" />
     </Stack>
   )
 }

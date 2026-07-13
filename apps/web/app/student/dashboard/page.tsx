@@ -1,6 +1,6 @@
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import PayNowButton from './PayNowButton'
+import QuickAccessGrid from './QuickAccessGrid'
 import { calculateCgpa } from '@he-system/shared/utils/gpa-calculator'
 
 const QUICK_ACCESS = [
@@ -12,6 +12,9 @@ const QUICK_ACCESS = [
   { href: '/student/location', icon: '📍', label: 'Location', color: 'text-purple-700 bg-purple-50' },
   { href: '/student/messages', icon: '💬', label: 'Messages', color: 'text-amber-700 bg-brand-gold-100' },
   { href: '/student/announcements', icon: '📰', label: 'News & Events', color: 'text-gray-700 bg-gray-100' },
+  { href: '/student/library', icon: '📚', label: 'Library', color: 'text-brand-blue bg-brand-blue-100' },
+  { href: '/student/directory', icon: '🧑‍🏫', label: 'Staff Directory', color: 'text-green-700 bg-green-50' },
+  { href: '/student/profile', icon: '🪪', label: 'My Profile', color: 'text-gray-700 bg-gray-100' },
 ]
 
 function formatMoney(amount: number, currency: string) {
@@ -33,11 +36,22 @@ function formatClassTime(iso: string) {
 export default async function StudentDashboard() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  const { data: profileRaw } = await supabase.from('users').select('full_name, institution_id').eq('id', user!.id).single()
+  const { data: profileRaw } = await supabase.from('users').select('full_name, institution_id, accent_color, dashboard_tile_order').eq('id', user!.id).single()
   // AUDIT FIX (build): plain (non-embedded-relation) selects can still
   // collapse to `never` under this project's generated Database types
   // (same issue as `studentData` below). Cast once here.
-  const profile = profileRaw as unknown as { full_name: string | null; institution_id: string } | null
+  const profile = profileRaw as unknown as {
+    full_name: string | null; institution_id: string; accent_color: string | null; dashboard_tile_order: string[] | null
+  } | null
+
+  const orderedTiles = (() => {
+    const order = profile?.dashboard_tile_order
+    if (!order || order.length === 0) return QUICK_ACCESS
+    const byHref = new Map(QUICK_ACCESS.map(t => [t.href, t]))
+    const ordered = order.map(href => byHref.get(href)).filter((t): t is typeof QUICK_ACCESS[number] => !!t)
+    const missing = QUICK_ACCESS.filter(t => !order.includes(t.href))
+    return [...ordered, ...missing]
+  })()
   const { data: student } = await supabase.from('students').select('id, programme_id, programmes(name)').eq('user_id', user!.id).single()
 
   // AUDIT FIX: Supabase's generated types couldn't resolve the
@@ -141,16 +155,72 @@ export default async function StudentDashboard() {
         <StatCard label="Results" value={`${resultsCount} published`} color="green" />
       </div>
 
-      <div className="grid grid-cols-4 sm:grid-cols-8 gap-3 mb-8">
-        {QUICK_ACCESS.map(q => (
-          <Link key={q.href} href={q.href} className="card flex flex-col items-center justify-center py-4 hover:shadow-md transition-shadow">
-            <div className={`w-11 h-11 rounded-full flex items-center justify-center text-xl mb-2 ${q.color}`}>{q.icon}</div>
-            <span className="text-xs font-medium text-gray-700 text-center leading-tight">{q.label}</span>
-          </Link>
-        ))}
-      </div>
+      <QuickAccessGrid userId={user!.id} initialTiles={orderedTiles} initialAccent={profile?.accent_color ?? 'blue'} />
 
       {nextInvoice && totalDue > 0 && (
         <div className="card mb-8">
           <p className="text-sm text-gray-600">
-            You have an outstanding invoice of <span className="font-semibold">{formatMoney(Number(nextInvoice.amount) - Number(nextInvo
+            You have an outstanding invoice of <span className="font-semibold">{formatMoney(Number(nextInvoice.amount) - Number(nextInvoice.amount_paid), feeCurrency)}</span>
+            {nextInvoice.due_date ? ` due ${new Date(nextInvoice.due_date).toLocaleDateString()}` : ''}.
+          </p>
+          <PayNowButton
+            invoiceId={nextInvoice.id}
+            userId={user!.id}
+            institutionId={nextInvoice.institution_id}
+            amountDue={Number(nextInvoice.amount) - Number(nextInvoice.amount_paid)}
+            currency={feeCurrency}
+            description={`Invoice ${nextInvoice.id.slice(0, 8)}`}
+          />
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="card">
+          <h2 className="text-lg font-display font-semibold text-brand-blue mb-4">Upcoming Classes</h2>
+          {upcomingClasses && upcomingClasses.length > 0 ? (
+            <ul className="space-y-3">
+              {upcomingClasses.map(c => (
+                <li key={c.id} className="flex justify-between text-sm">
+                  <span className="text-gray-700">{c.title || (c.subjects as unknown as { name?: string })?.name || 'Class'}</span>
+                  <span className="text-gray-400">{formatClassTime(c.starts_at)}</span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-400 text-sm">No upcoming classes scheduled.</p>
+          )}
+        </div>
+        <div className="card">
+          <h2 className="text-lg font-display font-semibold text-brand-blue mb-4">Notifications</h2>
+          {notifications.length > 0 ? (
+            <ul className="space-y-3">
+              {notifications.map(n => (
+                <li key={n.id} className={n.is_read ? 'text-sm text-gray-500' : 'text-sm text-gray-800 font-medium'}>
+                  {n.title}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-400 text-sm">No new notifications.</p>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function StatCard({ label, value, color }: { label: string; value: string; color: string }) {
+  const colors: Record<string, string> = {
+    blue: 'bg-brand-blue-100 text-brand-blue',
+    red:  'bg-brand-red-100 text-brand-red',
+    gold: 'bg-brand-gold-100 text-amber-700',
+    green:'bg-green-50 text-green-700',
+    purple: 'bg-purple-50 text-purple-700',
+  }
+  return (
+    <div className="card">
+      <p className="text-xs font-medium text-gray-500 mb-1">{label}</p>
+      <p className={`text-2xl font-display font-bold ${colors[color]?.split(' ')[1]}`}>{value}</p>
+    </div>
+  )
+}

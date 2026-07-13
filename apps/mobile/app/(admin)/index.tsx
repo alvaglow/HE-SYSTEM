@@ -143,6 +143,7 @@ export default function AdminDashboard() {
           <MenuCard label="Payouts" sublabel="Approve partner payout requests" onPress={() => router.push('/(admin)/payouts')} accent={colors.green} />
           <MenuCard label="Leave" sublabel="Approve staff leave requests" onPress={() => router.push('/(admin)/leave')} accent={colors.red} />
           <MenuCard label="Reports" sublabel="Export CSV reports" onPress={() => router.push('/(admin)/reports')} accent={colors.gray} />
+          <MenuCard label="Library" sublabel="Digital library resources" onPress={() => router.push('/(admin)/library')} accent={colors.blue} />
         </>
       ) : (
         <>
@@ -156,6 +157,7 @@ export default function AdminDashboard() {
           <MenuCard label="Leave" sublabel="Approve staff leave requests" onPress={() => router.push('/(admin)/leave')} accent={colors.red} />
           <MenuCard label="Timetable" sublabel="Class schedule" onPress={() => router.push('/(admin)/timetable')} accent={colors.blue} />
           <MenuCard label="Announcements" sublabel="Institution-wide messages" onPress={() => router.push('/(admin)/announcements')} accent={colors.gray} />
+          <MenuCard label="Library" sublabel="Digital library resources" onPress={() => router.push('/(admin)/library')} accent={colors.blue} />
         </>
       )}
     </ScrollView>
