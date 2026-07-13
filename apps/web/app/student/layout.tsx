@@ -24,6 +24,7 @@ export default async function StudentLayout({ children }: { children: React.Reac
             ['Wallet', '/student/wallet'],
             ['Location', '/student/location'],
             ['Messages', '/student/messages'],
+            ['Announcements', '/student/announcements'],
           ].map(([label, href]) => (
             <a key={href} href={href}
               className="flex items-center px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">

@@ -87,3 +87,12 @@ export const notifySend = (params: { userId: string; title: string; body: string
   invoke('notify-send', { user_id: params.userId, title: params.title, body: params.body, channel: params.channel ?? ['in_app'], reference_type: params.referenceType, reference_id: params.referenceId })
 
 // kpi-calculate is CRON-only (see supabase/config.toml) — no client call needed.
+
+// ── Messaging ──────────────────────────────────────────────────────────────────
+// Every ComposeForm calls this instead of inserting into `messages` directly —
+// message-send verifies the real caller, performs the insert with its own
+// service-role client, and notifies the recipient (push + in-app) server-side.
+export const messageSend = (params: { recipientId: string; content: string }) =>
+  invoke<{ message: { id: string; sender_id: string; recipient_id: string; content: string; created_at: string }; error?: string }>(
+    'message-send', { recipient_id: params.recipientId, content: params.content },
+  )

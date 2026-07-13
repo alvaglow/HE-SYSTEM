@@ -11,6 +11,28 @@
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { isServiceRoleCall, requireStaff, authErrorResponse } from '../_shared/auth.ts'
+import { isCronCall } from '../_shared/cron.ts'
+
+// deno-lint-ignore no-explicit-any
+async function notifyKpiPublished(supabase: any, opts: { userId: string; periodLabel: string; totalScore: number; grade: string }) {
+  try {
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    await fetch(`${Deno.env.get('SUPABASE_URL')!}/functions/v1/notify-send`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        user_id: opts.userId,
+        title: 'Your KPI has been published',
+        body: `${opts.periodLabel} score: ${opts.totalScore} (Grade ${opts.grade})`,
+        channel: ['in_app', 'push'],
+        reference_type: 'kpi_records',
+      }),
+    })
+  } catch (err) {
+    // Never let a notification failure fail the KPI batch itself.
+    console.error(`notifyKpiPublished failed (non-fatal) for user ${opts.userId}:`, err)
+  }
+}
 
 // deno-lint-ignore no-explicit-any
 async function logAudit(
@@ -36,9 +58,10 @@ async function logAudit(
 
 serve(async (req) => {
   // AUDIT FIX: this recomputes KPI for every teacher/staff member institution-
-  // wide. Only the CRON schedule (which Supabase invokes with the service-role
-  // key) or staff triggering it manually may run it.
-  if (!isServiceRoleCall(req)) {
+  // wide. Only a trusted service-role caller, the pg_cron scheduled job (which
+  // authenticates via the x-cron-secret header — see _shared/cron.ts), or
+  // staff triggering it manually may run it.
+  if (!isServiceRoleCall(req) && !isCronCall(req)) {
     try {
       await requireStaff(req)
     } catch (err) {
@@ -125,6 +148,8 @@ serve(async (req) => {
           console.error(`kpi-calculate: failed to upsert KPI for teacher ${teacher.id}:`, upsertErr)
         } else {
           processed++
+          const monthName = new Date(prevYear, prevMonth - 1, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+          await notifyKpiPublished(supabase, { userId: teacher.user_id, periodLabel: monthName, totalScore, grade })
         }
       } catch (teacherErr) {
         // One bad teacher row must not abort the whole batch — log and continue.

@@ -18,6 +18,7 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
             ['Students', '/teacher/students'],
             ['Leave', '/teacher/leave'],
             ['Messages', '/teacher/messages'],
+            ['Announcements', '/teacher/announcements'],
           ].map(([label, href]) => (
             <a key={href} href={href} className="flex items-center px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
               {label}

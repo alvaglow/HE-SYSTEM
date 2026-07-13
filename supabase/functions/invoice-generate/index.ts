@@ -60,15 +60,21 @@ serve(async (req) => {
   }
 
   try {
-    requireFields(payload, ['student_id', 'programme_id', 'amount', 'due_date', 'institution_id'])
+    // AUDIT FIX: programme_id was previously required here, but fee_invoices.
+    // programme_id is a nullable FK and the admin Invoices form legitimately
+    // offers "— None —" (leaves programmeId as ''), so every invoice created
+    // without a programme selected was failing with a 400 the admin had no
+    // way to work around. programme_id is now optional and defaults to null.
+    requireFields(payload, ['student_id', 'amount', 'due_date', 'institution_id'])
   } catch (err) {
     if (isValidationError(err)) return validationErrorResponse(err)
     throw err
   }
 
-  const { student_id, programme_id, amount, due_date, description, institution_id } = payload as {
-    student_id: string; programme_id: string; amount: number; due_date: string; description?: string; institution_id: string
+  const { student_id, amount, due_date, description, institution_id } = payload as {
+    student_id: string; programme_id?: string; amount: number; due_date: string; description?: string; institution_id: string
   }
+  const programme_id = (payload.programme_id as string | undefined) || null
 
   if (typeof amount !== 'number' || amount <= 0) {
     return new Response(JSON.stringify({ error: 'amount must be a positive number' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })

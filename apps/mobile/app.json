@@ -13,7 +13,10 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "vn.happyenglish.hesystem"
+      "bundleIdentifier": "vn.happyenglish.hesystem",
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "Face ID confirms it's really you before recording your class attendance."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -25,6 +28,7 @@
     "plugins": [
       "expo-router",
       "expo-location",
+      "expo-local-authentication",
       ["expo-notifications", { "icon": "./assets/notification-icon.png" }]
     ],
     "scheme": "he-system",

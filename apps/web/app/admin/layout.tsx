@@ -17,6 +17,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             ['Enrolment', '/admin/enrolment'],
             ['Invoices', '/admin/invoices'],
             ['Partners', '/admin/partners'],
+            ['Payouts', '/admin/payouts'],
+            ['Leave', '/admin/leave'],
             ['Timetable', '/admin/timetable'],
             ['KPI', '/admin/kpi'],
             ['Announcements', '/admin/announcements'],

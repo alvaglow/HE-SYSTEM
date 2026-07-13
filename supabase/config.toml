@@ -45,14 +45,32 @@ enable_signup = true
 double_confirm_changes = true
 enable_confirmations = true
 
-# KPI calculate — runs 1st of every month at midnight UTC
+# KPI calculate, Merkle build, and invoice-due-reminder are all scheduled —
+# but NOT via the [functions.*].schedule directives below. Those only take
+# effect when this project is linked/deployed through the Supabase CLI, which
+# it never has been (every function here was deployed via the management
+# API/MCP instead), so pg_cron/pg_net were never actually installed and these
+# schedules never ran. Phase 3 fixed this properly: see migration
+# `enable_cron_infra_and_schedule_jobs`, which installs pg_cron + pg_net and
+# creates real `cron.schedule(...)` jobs (kpi-calculate-monthly,
+# merkle-build-daily, invoice-due-reminder-daily) that call these functions
+# via net.http_post with the x-cron-secret header (see
+# supabase/functions/_shared/cron.ts) — the schedule strings below are kept
+# only as human-readable documentation of the intended cadence.
+#
+# KPI calculate — runs 1st of every month at 00:15 UTC
 [functions.kpi-calculate]
-schedule = "0 0 1 * *"
+schedule = "15 0 1 * *"
 
 # Merkle build — runs daily at 23:55 UTC, builds the tamper-proof attendance
 # root for every active institution for that day (see merkle-build/index.ts)
 [functions.merkle-build]
 schedule = "55 23 * * *"
+
+# Invoice due/overdue reminder — runs daily at 08:00 UTC, notifies students +
+# linked parents about fees due soon or overdue (see invoice-due-reminder/index.ts)
+[functions.invoice-due-reminder]
+schedule = "0 8 * * *"
 
 # ZaloPay retry sweep for payments stuck in 'pending' more than a few minutes
 # (see payment-zalopay's `query` action — call it per-transaction from a small

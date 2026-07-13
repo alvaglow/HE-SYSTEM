@@ -17,6 +17,7 @@
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { isServiceRoleCall, requireCaller, requireStaff, authErrorResponse } from '../_shared/auth.ts'
+import { isCronCall } from '../_shared/cron.ts'
 import { requireFields, isValidationError, validationErrorResponse } from '../_shared/resilience.ts'
 import { corsHeaders, handleCors } from '../_shared/cors.ts'
 
@@ -140,8 +141,9 @@ serve(async (req) => {
 
   if (action === 'build') {
     // AUDIT FIX: previously anyone could trigger a full rebuild for any (or
-    // every) institution. Only cron/service-role or staff may do this.
-    if (!isServiceRoleCall(req)) {
+    // every) institution. Only cron (x-cron-secret)/service-role or staff may
+    // do this.
+    if (!isServiceRoleCall(req) && !isCronCall(req)) {
       try {
         await requireStaff(req)
       } catch (err) {

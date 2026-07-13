@@ -15,7 +15,9 @@ export default function ManagementLayout({ children }: { children: React.ReactNo
             ['KPI Overview', '/management/kpi'],
             ['Finance', '/management/finance'],
             ['Partners', '/management/partners'],
+            ['Payouts', '/management/payouts'],
             ['Enrolment', '/management/enrolment'],
+            ['Leave', '/management/leave'],
             ['Reports', '/management/reports'],
           ].map(([label, href]) => (
             <a key={href} href={href} className="flex items-center px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
