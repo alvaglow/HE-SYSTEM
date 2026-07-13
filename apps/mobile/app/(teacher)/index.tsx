@@ -115,6 +115,8 @@ export default function TeacherDashboard() {
       <MenuCard label="Exam Timetable" sublabel="Upcoming exam schedule" onPress={() => router.push('/(teacher)/exams')} accent={colors.red} />
       <MenuCard label="Facility Finder" sublabel="Find a free room" onPress={() => router.push('/(teacher)/facilities')} accent={colors.blue} />
       <MenuCard label="Campus Shuttle" sublabel="Shuttle routes & times" onPress={() => router.push('/(teacher)/shuttle')} accent={colors.blue} />
+      <MenuCard label="Room Booking" sublabel="Reserve a room" onPress={() => router.push('/(teacher)/booking')} accent={colors.blue} />
+      <MenuCard label="Support" sublabel="Submit a support ticket" onPress={() => router.push('/(teacher)/support')} accent={colors.amber} />
       <MenuCard label="My KPI" sublabel="Performance breakdown" onPress={() => router.push('/(teacher)/kpi')} accent={colors.purple} />
       <MenuCard label="Leave" sublabel="Request & track leave" onPress={() => router.push('/(teacher)/leave')} accent={colors.amber} />
       <MenuCard label="Messages" sublabel="Message your students" onPress={() => router.push('/(teacher)/messages')} accent={colors.gray} />
@@ -129,3 +131,12 @@ const styles = StyleSheet.create({
   title: { fontSize: 20, fontWeight: '700', color: colors.blue },
   subtitle: { fontSize: 13, color: colors.gray, marginTop: 2 },
   signOut: { fontSize: 13, color: colors.red, fontWeight: '600' },
+  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 14 },
+  statBox: { width: '47%' },
+  cardTitle: { fontSize: 15, fontWeight: '700', color: colors.blue, marginBottom: 10 },
+  empty: { fontSize: 13, color: colors.muted },
+  classRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6 },
+  classTitle: { fontSize: 13, color: colors.text },
+  classTime: { fontSize: 12, color: colors.muted },
+  sectionLabel: { fontSize: 13, fontWeight: '700', color: colors.gray, marginTop: 8, marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 },
+})

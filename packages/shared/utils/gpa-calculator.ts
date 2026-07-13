@@ -21,6 +21,9 @@ const GRADE_POINTS: Record<string, number> = {
   F: 0.0,
 }
 
+/** Ordered list of valid letter grades, for building grade-select dropdowns (e.g. the GPA what-if predictor). */
+export const GRADE_OPTIONS: string[] = Object.keys(GRADE_POINTS)
+
 export function gradeToPoint(grade: string | null | undefined): number | null {
   if (!grade) return null
   const normalized = grade.trim().toUpperCase()

@@ -112,10 +112,21 @@ export default function ParentDashboard() {
       <MenuCard label="Location" sublabel="GPS/biometric check-in history" onPress={() => router.push('/(parent)/location')} accent={colors.purple} />
       <MenuCard label="Messages" sublabel="Message your children's teachers" onPress={() => router.push('/(parent)/messages')} accent={colors.amber} />
       <MenuCard label="Announcements" sublabel="Institution-wide updates" onPress={() => router.push('/(parent)/announcements')} accent={colors.gray} />
+      <MenuCard label="Support" sublabel="Submit a support ticket" onPress={() => router.push('/(parent)/support')} accent={colors.amber} />
     </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
-  headerRow: { flexDirection: 'row', justif
+  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 },
+  title: { fontSize: 22, fontWeight: '700', color: colors.blue },
+  subtitle: { fontSize: 13, color: colors.gray, marginTop: 2 },
+  signOut: { fontSize: 13, color: colors.red, fontWeight: '600' },
+  childName: { fontSize: 15, fontWeight: '700', color: colors.blue, marginBottom: 10 },
+  statsRow: { flexDirection: 'row', justifyContent: 'space-between' },
+  stat: { alignItems: 'center', flex: 1 },
+  statValue: { fontSize: 18, fontWeight: '700' },
+  statLabel: { fontSize: 11, color: colors.gray, marginTop: 2 },
+  sectionLabel: { fontSize: 13, fontWeight: '700', color: colors.gray, marginTop: 8, marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 },
+})

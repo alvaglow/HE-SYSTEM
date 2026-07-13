@@ -12,4 +12,12 @@ export default function TeacherLayout() {
       <Stack.Screen name="shuttle" />
       <Stack.Screen name="facilities" />
       <Stack.Screen name="leave" />
-      <Stack.Screen name
+      <Stack.Screen name="messages" />
+      <Stack.Screen name="students" />
+      <Stack.Screen name="timetable" />
+      <Stack.Screen name="announcements" />
+      <Stack.Screen name="support" />
+      <Stack.Screen name="booking" />
+    </Stack>
+  )
+}

@@ -22,4 +22,15 @@ export default function AdminLayout() {
       <Stack.Screen name="announcements" />
       <Stack.Screen name="finance" />
       <Stack.Screen name="reports" />
-      <Stack.Screen
+      <Stack.Screen name="library" />
+      <Stack.Screen name="rooms" />
+      <Stack.Screen name="exams" />
+      <Stack.Screen name="financial-aid" />
+      <Stack.Screen name="shuttle" />
+      <Stack.Screen name="audit-log" />
+      <Stack.Screen name="support" />
+      <Stack.Screen name="bookings" />
+      <Stack.Screen name="graduation" />
+    </Stack>
+  )
+}

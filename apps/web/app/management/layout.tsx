@@ -25,5 +25,18 @@ export default function ManagementLayout({ children }: { children: React.ReactNo
             ['Financial Aid', '/management/financial-aid'],
             ['Shuttle', '/management/shuttle'],
             ['Audit Log', '/management/audit-log'],
+            ['Support', '/management/support'],
+            ['Room Bookings', '/management/bookings'],
+            ['Graduation', '/management/graduation'],
           ].map(([label, href]) => (
-            <a key={href} href={href} classNa
+            <a key={href} href={href} className="flex items-center px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
+              {label}
+            </a>
+          ))}
+        </nav>
+        <LogoutButton />
+      </aside>
+      <main className="ml-60 flex-1 p-8"><ErrorBoundary>{children}</ErrorBoundary></main>
+    </div>
+  )
+}

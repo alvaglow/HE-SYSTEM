@@ -28,5 +28,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             ['Financial Aid', '/admin/financial-aid'],
             ['Shuttle', '/admin/shuttle'],
             ['Audit Log', '/admin/audit-log'],
+            ['Support', '/admin/support'],
+            ['Room Bookings', '/admin/bookings'],
+            ['Graduation', '/admin/graduation'],
           ].map(([label, href]) => (
-            <a key={href} href={href} className="flex items-center px-3 py-
+            <a key={href} href={href} className="flex items-center px-3 py-2 rounded-lg hover:bg-white/10 transition-colors">
+              {label}
+            </a>
+          ))}
+        </nav>
+        <LogoutButton />
+      </aside>
+      <main className="ml-60 flex-1 p-8"><ErrorBoundary>{children}</ErrorBoundary></main>
+    </div>
+  )
+}

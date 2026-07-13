@@ -13,17 +13,4 @@ export default function StudentLayout() {
       <Stack.Screen name="timetable" />
       <Stack.Screen name="wallet" />
       <Stack.Screen name="announcements" />
-      <Stack.Screen name="profile" />
-      <Stack.Screen name="library" />
-      <Stack.Screen name="directory" />
-      <Stack.Screen name="assistant" />
-      <Stack.Screen name="facilities" />
-      <Stack.Screen name="exams" />
-      <Stack.Screen name="transcript" />
-      <Stack.Screen name="financial-aid" />
-      <Stack.Screen name="shuttle" />
-      <Stack.Screen name="assignments" />
-      <Stack.Screen name="registration" />
-    </Stack>
-  )
-}
+      <Stack.Screen
