@@ -1,5 +1,18 @@
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import PayNowButton from './PayNowButton'
+import { calculateCgpa } from '@he-system/shared/utils/gpa-calculator'
+
+const QUICK_ACCESS = [
+  { href: '/student/attendance', icon: '📅', label: 'Attendance', color: 'text-brand-blue bg-brand-blue-100' },
+  { href: '/student/timetable', icon: '🗓️', label: 'Timetable', color: 'text-brand-blue bg-brand-blue-100' },
+  { href: '/student/results', icon: '🎓', label: 'Results', color: 'text-green-700 bg-green-50' },
+  { href: '/student/fees', icon: '💳', label: 'Fees', color: 'text-brand-red bg-brand-red-100' },
+  { href: '/student/wallet', icon: '👛', label: 'Wallet', color: 'text-purple-700 bg-purple-50' },
+  { href: '/student/location', icon: '📍', label: 'Location', color: 'text-purple-700 bg-purple-50' },
+  { href: '/student/messages', icon: '💬', label: 'Messages', color: 'text-amber-700 bg-brand-gold-100' },
+  { href: '/student/announcements', icon: '📰', label: 'News & Events', color: 'text-gray-700 bg-gray-100' },
+]
 
 function formatMoney(amount: number, currency: string) {
   try {
@@ -54,7 +67,9 @@ export default async function StudentDashboard() {
           .in('status', ['sent', 'overdue'])
           .order('due_date', { ascending: true })
       : Promise.resolve({ data: [] as { id: string; amount: number; amount_paid: number; currency: string; status: string; due_date: string | null; institution_id: string }[] }),
-    studentId ? supabase.from('exam_results').select('id').eq('student_id', studentId).eq('is_published', true) : Promise.resolve({ data: [] as { id: string }[] }),
+    studentId
+      ? supabase.from('exam_results').select('id, subject_id, grade, assessment_type, exam_date, subjects(name, code, credit_hours)').eq('student_id', studentId).eq('is_published', true)
+      : Promise.resolve({ data: [] as { id: string; subject_id: string; grade: string | null; assessment_type: string | null; exam_date: string | null; subjects: { name: string; code: string | null; credit_hours: number | null } | null }[] }),
     // AUDIT FIX (build): this is the only unconditional (non-ternary-guarded)
     // query in this Promise.all — the ternary-guarded ones stay safe because
     // their `never` branch gets absorbed into the union with the typed
@@ -74,7 +89,20 @@ export default async function StudentDashboard() {
   const nextInvoice = invoices[0]
   const feeCurrency = nextInvoice?.currency ?? 'USD'
 
-  const resultsCount = (resultsRes.data ?? []).length
+  const examResultRows = (resultsRes.data ?? []) as unknown as Array<{
+    id: string; subject_id: string; grade: string | null; assessment_type: string | null; exam_date: string | null
+    subjects: { name: string; code: string | null; credit_hours: number | null } | null
+  }>
+  const resultsCount = examResultRows.length
+  const cgpaResult = calculateCgpa(examResultRows.map(r => ({
+    subjectId: r.subject_id,
+    subjectName: r.subjects?.name ?? 'Subject',
+    subjectCode: r.subjects?.code,
+    creditHours: Number(r.subjects?.credit_hours ?? 0),
+    grade: r.grade,
+    assessmentType: r.assessment_type,
+    examDate: r.exam_date,
+  })))
   const notifications = (notificationsRes.data ?? []) as unknown as {
     id: string
     title: string
@@ -105,76 +133,24 @@ export default async function StudentDashboard() {
       </h1>
       <p className="text-gray-500 text-sm mb-8">{studentData?.programmes?.name ?? ''}</p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 mb-8">
+        <StatCard label="CGPA" value={cgpaResult.cgpa !== null ? String(cgpaResult.cgpa) : 'In progress'} color="purple" />
         <StatCard label="Attendance" value={attendancePct !== null ? `${attendancePct}%` : 'No records yet'} color="blue" />
         <StatCard label="Fee Balance" value={totalDue > 0 ? formatMoney(totalDue, feeCurrency) : 'Paid up'} color="red" />
         <StatCard label="Next Class" value={nextClass ? formatClassTime(nextClass.starts_at) : 'None scheduled'} color="gold" />
         <StatCard label="Results" value={`${resultsCount} published`} color="green" />
       </div>
 
+      <div className="grid grid-cols-4 sm:grid-cols-8 gap-3 mb-8">
+        {QUICK_ACCESS.map(q => (
+          <Link key={q.href} href={q.href} className="card flex flex-col items-center justify-center py-4 hover:shadow-md transition-shadow">
+            <div className={`w-11 h-11 rounded-full flex items-center justify-center text-xl mb-2 ${q.color}`}>{q.icon}</div>
+            <span className="text-xs font-medium text-gray-700 text-center leading-tight">{q.label}</span>
+          </Link>
+        ))}
+      </div>
+
       {nextInvoice && totalDue > 0 && (
         <div className="card mb-8">
           <p className="text-sm text-gray-600">
-            You have an outstanding invoice of <span className="font-semibold">{formatMoney(Number(nextInvoice.amount) - Number(nextInvoice.amount_paid), feeCurrency)}</span>
-            {nextInvoice.due_date ? ` due ${new Date(nextInvoice.due_date).toLocaleDateString()}` : ''}.
-          </p>
-          <PayNowButton
-            invoiceId={nextInvoice.id}
-            userId={user!.id}
-            institutionId={nextInvoice.institution_id}
-            amountDue={Number(nextInvoice.amount) - Number(nextInvoice.amount_paid)}
-            currency={feeCurrency}
-            description={`Invoice ${nextInvoice.id.slice(0, 8)}`}
-          />
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="card">
-          <h2 className="text-lg font-display font-semibold text-brand-blue mb-4">Upcoming Classes</h2>
-          {upcomingClasses && upcomingClasses.length > 0 ? (
-            <ul className="space-y-3">
-              {upcomingClasses.map(c => (
-                <li key={c.id} className="flex justify-between text-sm">
-                  <span className="text-gray-700">{c.title || (c.subjects as unknown as { name?: string })?.name || 'Class'}</span>
-                  <span className="text-gray-400">{formatClassTime(c.starts_at)}</span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-gray-400 text-sm">No upcoming classes scheduled.</p>
-          )}
-        </div>
-        <div className="card">
-          <h2 className="text-lg font-display font-semibold text-brand-blue mb-4">Notifications</h2>
-          {notifications.length > 0 ? (
-            <ul className="space-y-3">
-              {notifications.map(n => (
-                <li key={n.id} className={n.is_read ? 'text-sm text-gray-500' : 'text-sm text-gray-800 font-medium'}>
-                  {n.title}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-gray-400 text-sm">No new notifications.</p>
-          )}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function StatCard({ label, value, color }: { label: string; value: string; color: string }) {
-  const colors: Record<string, string> = {
-    blue: 'bg-brand-blue-100 text-brand-blue',
-    red:  'bg-brand-red-100 text-brand-red',
-    gold: 'bg-brand-gold-100 text-amber-700',
-    green:'bg-green-50 text-green-700',
-  }
-  return (
-    <div className="card">
-      <p className="text-xs font-medium text-gray-500 mb-1">{label}</p>
-      <p className={`text-2xl font-display font-bold ${colors[color]?.split(' ')[1]}`}>{value}</p>
-    </div>
-  )
-}
+            You have an outstanding invoice of <span className="font-semibold">{formatMoney(Number(nextInvoice.amount) - Number(nextInvo

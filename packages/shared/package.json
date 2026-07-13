@@ -8,6 +8,7 @@
     ".": "./index.ts",
     "./utils/commission-formula": "./utils/commission-formula.ts",
     "./utils/kpi-calculator": "./utils/kpi-calculator.ts",
+    "./utils/gpa-calculator": "./utils/gpa-calculator.ts",
     "./utils/format": "./utils/format.ts",
     "./types": "./types/index.ts",
     "./hooks/useAuth": "./hooks/useAuth.ts"
@@ -19,7 +20,4 @@
     "react": "^18"
   },
   "devDependencies": {
-    "@types/react": "^18",
-    "typescript": "^5.4.0"
-  }
-}
+ 

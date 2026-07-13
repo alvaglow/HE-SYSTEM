@@ -12,9 +12,12 @@ type Announcement = {
   id: string; title: string; body: string
   target_roles: string[] | null; is_published: boolean | null
   published_at: string | null; created_at: string
+  category: string; event_date: string | null
 }
 
 const ALL_ROLES = ['student', 'teacher', 'admin', 'management', 'partner', 'parent']
+const CATEGORIES = ['news', 'event', 'academic', 'urgent']
+const CATEGORY_LABELS: Record<string, string> = { news: 'News', event: 'Event', academic: 'Academic', urgent: 'Urgent' }
 
 export default function AnnouncementsScreen() {
   const [institutionId, setInstitutionId] = useState('')
@@ -24,6 +27,8 @@ export default function AnnouncementsScreen() {
   const [open, setOpen] = useState(false)
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
+  const [category, setCategory] = useState('news')
+  const [eventDate, setEventDate] = useState('')
   const [roles, setRoles] = useState<string[]>(ALL_ROLES)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -36,7 +41,7 @@ export default function AnnouncementsScreen() {
 
     const { data } = await supabase
       .from('announcements')
-      .select('id, title, body, target_roles, is_published, published_at, created_at')
+      .select('id, title, body, target_roles, is_published, published_at, created_at, category, event_date')
       .eq('institution_id', me.institutionId)
       .order('created_at', { ascending: false })
 
@@ -55,11 +60,12 @@ export default function AnnouncementsScreen() {
     setError('')
     const { error } = await supabase.from('announcements').insert({
       institution_id: institutionId, created_by: userId, title, body,
+      category, event_date: category === 'event' && eventDate ? new Date(eventDate).toISOString() : null,
       target_roles: roles, is_published: true, published_at: new Date().toISOString(),
     } as unknown as never)
     setSubmitting(false)
     if (error) { setError(error.message); return }
-    setTitle(''); setBody(''); setRoles(ALL_ROLES); setOpen(false)
+    setTitle(''); setBody(''); setCategory('news'); setEventDate(''); setRoles(ALL_ROLES); setOpen(false)
     await load()
   }
 
@@ -89,6 +95,15 @@ export default function AnnouncementsScreen() {
           <Text style={styles.cardTitle}>New Announcement</Text>
           <TextField value={title} onChangeText={setTitle} placeholder="Title" />
           <TextField value={body} onChangeText={setBody} placeholder="Message" multiline />
+          <Text style={styles.label}>Category</Text>
+          <View style={styles.chipRow}>
+            {CATEGORIES.map(c => (
+              <Text key={c} onPress={() => setCategory(c)} style={[chipStyles.chip, category === c ? chipStyles.chipActive : null]}>{CATEGORY_LABELS[c]}</Text>
+            ))}
+          </View>
+          {category === 'event' && (
+            <TextField value={eventDate} onChangeText={setEventDate} placeholder="Event date/time (YYYY-MM-DD HH:mm)" />
+          )}
           <Text style={styles.label}>Visible to</Text>
           <View style={styles.chipRow}>
             {ALL_ROLES.map(r => (
@@ -109,38 +124,16 @@ export default function AnnouncementsScreen() {
           <Card key={a.id}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <View style={{ flex: 1, marginRight: 10 }}>
-                <Text style={styles.annTitle}>{a.title}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Badge label={CATEGORY_LABELS[a.category] ?? 'News'} />
+                  <Text style={styles.annTitle}>{a.title}</Text>
+                </View>
                 <Text style={styles.annBody}>{a.body}</Text>
+                {a.event_date && <Text style={styles.eventDate}>📅 {new Date(a.event_date).toLocaleString()}</Text>}
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginTop: 8 }}>
                   {(a.target_roles ?? []).map(r => <Badge key={r} label={r} />)}
                 </View>
               </View>
               <View style={{ alignItems: 'flex-end', gap: 6 }}>
                 <Text onPress={() => togglePublish(a)} style={styles.actionLink}>{a.is_published ? 'Unpublish' : 'Publish'}</Text>
-                <Text onPress={() => remove(a.id)} style={[styles.actionLink, { color: colors.red }]}>Delete</Text>
-              </View>
-            </View>
-          </Card>
-        ))
-      )}
-    </ScrollView>
-  )
-}
-
-const chipStyles = StyleSheet.create({
-  chip: { fontSize: 12, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 999, backgroundColor: colors.grayLight, color: colors.gray, marginRight: 6, marginBottom: 6, overflow: 'hidden' },
-  chipActive: { backgroundColor: colors.blue, color: colors.white },
-})
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: colors.blue, marginBottom: 10 },
-  label: { fontSize: 12, color: colors.gray, marginBottom: 6 },
-  chipRow: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 10 },
-  error: { color: colors.red, fontSize: 12, marginBottom: 8 },
-  cancelLink: { textAlign: 'center', color: colors.gray, fontSize: 13, marginTop: 10 },
-  sectionLabel: { fontSize: 13, fontWeight: '700', color: colors.gray, marginTop: 18, marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 },
-  annTitle: { fontSize: 14, fontWeight: '700', color: colors.text },
-  annBody: { fontSize: 13, color: colors.gray, marginTop: 4 },
-  actionLink: { fontSize: 12, color: colors.blue, fontWeight: '600' },
-})
+                <Text onPress={() => remove(a.id)} style={[styl

@@ -16,7 +16,7 @@ export default async function AnnouncementsList({ role }: { role: string }) {
 
   const { data: announcementsRaw } = await supabase
     .from('announcements')
-    .select('id, title, body, target_roles, published_at, expires_at')
+    .select('id, title, body, target_roles, published_at, expires_at, category, event_date')
     .eq('institution_id', institutionId)
     .eq('is_published', true)
     .order('published_at', { ascending: false })
@@ -25,28 +25,21 @@ export default async function AnnouncementsList({ role }: { role: string }) {
   const now = new Date()
   const announcements = ((announcementsRaw ?? []) as unknown as Array<{
     id: string; title: string; body: string; target_roles: string[] | null; published_at: string | null; expires_at: string | null
+    category: string; event_date: string | null
   }>).filter(a => (a.target_roles ?? []).includes(role) && (!a.expires_at || new Date(a.expires_at) > now))
 
+  const CATEGORY_STYLES: Record<string, string> = {
+    news: 'bg-blue-50 text-brand-blue', event: 'bg-purple-50 text-purple-700',
+    academic: 'bg-green-50 text-green-700', urgent: 'bg-red-50 text-brand-red',
+  }
+  const CATEGORY_LABELS: Record<string, string> = { news: 'News', event: 'Event', academic: 'Academic', urgent: 'Urgent' }
+
+  // Upcoming events (category='event' with a future event_date) surfaced separately,
+  // similar in spirit to a portal's "News & Updates" split between general news and
+  // things worth marking on a calendar.
+  const upcomingEvents = announcements
+    .filter(a => a.category === 'event' && a.event_date && new Date(a.event_date) >= now)
+    .sort((a, b) => new Date(a.event_date!).getTime() - new Date(b.event_date!).getTime())
+
   return (
-    <div className="card">
-      <h2 className="text-lg font-display font-semibold text-brand-blue mb-4">
-        Announcements ({announcements.length})
-      </h2>
-      {announcements.length === 0 ? (
-        <p className="text-gray-400 text-sm">No announcements right now.</p>
-      ) : (
-        <ul className="space-y-4">
-          {announcements.map(a => (
-            <li key={a.id} className="border-b border-gray-50 pb-4 last:border-0 last:pb-0">
-              <p className="font-medium text-gray-800">{a.title}</p>
-              <p className="text-sm text-gray-500 mt-1 whitespace-pre-wrap">{a.body}</p>
-              <p className="text-xs text-gray-400 mt-2">
-                {a.published_at ? new Date(a.published_at).toLocaleDateString() : ''}
-              </p>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
-  )
-}
+    <d

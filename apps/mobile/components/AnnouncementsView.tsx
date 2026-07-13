@@ -11,9 +11,14 @@ import { ScrollView, View, Text, StyleSheet, RefreshControl } from 'react-native
 import { useFocusEffect } from 'expo-router'
 import { supabase } from '../lib/supabase'
 import { getMe } from '../lib/session'
-import { colors, ScreenHeader, Card, EmptyState, LoadingView } from './ui'
+import { colors, ScreenHeader, Card, Badge, EmptyState, LoadingView } from './ui'
 
-type Announcement = { id: string; title: string; body: string; target_roles: string[] | null; published_at: string | null; expires_at: string | null }
+type Announcement = {
+  id: string; title: string; body: string; target_roles: string[] | null; published_at: string | null; expires_at: string | null
+  category: string; event_date: string | null
+}
+
+const CATEGORY_LABELS: Record<string, string> = { news: 'News', event: 'Event', academic: 'Academic', urgent: 'Urgent' }
 
 export default function AnnouncementsView({ role }: { role: string }) {
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
@@ -25,7 +30,7 @@ export default function AnnouncementsView({ role }: { role: string }) {
 
     const { data } = await supabase
       .from('announcements')
-      .select('id, title, body, target_roles, published_at, expires_at')
+      .select('id, title, body, target_roles, published_at, expires_at, category, event_date')
       .eq('institution_id', me.institutionId)
       .eq('is_published', true)
       .order('published_at', { ascending: false })
@@ -42,30 +47,23 @@ export default function AnnouncementsView({ role }: { role: string }) {
 
   if (loading) return <LoadingView />
 
+  const now = new Date()
+  const upcomingEvents = announcements
+    .filter(a => a.category === 'event' && a.event_date && new Date(a.event_date) >= now)
+    .sort((a, b) => new Date(a.event_date!).getTime() - new Date(b.event_date!).getTime())
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ padding: 16 }} refreshControl={<RefreshControl refreshing={false} onRefresh={load} />}>
       <ScreenHeader title="Announcements" />
-      {announcements.length === 0 ? (
-        <EmptyState text="No announcements right now." />
-      ) : (
+
+      {upcomingEvents.length > 0 && (
         <Card>
-          {announcements.map(a => (
+          <Text style={styles.sectionLabel}>Upcoming Events ({upcomingEvents.length})</Text>
+          {upcomingEvents.map(a => (
             <View key={a.id} style={styles.item}>
               <Text style={styles.itemTitle}>{a.title}</Text>
               <Text style={styles.itemBody}>{a.body}</Text>
-              {a.published_at ? <Text style={styles.itemDate}>{new Date(a.published_at).toLocaleDateString()}</Text> : null}
+              <Text style={styles.eventDate}>📅 {new Date(a.event_date!).toLocaleString()}</Text>
             </View>
           ))}
-        </Card>
-      )}
-    </ScrollView>
-  )
-}
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
-  item: { marginBottom: 16, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: colors.grayLight },
-  itemTitle: { fontSize: 14, fontWeight: '700', color: colors.text, marginBottom: 4 },
-  itemBody: { fontSize: 13, color: colors.gray },
-  itemDate: { fontSize: 11, color: colors.gray, marginTop: 6 },
-})
+      

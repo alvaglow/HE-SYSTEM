@@ -9,10 +9,14 @@ import { getMe } from '../../lib/session'
 import { colors, ScreenHeader, Card, ListRow, EmptyState, LoadingView } from '../../components/ui'
 
 type Transaction = { id: string; type: string | null; amount: number; description: string | null; created_at: string }
+type TypeFilter = 'all' | 'credit' | 'debit'
+type PeriodFilter = 'all' | '30' | '90'
 
 export default function WalletScreen() {
   const [balance, setBalance] = useState<{ amount: number; currency: string } | null>(null)
   const [transactions, setTransactions] = useState<Transaction[]>([])
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>('all')
+  const [periodFilter, setPeriodFilter] = useState<PeriodFilter>('all')
   const [loading, setLoading] = useState(true)
 
   const load = useCallback(async () => {
@@ -29,7 +33,7 @@ export default function WalletScreen() {
         .select('id, type, amount, description, created_at')
         .eq('wallet_id', wallet.id)
         .order('created_at', { ascending: false })
-        .limit(50)
+        .limit(200)
       setTransactions((data ?? []) as unknown as Transaction[])
     }
     setLoading(false)
@@ -38,6 +42,16 @@ export default function WalletScreen() {
   useFocusEffect(useCallback(() => { load() }, [load]))
 
   if (loading) return <LoadingView />
+
+  const now = Date.now()
+  const filtered = transactions.filter(t => {
+    if (typeFilter !== 'all' && t.type !== typeFilter) return false
+    if (periodFilter !== 'all') {
+      const days = Number(periodFilter)
+      if (now - new Date(t.created_at).getTime() > days * 86400000) return false
+    }
+    return true
+  })
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={{ padding: 16 }} refreshControl={<RefreshControl refreshing={false} onRefresh={load} />}>
@@ -48,32 +62,16 @@ export default function WalletScreen() {
         <Text style={styles.balanceValue}>{balance ? `${balance.currency} ${balance.amount.toLocaleString()}` : '—'}</Text>
       </Card>
 
-      <Text style={styles.sectionLabel}>Transaction History ({transactions.length})</Text>
-      {transactions.length === 0 ? (
-        <EmptyState text="No transactions yet." />
-      ) : (
-        <Card>
-          {transactions.map(t => (
-            <ListRow key={t.id}
-              title={t.description ?? (t.type === 'credit' ? 'Top-up' : 'Deduction')}
-              subtitle={new Date(t.created_at).toLocaleString()}
-              right={
-                <Text style={[styles.txAmount, { color: t.type === 'credit' ? colors.green : colors.red }]}>
-                  {t.type === 'credit' ? '+' : '−'}{Math.abs(Number(t.amount)).toLocaleString()}
-                </Text>
-              }
-            />
-          ))}
-        </Card>
-      )}
-    </ScrollView>
-  )
-}
-
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.bg },
-  balanceLabel: { fontSize: 12, color: colors.gray, marginBottom: 4 },
-  balanceValue: { fontSize: 28, fontWeight: '700', color: colors.blue },
-  sectionLabel: { fontSize: 13, fontWeight: '700', color: colors.gray, marginTop: 18, marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 },
-  txAmount: { fontWeight: '700', fontSize: 13 },
-})
+      <View style={styles.filterRow}>
+        {(['all', 'credit', 'debit'] as TypeFilter[]).map(t => (
+          <Text key={t} onPress={() => setTypeFilter(t)} style={[chipStyles.chip, typeFilter === t ? chipStyles.chipActive : null]}>
+            {t === 'all' ? 'All' : t === 'credit' ? 'Credits' : 'Debits'}
+          </Text>
+        ))}
+      </View>
+      <View style={styles.filterRow}>
+        {(['all', '30', '90'] as PeriodFilter[]).map(p => (
+          <Text key={p} onPress={() => setPeriodFilter(p)} style={[chipStyles.chip, periodFilter === p ? chipStyles.chipActive : null]}>
+            {p === 'all' ? 'All time' : `Last ${p} days`}
+          </Text>
+ 

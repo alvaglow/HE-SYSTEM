@@ -6,7 +6,8 @@ import { View, Text, ScrollView, StyleSheet, RefreshControl, TouchableOpacity } 
 import { useFocusEffect, router } from 'expo-router'
 import { supabase } from '../../lib/supabase'
 import { getMe } from '../../lib/session'
-import { colors, Card, StatCard, MenuCard, LoadingView } from '../../components/ui'
+import { colors, Card, StatCard, TileCard, TileGrid, LoadingView } from '../../components/ui'
+import { calculateCgpa } from '@he-system/shared/utils/gpa-calculator'
 
 function formatMoney(amount: number, currency: string) {
   try {
@@ -34,6 +35,7 @@ export default function StudentDashboard() {
   const [totalDue, setTotalDue] = useState(0)
   const [feeCurrency, setFeeCurrency] = useState('USD')
   const [resultsCount, setResultsCount] = useState(0)
+  const [cgpa, setCgpa] = useState<number | null>(null)
   const [nextClass, setNextClass] = useState<UpcomingClass | null>(null)
   const [upcoming, setUpcoming] = useState<UpcomingClass[]>([])
   const [notifications, setNotifications] = useState<Notification[]>([])
@@ -52,7 +54,9 @@ export default function StudentDashboard() {
     const [attendanceRes, invoicesRes, resultsRes, notificationsRes, enrollmentsRes] = await Promise.all([
       studentId ? supabase.from('attendance_records').select('status').eq('student_id', studentId) : Promise.resolve({ data: [] as Array<{ status: string }> }),
       studentId ? supabase.from('fee_invoices').select('amount, amount_paid, currency').eq('student_id', studentId).in('status', ['sent', 'overdue']) : Promise.resolve({ data: [] as Array<{ amount: number; amount_paid: number; currency: string }> }),
-      studentId ? supabase.from('exam_results').select('id', { count: 'exact', head: true }).eq('student_id', studentId).eq('is_published', true) : Promise.resolve({ count: 0 }),
+      studentId
+        ? supabase.from('exam_results').select('id, subject_id, grade, assessment_type, exam_date, subjects(name, code, credit_hours)').eq('student_id', studentId).eq('is_published', true)
+        : Promise.resolve({ data: [] as Array<{ id: string; subject_id: string; grade: string | null; assessment_type: string | null; exam_date: string | null; subjects: { name: string; code: string | null; credit_hours: number | null } | null }> }),
       supabase.from('notifications').select('id, title, is_read').eq('user_id', me.id).order('created_at', { ascending: false }).limit(5),
       studentId ? supabase.from('class_enrollments').select('class_id').eq('student_id', studentId).eq('is_active', true) : Promise.resolve({ data: [] as Array<{ class_id: string }> }),
     ])
@@ -66,7 +70,20 @@ export default function StudentDashboard() {
     setTotalDue(invoices.reduce((sum, inv) => sum + (Number(inv.amount) - Number(inv.amount_paid)), 0))
     setFeeCurrency(invoices[0]?.currency ?? 'USD')
 
-    setResultsCount(('count' in resultsRes ? resultsRes.count : 0) ?? 0)
+    const examResultRows = (resultsRes.data ?? []) as unknown as Array<{
+      id: string; subject_id: string; grade: string | null; assessment_type: string | null; exam_date: string | null
+      subjects: { name: string; code: string | null; credit_hours: number | null } | null
+    }>
+    setResultsCount(examResultRows.length)
+    setCgpa(calculateCgpa(examResultRows.map(r => ({
+      subjectId: r.subject_id,
+      subjectName: r.subjects?.name ?? 'Subject',
+      subjectCode: r.subjects?.code,
+      creditHours: Number(r.subjects?.credit_hours ?? 0),
+      grade: r.grade,
+      assessmentType: r.assessment_type,
+      examDate: r.exam_date,
+    }))).cgpa)
     setNotifications((notificationsRes.data ?? []) as unknown as Notification[])
 
     const classIds = ((enrollmentsRes.data ?? []) as Array<{ class_id: string }>).map(e => e.class_id)
@@ -101,10 +118,10 @@ export default function StudentDashboard() {
       </View>
 
       <View style={styles.statsGrid}>
+        <View style={styles.statBox}><StatCard label="CGPA" value={cgpa ?? 'In progress'} accent={colors.purple} /></View>
         <View style={styles.statBox}><StatCard label="Attendance" value={attendancePct != null ? `${attendancePct}%` : 'No records'} accent={colors.blue} /></View>
         <View style={styles.statBox}><StatCard label="Fee Balance" value={totalDue > 0 ? formatMoney(totalDue, feeCurrency) : 'Paid up'} accent={colors.red} /></View>
         <View style={styles.statBox}><StatCard label="Next Class" value={nextClass ? formatClassTime(nextClass.starts_at) : 'None scheduled'} accent={colors.amber} /></View>
-        <View style={styles.statBox}><StatCard label="Results" value={`${resultsCount} published`} accent={colors.green} /></View>
       </View>
 
       <Card>
@@ -132,15 +149,17 @@ export default function StudentDashboard() {
         )}
       </Card>
 
-      <Text style={styles.sectionLabel}>Manage</Text>
-      <MenuCard label="Attendance & Check-In" sublabel="OTP check-in, GPS + biometric" onPress={() => router.push('/(student)/attendance')} accent={colors.blue} />
-      <MenuCard label="Timetable" sublabel="Your class schedule" onPress={() => router.push('/(student)/timetable')} accent={colors.blue} />
-      <MenuCard label="Results" sublabel="Published exam results" onPress={() => router.push('/(student)/results')} accent={colors.green} />
-      <MenuCard label="Fees" sublabel="Invoices & payments" onPress={() => router.push('/(student)/fees')} accent={colors.red} />
-      <MenuCard label="Wallet" sublabel="Digital wallet balance" onPress={() => router.push('/(student)/wallet')} accent={colors.purple} />
-      <MenuCard label="Location" sublabel="GPS/biometric check-in history" onPress={() => router.push('/(student)/location')} accent={colors.purple} />
-      <MenuCard label="Messages" sublabel="Message your teachers" onPress={() => router.push('/(student)/messages')} accent={colors.amber} />
-      <MenuCard label="Announcements" sublabel="Institution-wide updates" onPress={() => router.push('/(student)/announcements')} accent={colors.gray} />
+      <Text style={styles.sectionLabel}>Quick Access</Text>
+      <TileGrid>
+        <TileCard icon="📅" label="Attendance" onPress={() => router.push('/(student)/attendance')} accent={colors.blue} />
+        <TileCard icon="🗓️" label="Timetable" onPress={() => router.push('/(student)/timetable')} accent={colors.blue} />
+        <TileCard icon="🎓" label="Results" onPress={() => router.push('/(student)/results')} accent={colors.green} />
+        <TileCard icon="💳" label="Fees" onPress={() => router.push('/(student)/fees')} accent={colors.red} />
+        <TileCard icon="👛" label="Wallet" onPress={() => router.push('/(student)/wallet')} accent={colors.purple} />
+        <TileCard icon="📍" label="Location" onPress={() => router.push('/(student)/location')} accent={colors.purple} />
+        <TileCard icon="💬" label="Messages" onPress={() => router.push('/(student)/messages')} accent={colors.amber} />
+        <TileCard icon="📰" label="News & Events" onPress={() => router.push('/(student)/announcements')} accent={colors.gray} />
+      </TileGrid>
     </ScrollView>
   )
 }
@@ -149,16 +168,4 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.bg },
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 },
   title: { fontSize: 20, fontWeight: '700', color: colors.blue },
-  subtitle: { fontSize: 13, color: colors.gray, marginTop: 2 },
-  signOut: { fontSize: 13, color: colors.red, fontWeight: '600' },
-  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 14 },
-  statBox: { width: '47%' },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: colors.blue, marginBottom: 10 },
-  empty: { fontSize: 13, color: colors.muted },
-  classRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6 },
-  classTitle: { fontSize: 13, color: colors.text },
-  classTime: { fontSize: 12, color: colors.muted },
-  notifRead: { fontSize: 13, color: colors.gray, marginBottom: 6 },
-  notifUnread: { fontSize: 13, color: colors.text, fontWeight: '600', marginBottom: 6 },
-  sectionLabel: { fontSize: 13, fontWeight: '700', color: colors.gray, marginTop: 8, marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.5 },
-})
+  subtitle: { fontSize: 13

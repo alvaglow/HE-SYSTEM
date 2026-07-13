@@ -131,6 +131,27 @@ export function MenuCard({ label, sublabel, onPress, accent }: { label: string; 
   )
 }
 
+/**
+ * Widget-style quick-access tile for a grid dashboard layout (2 per row).
+ * Own design for HE-SYSTEM's home screen — an icon-forward tile grid is a
+ * common mobile-app pattern, not anyone's proprietary layout.
+ */
+export function TileCard({ icon, label, onPress, accent }: { icon: string; label: string; onPress: () => void; accent?: string }) {
+  const tint = accent ?? colors.blue
+  return (
+    <TouchableOpacity style={styles.tileCard} onPress={onPress}>
+      <View style={[styles.tileIconWrap, { backgroundColor: `${tint}1A` }]}>
+        <Text style={styles.tileIcon}>{icon}</Text>
+      </View>
+      <Text style={styles.tileLabel}>{label}</Text>
+    </TouchableOpacity>
+  )
+}
+
+export function TileGrid({ children }: { children: ReactNode }) {
+  return <View style={styles.tileGrid}>{children}</View>
+}
+
 export function PrimaryButton({ label, onPress, loading, disabled }: { label: string; onPress: () => void; loading?: boolean; disabled?: boolean }) {
   return (
     <TouchableOpacity style={[styles.primaryBtn, disabled ? { opacity: 0.5 } : null]} onPress={onPress} disabled={disabled || loading}>
@@ -177,12 +198,4 @@ const styles = StyleSheet.create({
   rowTitle: { fontSize: 14, color: colors.text, fontWeight: '500' },
   rowSubtitle: { fontSize: 12, color: colors.gray, marginTop: 2 },
   empty: { paddingVertical: 24, alignItems: 'center' },
-  emptyText: { fontSize: 13, color: colors.muted, textAlign: 'center' },
-  loading: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.white },
-  menuCard: { backgroundColor: colors.white, borderRadius: 12, padding: 16, marginBottom: 10, shadowColor: '#000', shadowOpacity: 0.03, shadowRadius: 5, shadowOffset: { width: 0, height: 1 }, elevation: 1 },
-  menuCardLabel: { fontSize: 15, fontWeight: '600', color: colors.text },
-  menuCardSub: { fontSize: 12, color: colors.gray, marginTop: 2 },
-  primaryBtn: { backgroundColor: colors.blue, borderRadius: 10, paddingVertical: 13, alignItems: 'center' },
-  primaryBtnText: { color: colors.white, fontWeight: '600', fontSize: 14 },
-  input: { borderWidth: 1, borderColor: colors.border, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 11, fontSize: 14, marginBottom: 10, color: colors.text },
-})
+  emptyText: { fontSize: 13, color: colors.muted, textAlign: 'ce
